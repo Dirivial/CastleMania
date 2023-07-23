@@ -52,6 +52,7 @@ public class MeshSockets
         for (int i = 0; i < vertices.Length; i++)
         {
             Vector3 v = vertices[i] * mult;
+            v = Quaternion.Euler(-90, 0, 0) * v;
             //Debug.Log(v);
             vertices[i] = v;
             if (v.x < minX) minX = v.x;
@@ -62,7 +63,13 @@ public class MeshSockets
             if (v.z  > maxZ) maxZ = v.z ;
         }
 
-        //Debug.Log(maxX + ", " + minX + ", " + maxY + ", " + minY + ", " + maxZ + ", " + minZ);
+        maxX = (float)Math.Round(maxX, 3);
+        minX = (float)Math.Round(minX, 3);
+
+        maxZ = (float)Math.Round(maxZ, 3);
+        minZ = (float)Math.Round(minZ, 3);
+
+        Debug.Log(maxX + ", " + minX + ", " + maxY + ", " + minY + ", " + maxZ + ", " + minZ);
 
         List<Vector2> posX = new List<Vector2>();
         List<Vector2> negX = new List<Vector2>();
@@ -78,15 +85,16 @@ public class MeshSockets
             {
                 continue;
             }
-            float x = vertices[i].x; //Mathf.Round(v.x);
-            float y = vertices[i].y; //Mathf.Round(v.y);
-            float z = vertices[i].z; //Mathf.Round(v.z);
-            if (x == maxX && !posX.Contains(new Vector2(y, z)))
+            float x = (float)Math.Round(vertices[i].x, 3); //Mathf.Round(v.x);
+            float y = (float)Math.Round(vertices[i].y, 3); //Mathf.Round(v.y);
+            float z = (float)Math.Round(vertices[i].z, 3); //Mathf.Round(v.z);
+
+            if (x == maxX && !posX.Contains(new Vector2(z, y)))
             {
-                posX.Add(new Vector2(y, z));
-            } else if (x == minX && !negX.Contains(new Vector2(y, z)))
+                posX.Add(new Vector2(z, y));
+            } else if (x == minX && !negX.Contains(new Vector2(z, y)))
             {
-                negX.Add(new Vector2(y, z));
+                negX.Add(new Vector2(z, y));
             }
 
             if (y == maxY && !posY.Contains(new Vector2(x, z)))
@@ -112,13 +120,13 @@ public class MeshSockets
 
         // If the face is valid, store it as a socket
 
-        if (Math.Round(maxX) == 1)
+        if (Math.Round(maxX, 2) == 1)
         {
             string id = SearchForID(posX);            
 
             if (id == String.Empty)
             {
-                //Debug.Log("Adding on X");
+                Debug.Log("Adding on X");
                 id = GenerateID();
                 sockets.Add(new Socket(id, posX.ToArray()));
             }
@@ -130,13 +138,13 @@ public class MeshSockets
         }
 
 
-        if (Math.Round(minX) == -1)
+        if (Math.Round(minX, 2) == -1)
         {
             string id = SearchForID(negX);
 
             if (id == String.Empty)
             {
-                //Debug.Log("Adding on -X");
+                Debug.Log("Adding on -X");
                 id = GenerateID();
                 sockets.Add(new Socket(id, negX.ToArray()));
             }
@@ -147,13 +155,47 @@ public class MeshSockets
             meshSockets.Add("-1");
         }
 
-        if (Math.Round(maxY) == 1)
+        if (Math.Round(maxZ, 2) == 1)
+        {
+            string id = SearchForID(posZ);
+
+            if (id == String.Empty)
+            {
+                Debug.Log("Adding on Z");
+                id = GenerateID();
+                sockets.Add(new Socket(id, posZ.ToArray()));
+            }
+            meshSockets.Add(id);
+        }
+        else
+        {
+            meshSockets.Add("-1");
+        }
+
+        if (Math.Round(minZ, 2) == -1)
+        {
+            string id = SearchForID(negZ);
+
+            if (id == String.Empty)
+            {
+                Debug.Log("Adding on -Z");
+                id = GenerateID();
+                sockets.Add(new Socket(id, negZ.ToArray()));
+            }
+            meshSockets.Add(id);
+        }
+        else
+        {
+            meshSockets.Add("-1");
+        }
+
+        if (Math.Round(maxY, 2) == 1)
         {
             string id = SearchForID(posY);
 
             if (id == String.Empty)
             {
-                //Debug.Log("Adding on Y");
+                Debug.Log("Adding on Y");
                 id = GenerateID();
                 sockets.Add(new Socket(id, posY.ToArray()));
             }
@@ -164,13 +206,13 @@ public class MeshSockets
             meshSockets.Add("-1");
         }
 
-        if (Math.Round(minY) == -1)
+        if (Math.Round(minY, 2) == -1)
         {
             string id = SearchForID(negY);
 
             if (id == String.Empty)
             { 
-                //Debug.Log("Adding on -Y");
+                Debug.Log("Adding on -Y");
                 id = GenerateID();
                 sockets.Add(new Socket(id, negY.ToArray()));
             }
@@ -181,38 +223,7 @@ public class MeshSockets
             meshSockets.Add("-1");
         }
 
-        if (Math.Round(maxZ) == 1)
-        {
-            string id = SearchForID(posZ);
 
-            if (id == String.Empty)
-            {
-                //Debug.Log("Adding on Z");
-                id = GenerateID();
-                sockets.Add(new Socket(id, posZ.ToArray()));
-            }
-            meshSockets.Add(id);
-        }
-        else
-        {
-            meshSockets.Add("-1");
-        }
-        if (Math.Round(minZ) == -1)
-        {
-            string id = SearchForID(negZ);
-
-            if (id == String.Empty)
-            {
-                //Debug.Log("Adding on -Z");
-                id = GenerateID();
-                sockets.Add(new Socket(id, negZ.ToArray()));
-            }
-            meshSockets.Add(id);
-        }
-        else
-        {
-            meshSockets.Add("-1");
-        }
 
         return meshSockets;
     }

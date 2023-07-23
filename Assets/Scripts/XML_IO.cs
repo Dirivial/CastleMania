@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
+using TreeEditor;
 using UnityEngine;
 
 public enum SocketDirection
@@ -16,24 +17,21 @@ public enum SocketDirection
 public class TileEntry
 {
     public string Name;
-    public string MeshName;
-    public Mesh Mesh;
+    public GameObject tileObject;
     public Symmetry Symmetry;
+    public float Weight = 1f;
 
     public TileEntry()
     {
         Name = string.Empty;
-        MeshName = string.Empty;
-        Mesh = null;
         Symmetry = Symmetry.X;
     }
 
-    public TileEntry(string name, string meshName, Mesh mesh, Symmetry symmetry)
+    public TileEntry(string name, Symmetry symmetry, float weight)
     {
         Name = name;
-        MeshName = meshName;
-        Mesh = mesh;
         Symmetry = symmetry;
+        Weight = weight;
     }
 }
 
@@ -42,7 +40,8 @@ public class PrototypeXML
 {
     // General information
     public string Name;
-    public string Mesh;
+
+    public float weight;
 
     // Sockets
     public string posX = "-1";
@@ -65,25 +64,107 @@ public class PrototypeXML
 
     }
 
-    public PrototypeXML(string name, string mesh) {
+    public PrototypeXML(string name, float weight) {
         this.Name = name;
-        this.Mesh = mesh;
+        this.weight = weight;
     }
 }
 
-[CreateAssetMenu(fileName = "Data", menuName = "ScriptableObject/JSON_IO", order = 1)]
-public class JSON_io : ScriptableObject
+[CreateAssetMenu(fileName = "Data", menuName = "ScriptableObject/XML_IO", order = 1)]
+public class XML_IO : ScriptableObject
 {
-    public string jsonPath = "models";
+    public string xmlPath = "models";
     public List<TileEntry> Tiles;
 
     private MeshSockets Sockets = new MeshSockets();
+    private List<TileType> tileTypes = new List<TileType>();
 
+    public List<TileType> GetTileTypes()
+    {
+        return tileTypes;
+    }
+
+    public void ClearTileTypes()
+    {
+        // Clear earlier tiles
+        tileTypes.Clear();
+    }
+
+    // This is to import the information stored in a XML document, most likely generated from the function Export();
+    public void Import()
+    {
+        // Specify the file path within the "Assets" folder
+        string filePath = Application.dataPath + "/" + xmlPath + ".xml";
+
+        // Check if the file exists before attempting to read it
+        if (File.Exists(filePath))
+        {
+            // Create XmlSerializer for the Person type
+            XmlSerializer serializer = new XmlSerializer(typeof(PrototypeXML[]));
+
+            // Deserialize the XML data back into C# objects
+            using (StreamReader reader = new StreamReader(filePath))
+            {
+                PrototypeXML[] tiles = (PrototypeXML[])serializer.Deserialize(reader);
+
+                // Now you have your data in the 'people' array
+                foreach (PrototypeXML tile in tiles)
+                {
+                    
+                    GameObject tileObject = null;
+                    
+                    // Find tileObject associated with the current tile
+                    foreach (TileEntry t in Tiles)
+                    {
+                        if (tile.Name.Substring(0, tile.Name.Length - 2) == t.Name)
+                        {
+                            //Debug.Log("Found game object! " + t.tileObject.name);
+                            tileObject = t.tileObject;
+                            break;
+                        }
+                    }
+
+                    // The times of rotation is stored as the last character in the name
+                    int rotation = Int32.Parse(tile.Name.Substring(tile.Name.Length - 1));
+
+                    // Make sure to have at least a very low weight
+                    float weight = tile.weight > 0 ? tile.weight : 0.001f;
+
+                    TileType tileType = new TileType(tile.Name, rotation, weight, tileObject);
+
+                    if (!tile.negY.Equals("-1"))
+                    {
+                        Debug.Log("Down: " + tile.negY);
+                    }
+
+                    if (!tile.posY.Equals("-1"))
+                    {
+                        Debug.Log("Up: " + tile.posY);
+                    }
+
+                    tileType.SetNeighbors(Direction.North, tile.npZ);
+                    tileType.SetNeighbors(Direction.South, tile.nnZ);
+                    tileType.SetNeighbors(Direction.East, tile.npX);
+                    tileType.SetNeighbors(Direction.West, tile.nnX);
+                    tileType.SetNeighbors(Direction.Up, tile.npY);
+                    tileType.SetNeighbors(Direction.Down, tile.nnY);
+
+                    tileTypes.Add(tileType);
+                }
+            }
+        }
+        else
+        {
+            Debug.LogError("File not found: " + filePath);
+        }
+    }
+
+    // This function is for exporting tile information to an XML file, to reduce compute times
     public void Export()
     {
         Debug.Log("Mobamba");
         Sockets.ClearList();
-        if (jsonPath != null && jsonPath.Length > 0 && Tiles.Count > 0)
+        if (xmlPath != null && xmlPath.Length > 0 && Tiles.Count > 0)
         {
 
             int totalTileCount = ComputeTileCount();
@@ -95,16 +176,20 @@ public class JSON_io : ScriptableObject
             // Compute the sockets
             for (int i = 0; i < Tiles.Count; i++)
             {
-                tileXML[k] = new PrototypeXML(Tiles[i].Name + "_0", Tiles[i].MeshName);
-                List<string> sockets = Sockets.ComputeMeshSockets(Tiles[i].Mesh);
+                MeshFilter mf = Tiles[i].tileObject.transform.GetComponent<MeshFilter>();
+                Mesh mesh = mf.sharedMesh;
+
+                tileXML[k] = new PrototypeXML(Tiles[i].Name + "_0", Tiles[i].Weight);
+                List<string> sockets = Sockets.ComputeMeshSockets(mesh);
 
                 int cardinality = GetCardinality(Tiles[i].Symmetry);
 
-                // Create rotated versions !!NOTE!! The tiles/models I am using has Z as the vertical axis
+                // This is a bit odd. In my case a cardinality of 2 means that the tile should be flipped 180 degrees
                 for (int j = 1; j < cardinality; j++)
                 {
-                    tileXML[k + j] = new PrototypeXML(Tiles[i].Name + "_" + j, Tiles[i].MeshName);
+                    tileXML[k + j] = new PrototypeXML(Tiles[i].Name + "_" + j, Tiles[i].Weight);
                 }
+
 
                 // Assign sockets
                 AssignSockets(sockets, tileXML, k, Tiles[i].Symmetry);
@@ -118,7 +203,7 @@ public class JSON_io : ScriptableObject
             XmlSerializer serializer = new XmlSerializer(typeof(PrototypeXML[]));
 
             // Specify the file path
-            string filePath = Application.dataPath + "/" + jsonPath + ".xml";
+            string filePath = Application.dataPath + "/" + xmlPath + ".xml";
 
             // Serialize data to XML and save to the file
             using (StreamWriter writer = new StreamWriter(filePath))
@@ -136,19 +221,20 @@ public class JSON_io : ScriptableObject
         }
     }
 
+    // I am switching stuff around a bit because my models are rotated
     private void AssignSockets(List<string> sockets, PrototypeXML[] tileXML, int index, Symmetry symmetry)
     {
 
         // Assign the first sockets
         tileXML[index].posX = sockets[0];
         tileXML[index].negX = sockets[1];
-        tileXML[index].posY = sockets[2];
-        tileXML[index].negY = sockets[3];
-        tileXML[index].posZ = sockets[4];
-        tileXML[index].negZ = sockets[5];
 
-        string PZ = sockets[4];
-        string NZ = sockets[5];
+        tileXML[index].posZ = sockets[2];
+        tileXML[index].negZ = sockets[3];
+
+        tileXML[index].posY = sockets[4];
+        tileXML[index].negY = sockets[5];
+
 
         // This is to make th
         SocketDirection[] socketDirections = new SocketDirection[4] { 0, SocketDirection.Right, SocketDirection.Top, SocketDirection.Bottom };
@@ -168,27 +254,27 @@ public class JSON_io : ScriptableObject
                 // Assign the rotated sockets to the prototype/tile
                 tileXML[i].posX = sockets[(int)socketDirections[0]];
                 tileXML[i].negX = sockets[(int)socketDirections[1]];
-                tileXML[i].posY = sockets[(int)socketDirections[2]];
-                tileXML[i].negY = sockets[(int)socketDirections[3]];
+                tileXML[i].posZ = sockets[(int)socketDirections[2]];
+                tileXML[i].negZ = sockets[(int)socketDirections[3]];
 
                 // These should always remain the same
-                tileXML[i].posZ = PZ;
-                tileXML[i].negZ = NZ;
+                tileXML[i].posY = sockets[4];
+                tileXML[i].negY = sockets[5];
             }
             return;
         } else if (cardinality == 2)
         {
             for (int j = 0; j < socketDirections.Length; j++)
             {
-                socketDirections[j] = GetNext(GetNext(socketDirections[j]));
+                socketDirections[j] = GetNext(socketDirections[j]);
             }
             tileXML[index + 1].posX = sockets[(int)socketDirections[0]];
             tileXML[index + 1].negX = sockets[(int)socketDirections[1]];
-            tileXML[index + 1].posY = sockets[(int)socketDirections[2]];
-            tileXML[index + 1].negY = sockets[(int)socketDirections[3]];
+            tileXML[index + 1].posZ = sockets[(int)socketDirections[2]];
+            tileXML[index + 1].negZ = sockets[(int)socketDirections[3]];
 
-            tileXML[index + 1].posZ = PZ;
-            tileXML[index + 1].negZ = NZ;
+            tileXML[index + 1].posY = sockets[4];
+            tileXML[index + 1].negY = sockets[5];
         } 
 
         return;
@@ -207,34 +293,34 @@ public class JSON_io : ScriptableObject
             for (int j = 0; j < tileXML.Length; j++)
             {
                 // Positive X
-                if (tileXML[i].posX == tileXML[j].negX)
+                if (tileXML[i].posX != "-1" && tileXML[i].posX == tileXML[j].negX)
                 {
                     xnp.Add(tileXML[j].Name);
                 }
                 // Negative X
-                if (tileXML[i].negX == tileXML[j].posX)
+                if (tileXML[i].negX != "-1" && tileXML[i].negX == tileXML[j].posX)
                 {
                     xnn.Add(tileXML[j].Name);
                 }
 
                 // Positive Y
-                if (tileXML[i].posY == tileXML[j].negY)
+                if (tileXML[i].posY != "-1" && tileXML[i].posY == tileXML[j].negY)
                 {
                     ynp.Add(tileXML[j].Name);
                 }
                 // Negative Y
-                if (tileXML[i].negY == tileXML[j].posY)
+                if (tileXML[i].negY != "-1" && tileXML[i].negY == tileXML[j].posY)
                 {
                     ynn.Add(tileXML[j].Name);
                 }
 
                 // Positive Z
-                if (tileXML[i].posZ == tileXML[j].negZ)
+                if (tileXML[i].posZ != "-1" && tileXML[i].posZ == tileXML[j].negZ)
                 {
                     znp.Add(tileXML[j].Name);
                 }
                 // Negative Z
-                if (tileXML[i].negZ == tileXML[j].posZ)
+                if (tileXML[i].negZ != "-1" && tileXML[i].negZ == tileXML[j].posZ)
                 {
                     znn.Add(tileXML[j].Name);
                 }
@@ -243,10 +329,10 @@ public class JSON_io : ScriptableObject
             // This might not makes sense for you, check if your models get fricked up
             tileXML[i].npX = xnp.ToArray();
             tileXML[i].nnX = xnn.ToArray();
-            tileXML[i].npY = znp.ToArray();
-            tileXML[i].nnY = znn.ToArray();
-            tileXML[i].npZ = ynn.ToArray();
-            tileXML[i].nnZ = ynp.ToArray();
+            tileXML[i].npY = ynp.ToArray();
+            tileXML[i].nnY = ynn.ToArray();
+            tileXML[i].npZ = znp.ToArray();
+            tileXML[i].nnZ = znn.ToArray();
         }
     }
 
@@ -279,16 +365,16 @@ public class JSON_io : ScriptableObject
 
     private SocketDirection GetNext(SocketDirection d)
     {
-        switch (d) // 0 -> 3 -> 1 -> 2 -> 0
+        switch (d)
         {
             case SocketDirection.Left:
-                return SocketDirection.Bottom;
-            case SocketDirection.Right:
                 return SocketDirection.Top;
+            case SocketDirection.Right:
+                return SocketDirection.Bottom;
             case SocketDirection.Top:
-                return SocketDirection.Left;
-            case SocketDirection.Bottom:
                 return SocketDirection.Right;
+            case SocketDirection.Bottom:
+                return SocketDirection.Left;
             default:
                 return SocketDirection.Left;
         }

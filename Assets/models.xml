@@ -2,40 +2,24 @@
 <ArrayOfPrototypeXML xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <PrototypeXML>
     <Name>BridgeX_0</Name>
-    <Mesh>BridgeX</Mesh>
+    <weight>0.9</weight>
     <posX>0</posX>
-    <posY>0</posY>
-    <posZ>1</posZ>
+    <posY>-1</posY>
+    <posZ>0</posZ>
     <negX>0</negX>
-    <negY>0</negY>
-    <negZ>2</negZ>
+    <negY>-1</negY>
+    <negZ>0</negZ>
     <npX>
       <string>BridgeX_0</string>
       <string>BridgeT_0</string>
       <string>BridgeT_1</string>
       <string>BridgeT_2</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
       <string>BridgeL_0</string>
       <string>BridgeL_1</string>
+      <string>Bridge_0</string>
       <string>Bridge_i_0</string>
     </npX>
-    <npY>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </npY>
+    <npY />
     <npZ>
       <string>BridgeX_0</string>
       <string>BridgeT_0</string>
@@ -43,6 +27,7 @@
       <string>BridgeT_3</string>
       <string>BridgeL_0</string>
       <string>BridgeL_3</string>
+      <string>Bridge_1</string>
       <string>Bridge_i_3</string>
     </npZ>
     <nnX>
@@ -50,10 +35,9 @@
       <string>BridgeT_0</string>
       <string>BridgeT_2</string>
       <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
       <string>BridgeL_2</string>
       <string>BridgeL_3</string>
+      <string>Bridge_0</string>
       <string>Bridge_i_2</string>
     </nnX>
     <nnY />
@@ -64,83 +48,42 @@
       <string>BridgeT_3</string>
       <string>BridgeL_1</string>
       <string>BridgeL_2</string>
+      <string>Bridge_1</string>
       <string>Bridge_i_1</string>
     </nnZ>
   </PrototypeXML>
   <PrototypeXML>
     <Name>BridgeT_0</Name>
-    <Mesh>BridgeT</Mesh>
+    <weight>0.5</weight>
     <posX>0</posX>
-    <posY>0</posY>
-    <posZ>1</posZ>
+    <posY>-1</posY>
+    <posZ>-1</posZ>
     <negX>0</negX>
-    <negY>3</negY>
-    <negZ>1</negZ>
+    <negY>-1</negY>
+    <negZ>0</negZ>
     <npX>
       <string>BridgeX_0</string>
       <string>BridgeT_0</string>
       <string>BridgeT_1</string>
       <string>BridgeT_2</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
       <string>BridgeL_0</string>
       <string>BridgeL_1</string>
+      <string>Bridge_0</string>
       <string>Bridge_i_0</string>
     </npX>
-    <npY>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </npY>
-    <npZ>
-      <string>BridgeT_2</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-    </npZ>
+    <npY />
+    <npZ />
     <nnX>
       <string>BridgeX_0</string>
       <string>BridgeT_0</string>
       <string>BridgeT_2</string>
       <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
       <string>BridgeL_2</string>
       <string>BridgeL_3</string>
+      <string>Bridge_0</string>
       <string>Bridge_i_2</string>
     </nnX>
-    <nnY>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </nnY>
+    <nnY />
     <nnZ>
       <string>BridgeX_0</string>
       <string>BridgeT_1</string>
@@ -148,42 +91,21 @@
       <string>BridgeT_3</string>
       <string>BridgeL_1</string>
       <string>BridgeL_2</string>
+      <string>Bridge_1</string>
       <string>Bridge_i_1</string>
     </nnZ>
   </PrototypeXML>
   <PrototypeXML>
     <Name>BridgeT_1</Name>
-    <Mesh>BridgeT</Mesh>
-    <posX>3</posX>
-    <posY>0</posY>
-    <posZ>1</posZ>
+    <weight>0.5</weight>
+    <posX>-1</posX>
+    <posY>-1</posY>
+    <posZ>0</posZ>
     <negX>0</negX>
-    <negY>0</negY>
-    <negZ>1</negZ>
-    <npX>
-      <string>BridgeT_3</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </npX>
-    <npY>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </npY>
+    <negY>-1</negY>
+    <negZ>0</negZ>
+    <npX />
+    <npY />
     <npZ>
       <string>BridgeX_0</string>
       <string>BridgeT_0</string>
@@ -191,6 +113,7 @@
       <string>BridgeT_3</string>
       <string>BridgeL_0</string>
       <string>BridgeL_3</string>
+      <string>Bridge_1</string>
       <string>Bridge_i_3</string>
     </npZ>
     <nnX>
@@ -198,29 +121,12 @@
       <string>BridgeT_0</string>
       <string>BridgeT_2</string>
       <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
       <string>BridgeL_2</string>
       <string>BridgeL_3</string>
+      <string>Bridge_0</string>
       <string>Bridge_i_2</string>
     </nnX>
-    <nnY>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </nnY>
+    <nnY />
     <nnZ>
       <string>BridgeX_0</string>
       <string>BridgeT_1</string>
@@ -228,45 +134,30 @@
       <string>BridgeT_3</string>
       <string>BridgeL_1</string>
       <string>BridgeL_2</string>
+      <string>Bridge_1</string>
       <string>Bridge_i_1</string>
     </nnZ>
   </PrototypeXML>
   <PrototypeXML>
     <Name>BridgeT_2</Name>
-    <Mesh>BridgeT</Mesh>
+    <weight>0.5</weight>
     <posX>0</posX>
-    <posY>3</posY>
-    <posZ>1</posZ>
+    <posY>-1</posY>
+    <posZ>0</posZ>
     <negX>0</negX>
-    <negY>0</negY>
-    <negZ>1</negZ>
+    <negY>-1</negY>
+    <negZ>-1</negZ>
     <npX>
       <string>BridgeX_0</string>
       <string>BridgeT_0</string>
       <string>BridgeT_1</string>
       <string>BridgeT_2</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
       <string>BridgeL_0</string>
       <string>BridgeL_1</string>
+      <string>Bridge_0</string>
       <string>Bridge_i_0</string>
     </npX>
-    <npY>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </npY>
+    <npY />
     <npZ>
       <string>BridgeX_0</string>
       <string>BridgeT_0</string>
@@ -274,6 +165,7 @@
       <string>BridgeT_3</string>
       <string>BridgeL_0</string>
       <string>BridgeL_3</string>
+      <string>Bridge_1</string>
       <string>Bridge_i_3</string>
     </npZ>
     <nnX>
@@ -281,76 +173,34 @@
       <string>BridgeT_0</string>
       <string>BridgeT_2</string>
       <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
       <string>BridgeL_2</string>
       <string>BridgeL_3</string>
+      <string>Bridge_0</string>
       <string>Bridge_i_2</string>
     </nnX>
-    <nnY>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </nnY>
-    <nnZ>
-      <string>BridgeT_0</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </nnZ>
+    <nnY />
+    <nnZ />
   </PrototypeXML>
   <PrototypeXML>
     <Name>BridgeT_3</Name>
-    <Mesh>BridgeT</Mesh>
+    <weight>0.5</weight>
     <posX>0</posX>
-    <posY>0</posY>
-    <posZ>1</posZ>
-    <negX>3</negX>
-    <negY>0</negY>
-    <negZ>1</negZ>
+    <posY>-1</posY>
+    <posZ>0</posZ>
+    <negX>-1</negX>
+    <negY>-1</negY>
+    <negZ>0</negZ>
     <npX>
       <string>BridgeX_0</string>
       <string>BridgeT_0</string>
       <string>BridgeT_1</string>
       <string>BridgeT_2</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
       <string>BridgeL_0</string>
       <string>BridgeL_1</string>
+      <string>Bridge_0</string>
       <string>Bridge_i_0</string>
     </npX>
-    <npY>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </npY>
+    <npY />
     <npZ>
       <string>BridgeX_0</string>
       <string>BridgeT_0</string>
@@ -358,33 +208,11 @@
       <string>BridgeT_3</string>
       <string>BridgeL_0</string>
       <string>BridgeL_3</string>
+      <string>Bridge_1</string>
       <string>Bridge_i_3</string>
     </npZ>
-    <nnX>
-      <string>BridgeT_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_3</string>
-    </nnX>
-    <nnY>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </nnY>
+    <nnX />
+    <nnY />
     <nnZ>
       <string>BridgeX_0</string>
       <string>BridgeT_1</string>
@@ -392,250 +220,33 @@
       <string>BridgeT_3</string>
       <string>BridgeL_1</string>
       <string>BridgeL_2</string>
+      <string>Bridge_1</string>
       <string>Bridge_i_1</string>
-    </nnZ>
-  </PrototypeXML>
-  <PrototypeXML>
-    <Name>Bridge_0</Name>
-    <Mesh>Bridge</Mesh>
-    <posX>0</posX>
-    <posY>3</posY>
-    <posZ>1</posZ>
-    <negX>0</negX>
-    <negY>3</negY>
-    <negZ>1</negZ>
-    <npX>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>Bridge_i_0</string>
-    </npX>
-    <npY>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </npY>
-    <npZ>
-      <string>BridgeT_2</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-    </npZ>
-    <nnX>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_2</string>
-    </nnX>
-    <nnY>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </nnY>
-    <nnZ>
-      <string>BridgeT_0</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </nnZ>
-  </PrototypeXML>
-  <PrototypeXML>
-    <Name>Bridge_1</Name>
-    <Mesh>Bridge</Mesh>
-    <posX>0</posX>
-    <posY>3</posY>
-    <posZ>1</posZ>
-    <negX>0</negX>
-    <negY>3</negY>
-    <negZ>1</negZ>
-    <npX>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>Bridge_i_0</string>
-    </npX>
-    <npY>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </npY>
-    <npZ>
-      <string>BridgeT_2</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-    </npZ>
-    <nnX>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_2</string>
-    </nnX>
-    <nnY>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </nnY>
-    <nnZ>
-      <string>BridgeT_0</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
     </nnZ>
   </PrototypeXML>
   <PrototypeXML>
     <Name>BridgeL_0</Name>
-    <Mesh>BridgeL</Mesh>
-    <posX>3</posX>
-    <posY>0</posY>
-    <posZ>1</posZ>
+    <weight>0.5</weight>
+    <posX>-1</posX>
+    <posY>-1</posY>
+    <posZ>-1</posZ>
     <negX>0</negX>
-    <negY>3</negY>
-    <negZ>1</negZ>
-    <npX>
-      <string>BridgeT_3</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </npX>
-    <npY>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </npY>
-    <npZ>
-      <string>BridgeT_2</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-    </npZ>
+    <negY>-1</negY>
+    <negZ>0</negZ>
+    <npX />
+    <npY />
+    <npZ />
     <nnX>
       <string>BridgeX_0</string>
       <string>BridgeT_0</string>
       <string>BridgeT_2</string>
       <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
       <string>BridgeL_2</string>
       <string>BridgeL_3</string>
+      <string>Bridge_0</string>
       <string>Bridge_i_2</string>
     </nnX>
-    <nnY>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </nnY>
+    <nnY />
     <nnZ>
       <string>BridgeX_0</string>
       <string>BridgeT_1</string>
@@ -643,42 +254,21 @@
       <string>BridgeT_3</string>
       <string>BridgeL_1</string>
       <string>BridgeL_2</string>
+      <string>Bridge_1</string>
       <string>Bridge_i_1</string>
     </nnZ>
   </PrototypeXML>
   <PrototypeXML>
     <Name>BridgeL_1</Name>
-    <Mesh>BridgeL</Mesh>
-    <posX>3</posX>
-    <posY>3</posY>
-    <posZ>1</posZ>
+    <weight>0.5</weight>
+    <posX>-1</posX>
+    <posY>-1</posY>
+    <posZ>0</posZ>
     <negX>0</negX>
-    <negY>0</negY>
-    <negZ>1</negZ>
-    <npX>
-      <string>BridgeT_3</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </npX>
-    <npY>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </npY>
+    <negY>-1</negY>
+    <negZ>-1</negZ>
+    <npX />
+    <npY />
     <npZ>
       <string>BridgeX_0</string>
       <string>BridgeT_0</string>
@@ -686,6 +276,7 @@
       <string>BridgeT_3</string>
       <string>BridgeL_0</string>
       <string>BridgeL_3</string>
+      <string>Bridge_1</string>
       <string>Bridge_i_3</string>
     </npZ>
     <nnX>
@@ -693,76 +284,34 @@
       <string>BridgeT_0</string>
       <string>BridgeT_2</string>
       <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
       <string>BridgeL_2</string>
       <string>BridgeL_3</string>
+      <string>Bridge_0</string>
       <string>Bridge_i_2</string>
     </nnX>
-    <nnY>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </nnY>
-    <nnZ>
-      <string>BridgeT_0</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </nnZ>
+    <nnY />
+    <nnZ />
   </PrototypeXML>
   <PrototypeXML>
     <Name>BridgeL_2</Name>
-    <Mesh>BridgeL</Mesh>
+    <weight>0.5</weight>
     <posX>0</posX>
-    <posY>3</posY>
-    <posZ>1</posZ>
-    <negX>3</negX>
-    <negY>0</negY>
-    <negZ>1</negZ>
+    <posY>-1</posY>
+    <posZ>0</posZ>
+    <negX>-1</negX>
+    <negY>-1</negY>
+    <negZ>-1</negZ>
     <npX>
       <string>BridgeX_0</string>
       <string>BridgeT_0</string>
       <string>BridgeT_1</string>
       <string>BridgeT_2</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
       <string>BridgeL_0</string>
       <string>BridgeL_1</string>
+      <string>Bridge_0</string>
       <string>Bridge_i_0</string>
     </npX>
-    <npY>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </npY>
+    <npY />
     <npZ>
       <string>BridgeX_0</string>
       <string>BridgeT_0</string>
@@ -770,115 +319,36 @@
       <string>BridgeT_3</string>
       <string>BridgeL_0</string>
       <string>BridgeL_3</string>
+      <string>Bridge_1</string>
       <string>Bridge_i_3</string>
     </npZ>
-    <nnX>
-      <string>BridgeT_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_3</string>
-    </nnX>
-    <nnY>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </nnY>
-    <nnZ>
-      <string>BridgeT_0</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </nnZ>
+    <nnX />
+    <nnY />
+    <nnZ />
   </PrototypeXML>
   <PrototypeXML>
     <Name>BridgeL_3</Name>
-    <Mesh>BridgeL</Mesh>
+    <weight>0.5</weight>
     <posX>0</posX>
-    <posY>0</posY>
-    <posZ>1</posZ>
-    <negX>3</negX>
-    <negY>3</negY>
-    <negZ>1</negZ>
+    <posY>-1</posY>
+    <posZ>-1</posZ>
+    <negX>-1</negX>
+    <negY>-1</negY>
+    <negZ>0</negZ>
     <npX>
       <string>BridgeX_0</string>
       <string>BridgeT_0</string>
       <string>BridgeT_1</string>
       <string>BridgeT_2</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
       <string>BridgeL_0</string>
       <string>BridgeL_1</string>
+      <string>Bridge_0</string>
       <string>Bridge_i_0</string>
     </npX>
-    <npY>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </npY>
-    <npZ>
-      <string>BridgeT_2</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-    </npZ>
-    <nnX>
-      <string>BridgeT_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_3</string>
-    </nnX>
-    <nnY>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </nnY>
+    <npY />
+    <npZ />
+    <nnX />
+    <nnY />
     <nnZ>
       <string>BridgeX_0</string>
       <string>BridgeT_1</string>
@@ -886,124 +356,114 @@
       <string>BridgeT_3</string>
       <string>BridgeL_1</string>
       <string>BridgeL_2</string>
+      <string>Bridge_1</string>
+      <string>Bridge_i_1</string>
+    </nnZ>
+  </PrototypeXML>
+  <PrototypeXML>
+    <Name>Bridge_0</Name>
+    <weight>0.1</weight>
+    <posX>0</posX>
+    <posY>-1</posY>
+    <posZ>-1</posZ>
+    <negX>0</negX>
+    <negY>-1</negY>
+    <negZ>-1</negZ>
+    <npX>
+      <string>BridgeX_0</string>
+      <string>BridgeT_0</string>
+      <string>BridgeT_1</string>
+      <string>BridgeT_2</string>
+      <string>BridgeL_0</string>
+      <string>BridgeL_1</string>
+      <string>Bridge_0</string>
+      <string>Bridge_i_0</string>
+    </npX>
+    <npY />
+    <npZ />
+    <nnX>
+      <string>BridgeX_0</string>
+      <string>BridgeT_0</string>
+      <string>BridgeT_2</string>
+      <string>BridgeT_3</string>
+      <string>BridgeL_2</string>
+      <string>BridgeL_3</string>
+      <string>Bridge_0</string>
+      <string>Bridge_i_2</string>
+    </nnX>
+    <nnY />
+    <nnZ />
+  </PrototypeXML>
+  <PrototypeXML>
+    <Name>Bridge_1</Name>
+    <weight>0.1</weight>
+    <posX>-1</posX>
+    <posY>-1</posY>
+    <posZ>0</posZ>
+    <negX>-1</negX>
+    <negY>-1</negY>
+    <negZ>0</negZ>
+    <npX />
+    <npY />
+    <npZ>
+      <string>BridgeX_0</string>
+      <string>BridgeT_0</string>
+      <string>BridgeT_1</string>
+      <string>BridgeT_3</string>
+      <string>BridgeL_0</string>
+      <string>BridgeL_3</string>
+      <string>Bridge_1</string>
+      <string>Bridge_i_3</string>
+    </npZ>
+    <nnX />
+    <nnY />
+    <nnZ>
+      <string>BridgeX_0</string>
+      <string>BridgeT_1</string>
+      <string>BridgeT_2</string>
+      <string>BridgeT_3</string>
+      <string>BridgeL_1</string>
+      <string>BridgeL_2</string>
+      <string>Bridge_1</string>
       <string>Bridge_i_1</string>
     </nnZ>
   </PrototypeXML>
   <PrototypeXML>
     <Name>Bridge_i_0</Name>
-    <Mesh>Bridge_i</Mesh>
-    <posX>3</posX>
-    <posY>3</posY>
-    <posZ>1</posZ>
+    <weight>0.1</weight>
+    <posX>-1</posX>
+    <posY>-1</posY>
+    <posZ>-1</posZ>
     <negX>0</negX>
-    <negY>3</negY>
-    <negZ>1</negZ>
-    <npX>
-      <string>BridgeT_3</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </npX>
-    <npY>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </npY>
-    <npZ>
-      <string>BridgeT_2</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-    </npZ>
+    <negY>-1</negY>
+    <negZ>-1</negZ>
+    <npX />
+    <npY />
+    <npZ />
     <nnX>
       <string>BridgeX_0</string>
       <string>BridgeT_0</string>
       <string>BridgeT_2</string>
       <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
       <string>BridgeL_2</string>
       <string>BridgeL_3</string>
+      <string>Bridge_0</string>
       <string>Bridge_i_2</string>
     </nnX>
-    <nnY>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </nnY>
-    <nnZ>
-      <string>BridgeT_0</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </nnZ>
+    <nnY />
+    <nnZ />
   </PrototypeXML>
   <PrototypeXML>
     <Name>Bridge_i_1</Name>
-    <Mesh>Bridge_i</Mesh>
-    <posX>3</posX>
-    <posY>3</posY>
-    <posZ>1</posZ>
-    <negX>3</negX>
-    <negY>0</negY>
-    <negZ>1</negZ>
-    <npX>
-      <string>BridgeT_3</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </npX>
-    <npY>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </npY>
+    <weight>0.1</weight>
+    <posX>-1</posX>
+    <posY>-1</posY>
+    <posZ>0</posZ>
+    <negX>-1</negX>
+    <negY>-1</negY>
+    <negZ>-1</negZ>
+    <npX />
+    <npY />
     <npZ>
       <string>BridgeX_0</string>
       <string>BridgeT_0</string>
@@ -1011,194 +471,52 @@
       <string>BridgeT_3</string>
       <string>BridgeL_0</string>
       <string>BridgeL_3</string>
+      <string>Bridge_1</string>
       <string>Bridge_i_3</string>
     </npZ>
-    <nnX>
-      <string>BridgeT_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_3</string>
-    </nnX>
-    <nnY>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </nnY>
-    <nnZ>
-      <string>BridgeT_0</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </nnZ>
+    <nnX />
+    <nnY />
+    <nnZ />
   </PrototypeXML>
   <PrototypeXML>
     <Name>Bridge_i_2</Name>
-    <Mesh>Bridge_i</Mesh>
+    <weight>0.1</weight>
     <posX>0</posX>
-    <posY>3</posY>
-    <posZ>1</posZ>
-    <negX>3</negX>
-    <negY>3</negY>
-    <negZ>1</negZ>
+    <posY>-1</posY>
+    <posZ>-1</posZ>
+    <negX>-1</negX>
+    <negY>-1</negY>
+    <negZ>-1</negZ>
     <npX>
       <string>BridgeX_0</string>
       <string>BridgeT_0</string>
       <string>BridgeT_1</string>
       <string>BridgeT_2</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
       <string>BridgeL_0</string>
       <string>BridgeL_1</string>
+      <string>Bridge_0</string>
       <string>Bridge_i_0</string>
     </npX>
-    <npY>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </npY>
-    <npZ>
-      <string>BridgeT_2</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-    </npZ>
-    <nnX>
-      <string>BridgeT_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_3</string>
-    </nnX>
-    <nnY>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </nnY>
-    <nnZ>
-      <string>BridgeT_0</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </nnZ>
+    <npY />
+    <npZ />
+    <nnX />
+    <nnY />
+    <nnZ />
   </PrototypeXML>
   <PrototypeXML>
     <Name>Bridge_i_3</Name>
-    <Mesh>Bridge_i</Mesh>
-    <posX>3</posX>
-    <posY>0</posY>
-    <posZ>1</posZ>
-    <negX>3</negX>
-    <negY>3</negY>
-    <negZ>1</negZ>
-    <npX>
-      <string>BridgeT_3</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </npX>
-    <npY>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </npY>
-    <npZ>
-      <string>BridgeT_2</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-    </npZ>
-    <nnX>
-      <string>BridgeT_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_3</string>
-    </nnX>
-    <nnY>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_1</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_i_0</string>
-      <string>Bridge_i_1</string>
-      <string>Bridge_i_2</string>
-      <string>Bridge_i_3</string>
-    </nnY>
+    <weight>0.1</weight>
+    <posX>-1</posX>
+    <posY>-1</posY>
+    <posZ>-1</posZ>
+    <negX>-1</negX>
+    <negY>-1</negY>
+    <negZ>0</negZ>
+    <npX />
+    <npY />
+    <npZ />
+    <nnX />
+    <nnY />
     <nnZ>
       <string>BridgeX_0</string>
       <string>BridgeT_1</string>
@@ -1206,7 +524,44 @@
       <string>BridgeT_3</string>
       <string>BridgeL_1</string>
       <string>BridgeL_2</string>
+      <string>Bridge_1</string>
       <string>Bridge_i_1</string>
     </nnZ>
+  </PrototypeXML>
+  <PrototypeXML>
+    <Name>Tower_0</Name>
+    <weight>0.1</weight>
+    <posX>-1</posX>
+    <posY>1</posY>
+    <posZ>-1</posZ>
+    <negX>-1</negX>
+    <negY>1</negY>
+    <negZ>-1</negZ>
+    <npX />
+    <npY>
+      <string>Tower_0</string>
+    </npY>
+    <npZ />
+    <nnX />
+    <nnY>
+      <string>Tower_0</string>
+    </nnY>
+    <nnZ />
+  </PrototypeXML>
+  <PrototypeXML>
+    <Name>Tower_top_0</Name>
+    <weight>0.1</weight>
+    <posX>-1</posX>
+    <posY>-1</posY>
+    <posZ>-1</posZ>
+    <negX>-1</negX>
+    <negY>2</negY>
+    <negZ>-1</negZ>
+    <npX />
+    <npY />
+    <npZ />
+    <nnX />
+    <nnY />
+    <nnZ />
   </PrototypeXML>
 </ArrayOfPrototypeXML>
