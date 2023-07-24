@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce23f4ad0a5d6be4ea7ae68abc02073a, type: 3}
   m_Name: XML_IO
   m_EditorClassIdentifier: 
+  meshRotation: {x: -90, y: 0, z: 0}
   xmlPath: models
   Tiles:
   - Name: BridgeX
@@ -19,33 +20,46 @@ MonoBehaviour:
       type: 3}
     Symmetry: 0
     Weight: 0.9
+    ignoreSide: 
   - Name: BridgeT
     tileObject: {fileID: 919132149155446097, guid: 0e3f11d671ed7c34797277ce529377e8,
       type: 3}
     Symmetry: 3
     Weight: 0.5
+    ignoreSide: 
   - Name: BridgeL
     tileObject: {fileID: 919132149155446097, guid: e86189cba95638d448241b4f2b7c1557,
       type: 3}
     Symmetry: 1
     Weight: 0.5
+    ignoreSide: 
   - Name: Bridge
     tileObject: {fileID: 919132149155446097, guid: 22c98cad2d12ac2458701c9e192eec53,
       type: 3}
     Symmetry: 2
     Weight: 0.1
+    ignoreSide: 
   - Name: Bridge_i
     tileObject: {fileID: 919132149155446097, guid: f92a7381e550a8d42b10e047c96a0b9e,
       type: 3}
     Symmetry: 3
     Weight: 0.1
+    ignoreSide: 
   - Name: Tower
     tileObject: {fileID: 919132149155446097, guid: 5d15d460ae77fe64db6feeb89a9d10ea,
       type: 3}
     Symmetry: 0
     Weight: 0.1
+    ignoreSide: 
   - Name: Tower_top
     tileObject: {fileID: 919132149155446097, guid: 256376ffb7de42c44b3b86ac949091cd,
       type: 3}
     Symmetry: 0
     Weight: 0.1
+    ignoreSide: 
+  - Name: Tower_bot
+    tileObject: {fileID: 919132149155446097, guid: 2e1f6c956ddc18f478ee9fe2e782f444,
+      type: 3}
+    Symmetry: 0
+    Weight: 0.9
+    ignoreSide: 05000000

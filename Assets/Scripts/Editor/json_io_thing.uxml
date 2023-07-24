@@ -1,5 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
-    <ui:Label tabindex="-1" text="Gamernation" display-tooltip-when-elided="true" />
-    <ui:TextField picking-mode="Ignore" label="JSON Path" value="filler text" binding-path="jsonPath" />
+    <ui:TextField picking-mode="Ignore" label="XML Path" value="filler text" binding-path="xmlPath" />
+    <ui:Vector3IntField label="Mesh Rotation" binding-path="meshRotation" />
     <uie:PropertyField binding-path="Tiles" label="Tile Types" />
 </ui:UXML>

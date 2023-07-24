@@ -212,11 +212,20 @@ public class WFC : MonoBehaviour
     // Debug function to make sure that the tiles and rotations of tiles are correct - this should be kept for later when we add more types of tiles :-)
     private void InstantiateTileTypes()
     {
+        float z = -3;
+        float x = 0;
         for (int i = 0; i < tileCount; i++)
         {
-            GameObject obj = Instantiate(tileTypes[i].tileObject, new Vector3(i * 2.3f, 0, -5), tileTypes[i].rotation);
+            if (tileTypes[i].name.EndsWith('0'))
+            {
+                x = 0;
+                z -= 2.5f;
+            }
+            GameObject obj = Instantiate(tileTypes[i].tileObject, new Vector3(x, 0, z), tileTypes[i].rotation);
             obj.transform.parent = transform;
-            viewConnections.Add(new Thing(i, new Vector3(i * 2.3f, 0, -5)));
+            viewConnections.Add(new Thing(i, new Vector3(x, 0, z)));
+
+            x += 2.5f;
         }
     }
 
@@ -701,12 +710,12 @@ public class WFC : MonoBehaviour
 
             if (t.hasConnection[(int)Direction.Up])
             {
-                Vector3 p = new Vector3(x, y * 2 - 1, z);
+                Vector3 p = new Vector3(x, y * 2 + 1, z);
                 Gizmos.DrawCube(p, new Vector3(size, size, size));
             }
             if (t.hasConnection[(int)Direction.Down])
             {
-                Vector3 p = new Vector3(x, y * 2 + 1, z );
+                Vector3 p = new Vector3(x, y * 2 - 1, z );
                 Gizmos.DrawCube(p, new Vector3(size, size, size));
             }
         }

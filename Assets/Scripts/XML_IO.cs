@@ -7,11 +7,13 @@ using System.Xml.Serialization;
 using TreeEditor;
 using UnityEngine;
 
+// We only need to rotate around the y-axis.
+// forward/back = z-axis
+// left/right = x-axis
 public enum SocketDirection
 {
-    Left, Right, Top, Bottom
+    Left, Right, Forward, Back
 }
-
 
 [Serializable]
 public class TileEntry
@@ -20,6 +22,7 @@ public class TileEntry
     public GameObject tileObject;
     public Symmetry Symmetry;
     public float Weight = 1f;
+    public List<Direction> ignoreSide;
 
     public TileEntry()
     {
@@ -73,6 +76,7 @@ public class PrototypeXML
 [CreateAssetMenu(fileName = "Data", menuName = "ScriptableObject/XML_IO", order = 1)]
 public class XML_IO : ScriptableObject
 {
+    public Vector3Int meshRotation = new Vector3Int();
     public string xmlPath = "models";
     public List<TileEntry> Tiles;
 
@@ -162,7 +166,6 @@ public class XML_IO : ScriptableObject
     // This function is for exporting tile information to an XML file, to reduce compute times
     public void Export()
     {
-        Debug.Log("Mobamba");
         Sockets.ClearList();
         if (xmlPath != null && xmlPath.Length > 0 && Tiles.Count > 0)
         {
@@ -176,12 +179,24 @@ public class XML_IO : ScriptableObject
             // Compute the sockets
             for (int i = 0; i < Tiles.Count; i++)
             {
+                Debug.Log(Tiles[i].Name);
+
+                // Get mesh
                 MeshFilter mf = Tiles[i].tileObject.transform.GetComponent<MeshFilter>();
                 Mesh mesh = mf.sharedMesh;
 
-                tileXML[k] = new PrototypeXML(Tiles[i].Name + "_0", Tiles[i].Weight);
-                List<string> sockets = Sockets.ComputeMeshSockets(mesh);
+                // Assign sides to ignore
+                bool[] sidesToIgnore = new bool[6] { false, false, false, false, false, false };
+                foreach (Direction d in Tiles[i].ignoreSide)
+                {
+                    sidesToIgnore[(int)d] = true;
+                }
 
+                // Create XML prototype of the tile
+                tileXML[k] = new PrototypeXML(Tiles[i].Name + "_0", Tiles[i].Weight);
+                List<string> sockets = Sockets.ComputeMeshSockets(mesh, meshRotation, sidesToIgnore);
+
+                // Get cardinality of the current tile
                 int cardinality = GetCardinality(Tiles[i].Symmetry);
 
                 // This is a bit odd. In my case a cardinality of 2 means that the tile should be flipped 180 degrees
@@ -189,7 +204,6 @@ public class XML_IO : ScriptableObject
                 {
                     tileXML[k + j] = new PrototypeXML(Tiles[i].Name + "_" + j, Tiles[i].Weight);
                 }
-
 
                 // Assign sockets
                 AssignSockets(sockets, tileXML, k, Tiles[i].Symmetry);
@@ -237,7 +251,7 @@ public class XML_IO : ScriptableObject
 
 
         // This is to make th
-        SocketDirection[] socketDirections = new SocketDirection[4] { 0, SocketDirection.Right, SocketDirection.Top, SocketDirection.Bottom };
+        SocketDirection[] socketDirections = new SocketDirection[4] { 0, SocketDirection.Right, SocketDirection.Forward, SocketDirection.Back };
 
         int cardinality = GetCardinality(symmetry);
 
@@ -368,12 +382,12 @@ public class XML_IO : ScriptableObject
         switch (d)
         {
             case SocketDirection.Left:
-                return SocketDirection.Top;
+                return SocketDirection.Forward;
             case SocketDirection.Right:
-                return SocketDirection.Bottom;
-            case SocketDirection.Top:
+                return SocketDirection.Back;
+            case SocketDirection.Forward:
                 return SocketDirection.Right;
-            case SocketDirection.Bottom:
+            case SocketDirection.Back:
                 return SocketDirection.Left;
             default:
                 return SocketDirection.Left;
