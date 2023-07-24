@@ -132,7 +132,8 @@ public class MeshSockets
                 } else
                 {
                     Debug.Log("Symmetrical");
-                    sockets.Add(new Socket(id + 's', posX.ToArray()));
+                    id = id + 's';
+                    sockets.Add(new Socket(id, posX.ToArray()));
                 }
             }
 
@@ -160,7 +161,8 @@ public class MeshSockets
                 else
                 {
                     Debug.Log("Symmetrical");
-                    sockets.Add(new Socket(id + 's', negX.ToArray()));
+                    id = id + 's';
+                    sockets.Add(new Socket(id, negX.ToArray()));
                 }
             }
             meshSockets.Add(id);
@@ -188,7 +190,8 @@ public class MeshSockets
                 else
                 {
                     Debug.Log("Symmetrical");
-                    sockets.Add(new Socket(id + 's', posZ.ToArray()));
+                    id = id + 's';
+                    sockets.Add(new Socket(id, posZ.ToArray()));
                 }
             }
             meshSockets.Add(id);
@@ -216,7 +219,8 @@ public class MeshSockets
                 else
                 {
                     Debug.Log("Symmetrical");
-                    sockets.Add(new Socket(id + 's', negZ.ToArray()));
+                    id = id + 's';
+                    sockets.Add(new Socket(id, negZ.ToArray()));
                 }
             }
             meshSockets.Add(id);
@@ -234,9 +238,9 @@ public class MeshSockets
 
             if (id == String.Empty)
             {
-                id = GenerateID(true);
-                //Debug.Log("Adding on Y: " + id);
-                sockets.Add(new Socket(id+ "_0", posY.ToArray()));
+                id = GenerateID(true) + "_0";
+                Debug.Log("Adding on Y: " + id);
+                sockets.Add(new Socket(id, posY.ToArray()));
                 GenerateRotated(posY, id);
             }
             meshSockets.Add(id);
@@ -253,9 +257,9 @@ public class MeshSockets
             if (id == String.Empty)
             { 
                 
-                id = GenerateID(true);
+                id = GenerateID(true) + "_0";
                 //Debug.Log("Adding on -Y: " + id);
-                sockets.Add(new Socket(id + "_0", negY.ToArray()));
+                sockets.Add(new Socket(id, negY.ToArray()));
                 GenerateRotated(negY, id);
             }
             meshSockets.Add(id);

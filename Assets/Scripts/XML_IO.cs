@@ -15,6 +15,17 @@ public enum SocketDirection
     Left, Right, Forward, Back
 }
 
+public struct TileNeighbors
+{
+    public int tileIndex;
+    public string[] npX;
+    public string[] npY;
+    public string[] npZ;
+    public string[] nnX;
+    public string[] nnY;
+    public string[] nnZ;
+}
+
 [Serializable]
 public class TileEntry
 {
@@ -111,6 +122,7 @@ public class XML_IO : ScriptableObject
             {
                 PrototypeXML[] tiles = (PrototypeXML[])serializer.Deserialize(reader);
 
+
                 // Now you have your data in the 'people' array
                 foreach (PrototypeXML tile in tiles)
                 {
@@ -136,24 +148,18 @@ public class XML_IO : ScriptableObject
 
                     TileType tileType = new TileType(tile.Name, rotation, weight, tileObject);
 
-                    if (!tile.negY.Equals("-1"))
-                    {
-                        Debug.Log("Down: " + tile.negY);
-                    }
-
-                    if (!tile.posY.Equals("-1"))
-                    {
-                        Debug.Log("Up: " + tile.posY);
-                    }
-
-                    tileType.SetNeighbors(Direction.North, tile.npZ);
-                    tileType.SetNeighbors(Direction.South, tile.nnZ);
-                    tileType.SetNeighbors(Direction.East, tile.npX);
-                    tileType.SetNeighbors(Direction.West, tile.nnX);
-                    tileType.SetNeighbors(Direction.Up, tile.npY);
-                    tileType.SetNeighbors(Direction.Down, tile.nnY);
-
                     tileTypes.Add(tileType);
+                }
+
+                // Set the neighbors now that we have extracted all of the tile types
+                for (int i = 0; i < tileTypes.Count; i++)
+                {
+                    tileTypes[i].SetNeighbors(Direction.North, CreateNeighborsArray(tiles[i].npZ));
+                    tileTypes[i].SetNeighbors(Direction.South, CreateNeighborsArray(tiles[i].nnZ));
+                    tileTypes[i].SetNeighbors(Direction.East, CreateNeighborsArray(tiles[i].npX));
+                    tileTypes[i].SetNeighbors(Direction.West, CreateNeighborsArray(tiles[i].nnX));
+                    tileTypes[i].SetNeighbors(Direction.Up, CreateNeighborsArray(tiles[i].npY));
+                    tileTypes[i].SetNeighbors(Direction.Down, CreateNeighborsArray(tiles[i].nnY));
                 }
             }
         }
@@ -161,6 +167,29 @@ public class XML_IO : ScriptableObject
         {
             Debug.LogError("File not found: " + filePath);
         }
+    }
+
+    // Convert the neighbor array to an array of boolean values
+    private bool[] CreateNeighborsArray(string[] neighbors)
+    {
+        bool[] n = new bool[tileTypes.Count];
+
+        for (int i = 0; i < tileTypes.Count; i++)
+        {
+            n[i] = false;
+        }
+
+        foreach (string neighbor in neighbors)
+        {
+            int index = tileTypes.FindIndex(tile => tile.name.Equals(neighbor));
+            if (index < 0)
+            {
+                Debug.LogError("Neighbor not found");
+            }
+            n[index] = true;
+        }
+
+        return n;
     }
 
     // This function is for exporting tile information to an XML file, to reduce compute times
@@ -294,6 +323,7 @@ public class XML_IO : ScriptableObject
         return;
     }
 
+    // Compute which tiles can interface with each other
     private void ComputeNeighbors(PrototypeXML[] tileXML)
     {
         for (int i = 0; i < tileXML.Length; i++)
@@ -307,15 +337,28 @@ public class XML_IO : ScriptableObject
             for (int j = 0; j < tileXML.Length; j++)
             {
                 // Positive X
-                if (tileXML[i].posX != "-1" && tileXML[i].posX == tileXML[j].negX)
+                if (tileXML[i].posX != "-1" && ShouldConnect(tileXML[i].posX, tileXML[j].negX))
                 {
                     xnp.Add(tileXML[j].Name);
                 }
                 // Negative X
-                if (tileXML[i].negX != "-1" && tileXML[i].negX == tileXML[j].posX)
+                if (tileXML[i].negX != "-1" && ShouldConnect(tileXML[i].negX, tileXML[j].posX))
                 {
                     xnn.Add(tileXML[j].Name);
                 }
+
+                // Positive Z
+                if (tileXML[i].posZ != "-1" && ShouldConnect(tileXML[i].posZ, tileXML[j].negZ))
+                {
+                    znp.Add(tileXML[j].Name);
+                }
+                // Negative Z
+                if (tileXML[i].negZ != "-1" && ShouldConnect(tileXML[i].negZ, tileXML[j].posZ))
+                {
+                    znn.Add(tileXML[j].Name);
+                }
+
+                // These do not use symmetrical/asymmetrical sockets
 
                 // Positive Y
                 if (tileXML[i].posY != "-1" && tileXML[i].posY == tileXML[j].negY)
@@ -327,17 +370,6 @@ public class XML_IO : ScriptableObject
                 {
                     ynn.Add(tileXML[j].Name);
                 }
-
-                // Positive Z
-                if (tileXML[i].posZ != "-1" && tileXML[i].posZ == tileXML[j].negZ)
-                {
-                    znp.Add(tileXML[j].Name);
-                }
-                // Negative Z
-                if (tileXML[i].negZ != "-1" && tileXML[i].negZ == tileXML[j].posZ)
-                {
-                    znn.Add(tileXML[j].Name);
-                }
             }
 
             // This might not makes sense for you, check if your models get fricked up
@@ -347,6 +379,18 @@ public class XML_IO : ScriptableObject
             tileXML[i].nnY = ynn.ToArray();
             tileXML[i].npZ = znp.ToArray();
             tileXML[i].nnZ = znn.ToArray();
+        }
+    }
+
+    private bool ShouldConnect(string socketA, string socketB)
+    {
+        if (socketA.EndsWith('s'))
+        {
+            // Symmetrical
+            return socketA.Equals(socketB);
+        } else
+        {
+            return (socketA + 'f') == socketB || (socketB + 'f') == socketA;
         }
     }
 

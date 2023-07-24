@@ -78,7 +78,28 @@ public class WFC : MonoBehaviour
         // For testing
         InstantiateTileTypes();
 
+        //PrintConnectionCount();
+
         //GenerateFull();
+    }
+
+    private void PrintConnectionCount()
+    {
+        foreach (TileType tileType in tileTypes)
+        {
+            int n_neighbors = 0;
+            foreach (bool[] n in tileType.neighbors)
+            {
+                foreach(bool b in n)
+                {
+                    if (b)
+                    {
+                        n_neighbors++;
+                    }
+                }
+            }
+            Debug.Log(tileType.name + " has a total of " + n_neighbors + " neighbors");
+        }
     }
 
     public void Clear()
@@ -123,7 +144,7 @@ public class WFC : MonoBehaviour
             }
         }
         // This code was used to create a tower at some random location
-        Vector3Int v = new Vector3Int(1, 0, 1);
+        Vector3Int v = new Vector3Int(Random.Range(0, dimensions.x), 0, Random.Range(0, dimensions.z));
         int c = 0;
 
         tileMap[v.x, v.y, v.z] = c;
@@ -186,25 +207,6 @@ public class WFC : MonoBehaviour
             {
                 Debug.Log("Could not get any further");
                 a = false;
-            }
-        }
-    }
-
-    private void PrintStuff()
-    {
-        // Print out the tiles that have been fiddled on
-        for (int x = 0; x < dimensions.x; x++)
-        {
-            for (int z = 0; z < dimensions.z; z++)
-            {
-                for (int y = 0; y < dimensions.y; y++)
-                {
-                    int index = tileMap[x, y, z];
-                    if (index != -1)
-                    {
-                        Debug.Log("Decided: " + tileTypes[index] + " " + new Vector3Int(x, y, z));
-                    }
-                }
             }
         }
     }
@@ -314,7 +316,7 @@ public class WFC : MonoBehaviour
 
     private int ChooseTileTypeAt(int x, int y, int z)
     {
-        Debug.Log("Investigating " + new Vector3Int(x, y, z));
+        //Debug.Log("Investigating " + new Vector3Int(x, y, z));
 /*        if (y == 0)
         {
             List<int> groundTiles = new List<int>
@@ -357,13 +359,13 @@ public class WFC : MonoBehaviour
         if (choices.Count > 0)
         {
             //Debug.Log("removed tiles: " + removed);
-            Debug.Log("Possible tiles: " + names);
-            Debug.Log("");
+            //Debug.Log("Possible tiles: " + names);
+            //Debug.Log("");
             return ChooseWithWeights(choices);
         }
         else
         {
-            Debug.Log("No possible tile " + new Vector3Int(x, y, z));
+            //Debug.Log("No possible tile " + new Vector3Int(x, y, z));
             return -1;
         }
     }
@@ -501,9 +503,6 @@ public class WFC : MonoBehaviour
         int tileIndex = tileMap[tilePosition.x, tilePosition.y, tilePosition.z];
         TileType tileType = tileTypes[tileIndex];
 
-        //if (!tileType.CanRepeatV) EnforceRepeatV(tilePosition.x, tilePosition.y, tilePosition.z, tileIndex);
-        //if (!tileType.CanRepeatH) EnforceRepeatH(tilePosition.x, tilePosition.y, tilePosition.z, tileIndex);
-
         for (Direction i = 0; i <= Direction.Down; i++)
         {
             Vector3Int neighborPosition = tilePosition;
@@ -553,8 +552,6 @@ public class WFC : MonoBehaviour
                     }
                     else
                     {
-
-                        string names = "";
                         // Remove the possible tiles of the neighbor that are not in the current tiles possible neighbors
                         for (int j = 0; j < tileCount; j++)
                         {
@@ -562,15 +559,16 @@ public class WFC : MonoBehaviour
                             {
                                 TileType tile = tileTypes[j];
 
-                                if (!tileType.neighbors[(int)i].Contains(tile.name)) // With a complete array of possible connections, this should be a lot quicker
+                                if (!tileType.neighbors[(int)i][j])
                                 {
                                     tileMapArray[neighborPosition.x, neighborPosition.y, neighborPosition.z][j] = false;
                                     found = true;
-                                    names += tile.name + " ";
+                                } else
+                                {
+                                    Debug.Log("Yo");
                                 }
                             }
                         }
-                        //Debug.Log(tilePosition +  " From " + i + " removed " + names);
                     }
 
                     if (found)
@@ -580,20 +578,6 @@ public class WFC : MonoBehaviour
                 }
             }
         }
-    }
-
-    private void EnforceRepeatV(int x, int y, int z, int type)
-    {
-        if (y > 0) tileMapArray[x, y - 1, z][type] = false;
-        if (y < dimensions.y - 1) tileMapArray[x, y + 1, z][type] = false;
-    }
-
-    private void EnforceRepeatH(int x, int y, int z, int type)
-    {
-        if (x > 0) tileMapArray[x - 1, y, z][type] = false;
-        if (x < dimensions.x - 1) tileMapArray[x + 1, y, z][type] = false;
-        if (z > 0) tileMapArray[x, y, z - 1][type] = false;
-        if (z < dimensions.z - 1) tileMapArray[x, y, z + 1][type] = false;
     }
 
     // Get the entropy of a tile

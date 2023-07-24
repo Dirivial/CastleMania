@@ -3,13 +3,22 @@
   <PrototypeXML>
     <Name>BridgeX_0</Name>
     <weight>0.9</weight>
-    <posX>0</posX>
+    <posX>0s</posX>
     <posY>-1</posY>
     <posZ>0s</posZ>
     <negX>0s</negX>
     <negY>-1</negY>
     <negZ>0s</negZ>
-    <npX />
+    <npX>
+      <string>BridgeX_0</string>
+      <string>BridgeT_0</string>
+      <string>BridgeT_1</string>
+      <string>BridgeT_2</string>
+      <string>BridgeL_0</string>
+      <string>BridgeL_1</string>
+      <string>Bridge_0</string>
+      <string>Bridge_i_0</string>
+    </npX>
     <npY />
     <npZ>
       <string>BridgeX_0</string>
@@ -22,6 +31,7 @@
       <string>Bridge_i_3</string>
     </npZ>
     <nnX>
+      <string>BridgeX_0</string>
       <string>BridgeT_0</string>
       <string>BridgeT_2</string>
       <string>BridgeT_3</string>
@@ -64,6 +74,7 @@
     <npY />
     <npZ />
     <nnX>
+      <string>BridgeX_0</string>
       <string>BridgeT_0</string>
       <string>BridgeT_2</string>
       <string>BridgeT_3</string>
@@ -106,6 +117,7 @@
       <string>Bridge_i_3</string>
     </npZ>
     <nnX>
+      <string>BridgeX_0</string>
       <string>BridgeT_0</string>
       <string>BridgeT_2</string>
       <string>BridgeT_3</string>
@@ -157,6 +169,7 @@
       <string>Bridge_i_3</string>
     </npZ>
     <nnX>
+      <string>BridgeX_0</string>
       <string>BridgeT_0</string>
       <string>BridgeT_2</string>
       <string>BridgeT_3</string>
@@ -224,6 +237,7 @@
     <npY />
     <npZ />
     <nnX>
+      <string>BridgeX_0</string>
       <string>BridgeT_0</string>
       <string>BridgeT_2</string>
       <string>BridgeT_3</string>
@@ -266,6 +280,7 @@
       <string>Bridge_i_3</string>
     </npZ>
     <nnX>
+      <string>BridgeX_0</string>
       <string>BridgeT_0</string>
       <string>BridgeT_2</string>
       <string>BridgeT_3</string>
@@ -367,6 +382,7 @@
     <npY />
     <npZ />
     <nnX>
+      <string>BridgeX_0</string>
       <string>BridgeT_0</string>
       <string>BridgeT_2</string>
       <string>BridgeT_3</string>
@@ -425,6 +441,7 @@
     <npY />
     <npZ />
     <nnX>
+      <string>BridgeX_0</string>
       <string>BridgeT_0</string>
       <string>BridgeT_2</string>
       <string>BridgeT_3</string>
@@ -515,16 +532,20 @@
     <Name>Tower_0</Name>
     <weight>0.1</weight>
     <posX>-1</posX>
-    <posY>v0</posY>
+    <posY>v0_0</posY>
     <posZ>-1</posZ>
     <negX>-1</negX>
     <negY>v0_0</negY>
     <negZ>-1</negZ>
     <npX />
-    <npY />
+    <npY>
+      <string>Tower_0</string>
+      <string>Tower_top_0</string>
+    </npY>
     <npZ />
     <nnX />
     <nnY>
+      <string>Tower_0</string>
       <string>Tower_bot_0</string>
     </nnY>
     <nnZ />
@@ -543,6 +564,7 @@
     <npZ />
     <nnX />
     <nnY>
+      <string>Tower_0</string>
       <string>Tower_bot_0</string>
     </nnY>
     <nnZ />
