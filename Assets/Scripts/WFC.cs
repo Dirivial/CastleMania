@@ -47,6 +47,10 @@ public class WFC : MonoBehaviour
     [SerializeField] public Vector3Int dimensions = new Vector3Int(5, 5, 5);
     [SerializeField] private int tileSize = 2;
 
+
+    public static int UNDECIDED = -1;
+    public static int EMPTY_TILE = -2;
+
     private List<TileType> tileTypes;
     private int tileCount = 1;
     private bool setupComplete = false;
@@ -55,7 +59,7 @@ public class WFC : MonoBehaviour
     private Stack<Vector3Int> tilesToProcess;
     //private Stack<SaveState> saveStates;
 
-    private List<GameObject> boi;
+    private List<GameObject> InstantiatedTiles;
     
     private List<Thing> viewConnections = new List<Thing>();
 
@@ -69,7 +73,7 @@ public class WFC : MonoBehaviour
         tileCount = tileTypes.Count;
 
         tileMapArray = new bool[dimensions.x, dimensions.y, dimensions.z][];
-        boi = new List<GameObject>();
+        InstantiatedTiles = new List<GameObject>();
     }
 
     void Start()
@@ -80,7 +84,7 @@ public class WFC : MonoBehaviour
 
         //PrintConnectionCount();
 
-        //GenerateFull();
+        GenerateFull();
     }
 
     private void PrintConnectionCount()
@@ -102,30 +106,32 @@ public class WFC : MonoBehaviour
         }
     }
 
+    // Clear everything important
     public void Clear()
     {
-        setupComplete = false;
-        tilesToProcess.Clear();
-        tileMap = new int[dimensions.x, dimensions.y, dimensions.z];
-        for (int i = boi.Count - 1; i >= 0; i--)
-        {
-            Destroy(boi[i]);
-        }
+        // Setup clears everything anyways so just call that one instead - a bit unnecessary if you change the dimensions though
+        Setup();
     }
 
+    // Do any necessary steps for running the WFC algorithm
     public void Setup()
     {
         //Debug.Log("Generating a new model - Clearing " + boi.Count + " items");
 
-        for (int i = boi.Count - 1; i >= 0; i--)
+        // Clear any already instantiated tiles
+        for (int i = InstantiatedTiles.Count - 1; i >= 0; i--)
         {
-            Destroy(boi[i]);
+            Destroy(InstantiatedTiles[i]);
         }
-        boi.Clear();
-        tilesToProcess = new Stack<Vector3Int>();
+        InstantiatedTiles.Clear();
+
+        // In the start we do not have any tiles to process
+        tilesToProcess.Clear();
+
+        // Create a new tileMap to be filled later on
         tileMap = new int[dimensions.x, dimensions.y, dimensions.z];
 
-        // Store the initial entropy of each coordinate in the tile map
+        // This variable is used to store an array of boolean values for each position
         tileMapArray = new bool[dimensions.x, dimensions.y, dimensions.z][];
         for (int x = 0; x < dimensions.x; x++)
         {
@@ -133,9 +139,14 @@ public class WFC : MonoBehaviour
             {
                 for (int y = 0; y < dimensions.y; y++)
                 {
+                    // Set each tile to be undecided
+                    tileMap[x, y, z] = UNDECIDED;
+
+                    // In the beginning all positions has the potential to be one of all possible tiles
                     tileMapArray[x, y, z] = new bool[tileCount];
 
-                    tileMap[x, y, z] = -1;
+                    // Set each boolean value to true to represent the positions ability to
+                    // be the corresponding tile in the tileTypes list
                     for (int i = 0; i < tileCount; i++)
                     {
                         tileMapArray[x, y, z][i] = true;
@@ -143,7 +154,12 @@ public class WFC : MonoBehaviour
                 }
             }
         }
-        // This code was used to create a tower at some random location
+        setupComplete = true;
+    }
+
+    // Insert any important features before starting WFC
+    private void PrePopulate()
+    {
         Vector3Int v = new Vector3Int(Random.Range(0, dimensions.x), 0, Random.Range(0, dimensions.z));
         int c = 0;
 
@@ -159,55 +175,53 @@ public class WFC : MonoBehaviour
 
         ProcessTiles();
 
-        InstantiateDeezNuts();
-        setupComplete = true;
+        InstantiateTiles();
     }
 
+    // Generate a complete volume of tiles
     public void GenerateFull()
     {
         Setup();
 
-        int maxIterations = dimensions.x * dimensions.y * dimensions.z;
-        int iterations = 0;
+        Debug.Log("Start");
+
+        int maxIterationsLeft = dimensions.x * dimensions.y * dimensions.z;
         Vector3Int nextWave = FindLowestEntropy();
 
-        while (nextWave.x != -1 && nextWave.y != -1 && iterations < maxIterations)
+        // Run while there are still tiles to collapse
+        while (nextWave.x != -1 && nextWave.y != -1 && maxIterationsLeft > 0)
         {
             PickTileAt(nextWave);
             ProcessTiles();
             nextWave = FindLowestEntropy();
-            iterations++;
+            maxIterationsLeft--;
         }
-        InstantiateDeezNuts();
+        InstantiateTiles();
         //PrintArrayCount();
+        Debug.Log("End");
     }
 
     public void TakeStep()
     {
+        // Run setup if needed
         if (!setupComplete)
         {
             Setup();
             setupComplete = true;
         }
 
-        bool a = true;
-        while (a)
-        {
-            Vector3Int nextWave = FindLowestEntropy();
-            List<Vector3Int> toInstantiate;
+        Vector3Int nextWave = FindLowestEntropy();
+        List<Vector3Int> toInstantiate;
 
-            if (nextWave.x != -1 && nextWave.y != -1 && nextWave.z != -1)
-            {
-                PickTileAt(nextWave);
-                toInstantiate = ProcessTiles();
-                InstantiateDeezNut(toInstantiate);
-                a = false;
-            }
-            else
-            {
-                Debug.Log("Could not get any further");
-                a = false;
-            }
+        if (nextWave.x != -1 && nextWave.y != -1 && nextWave.z != -1)
+        {
+            PickTileAt(nextWave);
+            toInstantiate = ProcessTiles();
+            InstantiateTile(toInstantiate);
+        }
+        else
+        {
+            Debug.Log("Could not get any further");
         }
     }
 
@@ -231,7 +245,7 @@ public class WFC : MonoBehaviour
         }
     }
 
-    private void InstantiateDeezNuts()
+    private void InstantiateTiles()
     {
         for (int x = 0; x < dimensions.x; x++)
         {
@@ -244,7 +258,7 @@ public class WFC : MonoBehaviour
                     {
                         GameObject obj = Instantiate(tileTypes[index].tileObject, new Vector3(x * tileSize, y * tileSize, z * tileSize), tileTypes[index].rotation);
                         obj.transform.parent = transform;
-                        boi.Add(obj);
+                        InstantiatedTiles.Add(obj);
                     } else
                     {
                         continue;
@@ -257,18 +271,19 @@ public class WFC : MonoBehaviour
         }
     }
 
-    private void InstantiateDeezNut(List<Vector3Int> toInstantiate)
+    private void InstantiateTile(List<Vector3Int> toInstantiate)
     {
         foreach (Vector3Int v in toInstantiate)
         {
+            if (tileMap[v.x, v.y, v.z] == EMPTY_TILE) continue;
             TileType tileType = tileTypes[tileMap[v.x, v.y, v.z]];
             GameObject obj = Instantiate(tileType.tileObject, new Vector3(v.x * tileSize, v.y * tileSize, v.z * tileSize), tileType.rotation);
             obj.transform.parent = transform;
-            boi.Add(obj);
+            InstantiatedTiles.Add(obj);
         }
     }
 
-    // Pick a random tile at the given tile position, using the possible tiles at that position
+    // Pick a tile at the given tile position
     private void PickTileAt(Vector3Int pos)
     {
         int v = ChooseTileTypeAt(pos.x, pos.y, pos.z);
@@ -295,7 +310,7 @@ public class WFC : MonoBehaviour
             {
                 for (int y = 0; y < dimensions.y; y++)
                 {
-                    if (tileMap[x, y, z] != -1) continue;
+                    if (tileMap[x, y, z] != UNDECIDED) continue;
                     possiblePositions.Add(new Vector3Int(x, y, z));
 
                     float entropy = GetEntropy(new Vector3Int(x, y, z));
@@ -316,58 +331,38 @@ public class WFC : MonoBehaviour
 
     private int ChooseTileTypeAt(int x, int y, int z)
     {
-        //Debug.Log("Investigating " + new Vector3Int(x, y, z));
-/*        if (y == 0)
-        {
-            List<int> groundTiles = new List<int>
-            {
-                0
-            };  // Tiles that can touch ground
-            for (int i = 1; i < tileCount; i++)
-            {
-                if (tileMapArray[x, y, z][i])
-                {
-                    if (tileTypes[i].CanTouchGround) groundTiles.Add(i);
-                }
-            }
-            return ChooseWithWeights(groundTiles);
-        }*/
-
+        //Debug.Log("Position: " + x + " , " + y + ", " + z);
         List<int> choices = new List<int>(); // All possible choices
-        string names = "";
-        string removed = "";
 
-        for (int i = 1; i < tileCount; i++)
+        for (int i = 0; i < tileCount; i++)
         {
             if (tileMapArray[x, y, z][i])
             {
                 //Debug.Log("Trying tile: " + tileTypes[i].name);
-                if (HasPossibleConnection(x, y, z, i))
+                if (HasPossibleConnection(x, y, z, i) && EnforceCustomConstraints(x, y, z, i))
                 {
                     choices.Add(i);
-                    names += tileTypes[i].name + " ";
-                } else
-                {
-                    removed += tileTypes[i].name + " ";
                 }
             }
         }
-        
-
 
         // Choose a random tile type from the list of possible tile types
         if (choices.Count > 0)
         {
-            //Debug.Log("removed tiles: " + removed);
-            //Debug.Log("Possible tiles: " + names);
-            //Debug.Log("");
             return ChooseWithWeights(choices);
         }
         else
         {
             //Debug.Log("No possible tile " + new Vector3Int(x, y, z));
-            return -1;
+            return EMPTY_TILE;
         }
+    }
+
+    // If you do not have any custom constraints, just return true here or remove the function
+    private bool EnforceCustomConstraints(int x, int y, int z, int i)
+    {
+
+        return true;
     }
 
     // Thank you chatGPT :-)
@@ -390,13 +385,16 @@ public class WFC : MonoBehaviour
         return indices[index];
     }
 
+    // Checks if the given postion has the potential to fulfill its connections
+    // This is not possible if the give tile type has a connection to an empty tile that has no possible tiles
+    // The goal is to reduce the number of tiles connecting to air/empty tiles
     private bool HasPossibleConnection(int x, int y, int z, int i)
     {
         // If the current tile has a connection to an empty tile (as in there can be no tile there), return false
 
         if (tileTypes[i].hasConnection[(int)Direction.West])
         {
-            if (x == 0 || (tileMap[x - 1, y, z] == -1 && !tileMapArray[x - 1, y, z].Any(t => t == true)))
+            if (x == 0 || tileMap[x - 1, y, z] == EMPTY_TILE)
             {
                 //Debug.Log("Failed West.");
                 return false;
@@ -405,7 +403,7 @@ public class WFC : MonoBehaviour
 
         if (tileTypes[i].hasConnection[(int)Direction.East])
         {
-            if (x == dimensions.x - 1 || (tileMap[x + 1, y, z] == -1 && !tileMapArray[x + 1, y, z].Any(t => t == true)))
+            if (x == dimensions.x - 1 || tileMap[x + 1, y, z] == EMPTY_TILE)
             {
                 //Debug.Log("Failed East.");
                 return false;
@@ -414,7 +412,7 @@ public class WFC : MonoBehaviour
 
         if (tileTypes[i].hasConnection[(int)Direction.South])
         {
-            if (z == 0 || (tileMap[x, y, z - 1] == -1 && !tileMapArray[x, y, z - 1].Any(t => t == true)))
+            if (z == 0 || tileMap[x, y, z - 1] == EMPTY_TILE)
             {
                 //Debug.Log("Failed South.");
                 return false;
@@ -423,20 +421,20 @@ public class WFC : MonoBehaviour
 
         if (tileTypes[i].hasConnection[(int)Direction.North])
         {
-            if (z == dimensions.z - 1 || (tileMap[x, y, z + 1] == -1 && !tileMapArray[x, y, z + 1].Any(t => t == true)))
+            if (z == dimensions.z - 1 || tileMap[x, y, z + 1] == EMPTY_TILE)
             {
                 //Debug.Log("Failed North.");
                 return false;
             }
         }
 
-        if (tileTypes[i].hasConnection[(int)Direction.Down] && (y == 0 || (tileMap[x, y - 1, z] == -1 && !tileMapArray[x, y - 1, z].Any(t => t == true))))
+        if (tileTypes[i].hasConnection[(int)Direction.Down] && (y == 0 || tileMap[x, y - 1, z] == EMPTY_TILE))
         {
             //Debug.Log("Failed Down.");
             return false;
         }
 
-        if (tileTypes[i].hasConnection[(int)Direction.Up] && (y == dimensions.y - 1 || (tileMap[x, y + 1, z] == -1 && !tileMapArray[x, y + 1, z].Any(t => t == true))))
+        if (tileTypes[i].hasConnection[(int)Direction.Up] && (y == dimensions.y - 1 || tileMap[x, y + 1, z] == EMPTY_TILE))
         {
             //Debug.Log("Failed Up.");
             return false;
@@ -468,18 +466,16 @@ public class WFC : MonoBehaviour
         {
             Vector3Int tilePosition = tilesToProcess.Pop();
 
-            if (tileMap[tilePosition.x, tilePosition.y, tilePosition.z] == -1)
+            if (tileMap[tilePosition.x, tilePosition.y, tilePosition.z] == UNDECIDED)
             {
-                if (tileMapArray[tilePosition.x, tilePosition.y, tilePosition.z].Count(c => c == true) == 1) {
+                if (tileMapArray[tilePosition.x, tilePosition.y, tilePosition.z].Count(c => c == true) == 1)
+                {
                     Debug.Log("GAMING");
                     int chosenTile = ChooseTileTypeAt(tilePosition.x, tilePosition.y, tilePosition.z);
 
-                    if (chosenTile != -1)
-                    {
-                        tileMap[tilePosition.x, tilePosition.y, tilePosition.z] = chosenTile;
-                        UpdateNeighbors(tilePosition);
-                        setTiles.Add(tilePosition);
-                    }
+                    tileMap[tilePosition.x, tilePosition.y, tilePosition.z] = chosenTile;
+                    UpdateNeighbors(tilePosition);
+                    setTiles.Add(tilePosition);
 
                     // We have a single chunk type, so we can set it
                     for (int j = tileCount - 1; j >= 0; j--)
@@ -487,6 +483,11 @@ public class WFC : MonoBehaviour
                         tileMapArray[tilePosition.x, tilePosition.y, tilePosition.z][j] = false;
                     }
                 }
+                else if (tileMapArray[tilePosition.x, tilePosition.y, tilePosition.z].Count(c => c == true) == 0)
+                {
+                    tileMap[tilePosition.x, tilePosition.y, tilePosition.z] = EMPTY_TILE;
+                    UpdateNeighbors(tilePosition);
+                } 
             } else
             {
                 UpdateNeighbors(tilePosition);
@@ -500,9 +501,6 @@ public class WFC : MonoBehaviour
     // Update the neighbors of the given chunk position
     private void UpdateNeighbors(Vector3Int tilePosition)
     {
-        int tileIndex = tileMap[tilePosition.x, tilePosition.y, tilePosition.z];
-        TileType tileType = tileTypes[tileIndex];
-
         for (Direction i = 0; i <= Direction.Down; i++)
         {
             Vector3Int neighborPosition = tilePosition;
@@ -528,44 +526,69 @@ public class WFC : MonoBehaviour
                     break;
             }
 
-            if (neighborPosition.x >= 0 && neighborPosition.x < dimensions.x && neighborPosition.y >= 0 && neighborPosition.y < dimensions.y && neighborPosition.z >= 0 && neighborPosition.z < dimensions.z)
+            if (neighborPosition.x >= 0 && neighborPosition.x < dimensions.x &&
+                neighborPosition.y >= 0 && neighborPosition.y < dimensions.y &&
+                neighborPosition.z >= 0 && neighborPosition.z < dimensions.z)
             {
 
-                if (tileMap[neighborPosition.x, neighborPosition.y, neighborPosition.z] == -1 && tileMapArray[neighborPosition.x, neighborPosition.y, neighborPosition.z].Count(c => c == true) > 1)
+                if (tileMap[neighborPosition.x, neighborPosition.y, neighborPosition.z] == UNDECIDED)
                 {
                     // See if there is a connection from the current tile to the neighbor
-                    //Debug.Log("This tile: " + tileType.name + " to direction: " + i);
-                    bool originConnection = tileType.neighbors[(int)i].Length == 0;
+                    int tileIndex = tileMap[tilePosition.x, tilePosition.y, tilePosition.z];
                     bool found = false;
 
-                    // Remove all possible tiles from neighbor
-                    if (originConnection)
+                    if (tileIndex > UNDECIDED)
                     {
-                        for (int j = 0; j < tileCount; j++)
+                        TileType tileType = tileTypes[tileIndex];
+                        bool originConnection = !tileType.hasConnection[(int)i];
+
+                        // Remove all possible tiles from neighbor
+                        if (originConnection)
                         {
-                            if (tileMapArray[neighborPosition.x, neighborPosition.y, neighborPosition.z][j])
+                            Debug.Log(tilePosition + " Huh?");
+                            for (int j = 0; j < tileCount; j++)
                             {
-                                tileMapArray[neighborPosition.x, neighborPosition.y, neighborPosition.z][j] = false;
-                                found = true;
+                                if (tileMapArray[neighborPosition.x, neighborPosition.y, neighborPosition.z][j])
+                                {
+                                    tileMapArray[neighborPosition.x, neighborPosition.y, neighborPosition.z][j] = false;
+                                    found = true;
+                                }
                             }
                         }
-                    }
-                    else
+                        else
+                        {
+                            // Remove the possible tiles of the neighbor that are not in the current tiles possible neighbors
+                            for (int j = 0; j < tileCount; j++)
+                            {
+                                if (tileMapArray[neighborPosition.x, neighborPosition.y, neighborPosition.z][j])
+                                {
+                                    TileType tile = tileTypes[j];
+
+                                    if (!tileType.neighbors[(int)i][j])
+                                    {
+                                        tileMapArray[neighborPosition.x, neighborPosition.y, neighborPosition.z][j] = false;
+                                        found = true;
+                                    }
+                                }
+                            }
+                        }
+                    } else if (tileIndex == EMPTY_TILE)
                     {
-                        // Remove the possible tiles of the neighbor that are not in the current tiles possible neighbors
+                        //Debug.Log(tilePosition + " removing neighbors with connections");
+                        // Tile is empty, so remove that have a connection to this position
                         for (int j = 0; j < tileCount; j++)
                         {
                             if (tileMapArray[neighborPosition.x, neighborPosition.y, neighborPosition.z][j])
                             {
                                 TileType tile = tileTypes[j];
 
-                                if (!tileType.neighbors[(int)i][j])
+                                // Get opposite direction
+                                int opposite = (int)i % 2 == 0 ? (int)i + 1 : (int)i - 1;
+
+                                if (tile.hasConnection[opposite])
                                 {
                                     tileMapArray[neighborPosition.x, neighborPosition.y, neighborPosition.z][j] = false;
                                     found = true;
-                                } else
-                                {
-                                    Debug.Log("Yo");
                                 }
                             }
                         }
@@ -624,7 +647,7 @@ public class WFC : MonoBehaviour
 
                         Gizmos.color = Color.green;
                         // Draw cubes on the connections
-                        if (tileMap[x, y, z] != -1)
+                        if (tileMap[x, y, z] > UNDECIDED)
                         {
                             TileType t = tileTypes[tileMap[x, y, z]];
                             if (t.hasConnection[(int)Direction.North])

@@ -4,14 +4,10 @@ using UnityEngine;
 [System.Serializable]
 public class TileType
 {
-    public string tileMesh;
     public string name;
-
-    public string Constrain_to;
-    public string Constrain_from;
-
     public Quaternion rotation;
     public float weight = 1.0f;
+    public bool grounded = false;
 
     public GameObject tileObject;
 

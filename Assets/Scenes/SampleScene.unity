@@ -201,7 +201,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   XML_IO: {fileID: 11400000, guid: 0ff3a835474889547a46c06853a2eac8, type: 2}
-  dimensions: {x: 5, y: 3, z: 5}
+  dimensions: {x: 15, y: 3, z: 15}
   tileSize: 2
 --- !u!4 &292398179
 Transform:

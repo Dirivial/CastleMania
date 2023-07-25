@@ -571,7 +571,7 @@
   </PrototypeXML>
   <PrototypeXML>
     <Name>Tower_bot_0</Name>
-    <weight>0.9</weight>
+    <weight>0.2</weight>
     <posX>-1</posX>
     <posY>v0_0</posY>
     <posZ>-1</posZ>

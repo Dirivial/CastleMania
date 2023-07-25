@@ -43,7 +43,7 @@ MonoBehaviour:
     tileObject: {fileID: 919132149155446097, guid: f92a7381e550a8d42b10e047c96a0b9e,
       type: 3}
     Symmetry: 3
-    Weight: 0.1
+    Weight: 0.01
     ignoreSide: 
   - Name: Tower
     tileObject: {fileID: 919132149155446097, guid: 5d15d460ae77fe64db6feeb89a9d10ea,
@@ -61,5 +61,5 @@ MonoBehaviour:
     tileObject: {fileID: 919132149155446097, guid: 2e1f6c956ddc18f478ee9fe2e782f444,
       type: 3}
     Symmetry: 0
-    Weight: 0.9
+    Weight: 0.01
     ignoreSide: 05000000
