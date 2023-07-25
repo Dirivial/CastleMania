@@ -45,7 +45,8 @@ public class WFC : MonoBehaviour
 {
     [SerializeField] private XML_IO XML_IO;
     [SerializeField] public Vector3Int dimensions = new Vector3Int(5, 5, 5);
-    [SerializeField] private int tileSize = 2;
+    [SerializeField] public Vector3Int tileScaling = new Vector3Int(100, 100, 100);
+    [SerializeField] private int tileSize = 4;
 
 
     public static int UNDECIDED = -1;
@@ -57,7 +58,6 @@ public class WFC : MonoBehaviour
     private int[,,] tileMap;
     private bool[,,][] tileMapArray;
     private Stack<Vector3Int> tilesToProcess;
-    //private Stack<SaveState> saveStates;
 
     private List<GameObject> InstantiatedTiles;
     
@@ -235,13 +235,14 @@ public class WFC : MonoBehaviour
             if (tileTypes[i].name.EndsWith('0'))
             {
                 x = 0;
-                z -= 2.5f;
+                z -= (tileSize + 1f);
             }
             GameObject obj = Instantiate(tileTypes[i].tileObject, new Vector3(x, 0, z), tileTypes[i].rotation);
+            obj.transform.localScale = tileScaling;
             obj.transform.parent = transform;
             viewConnections.Add(new Thing(i, new Vector3(x, 0, z)));
 
-            x += 2.5f;
+            x += (2.5f + tileSize);
         }
     }
 
@@ -257,6 +258,7 @@ public class WFC : MonoBehaviour
                     if (index >= 0)
                     {
                         GameObject obj = Instantiate(tileTypes[index].tileObject, new Vector3(x * tileSize, y * tileSize, z * tileSize), tileTypes[index].rotation);
+                        obj.transform.localScale = tileScaling;
                         obj.transform.parent = transform;
                         InstantiatedTiles.Add(obj);
                     } else
@@ -278,6 +280,7 @@ public class WFC : MonoBehaviour
             if (tileMap[v.x, v.y, v.z] == EMPTY_TILE) continue;
             TileType tileType = tileTypes[tileMap[v.x, v.y, v.z]];
             GameObject obj = Instantiate(tileType.tileObject, new Vector3(v.x * tileSize, v.y * tileSize, v.z * tileSize), tileType.rotation);
+            obj.transform.localScale = tileScaling;
             obj.transform.parent = transform;
             InstantiatedTiles.Add(obj);
         }
@@ -545,13 +548,20 @@ public class WFC : MonoBehaviour
                         // Remove all possible tiles from neighbor
                         if (originConnection)
                         {
-                            Debug.Log(tilePosition + " Huh?");
                             for (int j = 0; j < tileCount; j++)
                             {
                                 if (tileMapArray[neighborPosition.x, neighborPosition.y, neighborPosition.z][j])
                                 {
-                                    tileMapArray[neighborPosition.x, neighborPosition.y, neighborPosition.z][j] = false;
-                                    found = true;
+                                    TileType tile = tileTypes[j];
+
+                                    // Get opposite direction
+                                    int opposite = (int)i % 2 == 0 ? (int)i + 1 : (int)i - 1;
+
+                                    if (tile.hasConnection[opposite])
+                                    {
+                                        tileMapArray[neighborPosition.x, neighborPosition.y, neighborPosition.z][j] = false;
+                                        found = true;
+                                    }
                                 }
                             }
                         }
@@ -574,8 +584,7 @@ public class WFC : MonoBehaviour
                         }
                     } else if (tileIndex == EMPTY_TILE)
                     {
-                        //Debug.Log(tilePosition + " removing neighbors with connections");
-                        // Tile is empty, so remove that have a connection to this position
+                        // Tile is empty, so remove tiles that have a connection to this position
                         for (int j = 0; j < tileCount; j++)
                         {
                             if (tileMapArray[neighborPosition.x, neighborPosition.y, neighborPosition.z][j])
@@ -639,7 +648,7 @@ public class WFC : MonoBehaviour
                                 {
                                     Gizmos.color = Color.black;
                                 }
-                                Vector3 p = new Vector3(x * 2 - 0.5f + (i % 5) * (size + 0.05f), y * 2, z * 2 - 0.5f + (i % 3) * (size + 0.05f));
+                                Vector3 p = new Vector3(x * tileSize - 0.5f + (i % 5) * (size + 0.05f), y * tileSize, z * tileSize - 0.5f + (i % 3) * (size + 0.05f));
 
                                 Gizmos.DrawCube(p, new Vector3(size, size, size));
                             }
@@ -652,34 +661,34 @@ public class WFC : MonoBehaviour
                             TileType t = tileTypes[tileMap[x, y, z]];
                             if (t.hasConnection[(int)Direction.North])
                             {
-                                Vector3 p = new Vector3(x * 2, y * 2, z * 2 + 1);
+                                Vector3 p = new Vector3(x * tileSize, y * tileSize, z * tileSize + tileSize / 2);
                                 Gizmos.DrawCube(p, new Vector3(size, size, size));
                             }
                             if (t.hasConnection[(int)Direction.South])
                             {
-                                Vector3 p = new Vector3(x * 2, y * 2, z * 2 - 1);
+                                Vector3 p = new Vector3(x * tileSize, y * tileSize, z * tileSize - tileSize / 2);
                                 Gizmos.DrawCube(p, new Vector3(size, size, size));
                             }
 
                             if (t.hasConnection[(int)Direction.East])
                             {
-                                Vector3 p = new Vector3(x * 2 + 1, y * 2, z * 2);
+                                Vector3 p = new Vector3(x * tileSize + tileSize / 2, y * tileSize, z * tileSize);
                                 Gizmos.DrawCube(p, new Vector3(size, size, size));
                             }
                             if (t.hasConnection[(int)Direction.West])
                             {
-                                Vector3 p = new Vector3(x * 2 - 1, y * 2, z * 2);
+                                Vector3 p = new Vector3(x * tileSize - tileSize / 2, y * tileSize, z * tileSize);
                                 Gizmos.DrawCube(p, new Vector3(size, size, size));
                             }
 
                             if (t.hasConnection[(int)Direction.Up])
                             {
-                                Vector3 p = new Vector3(x * 2, y * 2 - 1, z * 2);
+                                Vector3 p = new Vector3(x * tileSize, y * tileSize + tileSize / 2, z * tileSize);
                                 Gizmos.DrawCube(p, new Vector3(size, size, size));
                             }
                             if (t.hasConnection[(int)Direction.Down])
                             {
-                                Vector3 p = new Vector3(x * 2, y * 2 + 1, z * 2);
+                                Vector3 p = new Vector3(x * tileSize, y * tileSize - tileSize / 2, z * tileSize);
                                 Gizmos.DrawCube(p, new Vector3(size, size, size));
                             }
                         }
@@ -695,34 +704,34 @@ public class WFC : MonoBehaviour
             float x = ting.position.x; float y = ting.position.y; float z = ting.position.z;
             if (t.hasConnection[(int)Direction.North])
             {
-                Vector3 p = new Vector3(x, y * 2, z + 1);
+                Vector3 p = new Vector3(x, y * tileSize, z + tileSize / 2);
                 Gizmos.DrawCube(p, new Vector3(size, size, size));
             }
             if (t.hasConnection[(int)Direction.South])
             {
-                Vector3 p = new Vector3(x, y * 2, z - 1);
+                Vector3 p = new Vector3(x, y * tileSize, z - tileSize / 2);
                 Gizmos.DrawCube(p, new Vector3(size, size, size));
             }
 
             if (t.hasConnection[(int)Direction.East])
             {
-                Vector3 p = new Vector3(x + 1, y * 2, z);
+                Vector3 p = new Vector3(x + tileSize / 2, y * tileSize, z);
                 Gizmos.DrawCube(p, new Vector3(size, size, size));
             }
             if (t.hasConnection[(int)Direction.West])
             {
-                Vector3 p = new Vector3(x - 1, y * 2, z);
+                Vector3 p = new Vector3(x - tileSize / 2, y * tileSize, z);
                 Gizmos.DrawCube(p, new Vector3(size, size, size));
             }
 
             if (t.hasConnection[(int)Direction.Up])
             {
-                Vector3 p = new Vector3(x, y * 2 + 1, z);
+                Vector3 p = new Vector3(x, y * tileSize + tileSize / 2, z);
                 Gizmos.DrawCube(p, new Vector3(size, size, size));
             }
             if (t.hasConnection[(int)Direction.Down])
             {
-                Vector3 p = new Vector3(x, y * 2 - 1, z );
+                Vector3 p = new Vector3(x, y * tileSize - tileSize / 2, z );
                 Gizmos.DrawCube(p, new Vector3(size, size, size));
             }
         }

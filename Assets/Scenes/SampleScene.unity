@@ -200,9 +200,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82490d7fdba785d4e915676957609e8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  XML_IO: {fileID: 11400000, guid: 0ff3a835474889547a46c06853a2eac8, type: 2}
+  XML_IO: {fileID: 11400000, guid: a1d8e7e02f31f3749b67dbd042250b03, type: 2}
   dimensions: {x: 15, y: 3, z: 15}
-  tileSize: 2
+  tileScaling: {x: 300, y: 300, z: 300}
+  tileSize: 8
 --- !u!4 &292398179
 Transform:
   m_ObjectHideFlags: 0

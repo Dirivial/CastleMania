@@ -8,6 +8,7 @@ public class TileType
     public Quaternion rotation;
     public float weight = 1.0f;
     public bool grounded = false;
+    public bool mustConnect = false;
 
     public GameObject tileObject;
 
