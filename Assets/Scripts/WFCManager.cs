@@ -2,7 +2,6 @@
 
 using JetBrains.Annotations;
 using System.Collections.Generic;
-using System.Linq;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
@@ -10,42 +9,44 @@ using UnityEngine.UIElements;
 
 public class WFCManager : MonoBehaviour
 {
-    public Vector3Int dimensions = new Vector3Int(5, 5, 5);
+    public int chunkSize;
+    public int numberOfFloors = 3;
     public int numberOfJobs = 1;
     public XML_IO XML_IO;
     public int tileSize = 8;
 
-    private Dictionary<Vector2Int, Chunk> chunks;
+    private Dictionary<Vector2Int, ChunkWFC> chunks;
+    private Vector3Int dimensions = new Vector3Int(5, 5, 5);
 
     // Keep track of these to make instantiating possible - and to create NativeTileTypes
     List<TileType> imported_tiles;
+
+    List<Vector2Int> pendingChunks = new List<Vector2Int>();
 
     // These should remain the same for all chunks
     private NativeArray<NativeTileType> tileTypes;
     private NativeArray<bool> neighborData;
     private NativeArray<bool> hasConnectionData;
-
-    // These need to be created for each new job
-    //private NativeArray<bool> tileMapArray;
-    //private NativeList<Vector3Int> tilesToProcess;
-    
     
     // Gaming
     private int tileCount;
 
     private void Awake()
     {
+        dimensions = new Vector3Int(chunkSize, numberOfFloors, chunkSize);
+
         XML_IO.ClearTileTypes();
         XML_IO.Import();
         imported_tiles = XML_IO.GetTileTypes();
         tileCount = imported_tiles.Count;
+        
 
         // Create the arrays needed for all jobs
         tileTypes = new NativeArray<NativeTileType>(tileCount, Allocator.Persistent);
         neighborData = new NativeArray<bool>(tileCount * tileCount * 6, Allocator.Persistent); // (Number of tiles (n# depends) ^ 2) * directions (6)
         hasConnectionData = new NativeArray<bool>(tileCount * 6, Allocator.Persistent); // Number of tiles (n# depends) * directions (6)
 
-        // Create NativeTileTypes - These have very little information
+        // Create NativeTileTypes - A restricted TileType
         int i = 0;
         foreach (TileType tileType in imported_tiles)
         {
@@ -63,60 +64,35 @@ public class WFCManager : MonoBehaviour
         }
 
         // Create dictionary to access chunks
-        chunks = new Dictionary<Vector2Int, Chunk> ();
-
-        // Create chunk & jobs
-        for (i = 0; i < numberOfJobs; i++)
-        {
-            // Create chunk
-            Vector2Int position = new Vector2Int(i, 0);
-            Chunk chunk = new Chunk();
-            chunk.position = position;
-
-            // Allocate memory for the chunk/job
-            NativeArray<int> tileMap = new NativeArray<int> (dimensions.x * dimensions.y * dimensions.z, Allocator.Persistent);
-            NativeArray<bool> tileMapArray = new NativeArray<bool>(dimensions.x * dimensions.y * dimensions.z * tileCount, Allocator.Persistent);
-            NativeList<Vector3Int> tilesToProcess = new NativeList<Vector3Int>(0, Allocator.Persistent);
-
-            // Create job
-            JobWFC job = new JobWFC(position, dimensions, tileTypes.AsReadOnly(), tileMapArray, tileCount, tileMap, neighborData.AsReadOnly(), hasConnectionData.AsReadOnly(), tilesToProcess);
-            
-            // Fill chunk with datachunks
-            chunk.tileMap = tileMap;
-            chunk.tileMapArray = tileMapArray;
-            chunk.tilesToProcess = tilesToProcess;
-            chunk.jobWFC = job;
-
-            // Store chunk
-            chunks[position] = chunk;
-        }
+        chunks = new Dictionary<Vector2Int, ChunkWFC> ();
     }
 
+    /*
     public void Start()
     {
         Debug.Log("Starting Jobs");
 
         for (int i = 0; i < numberOfJobs; i++)
         {
-            Vector2Int position = new Vector2Int(i, 0);
+            Vector2Int position = new Vector2Int(i, i);
             chunks[position].jobHandle = chunks[position].jobWFC.Schedule();
             Debug.Log("Scheduled job #" + i);
         }
 
         Debug.Log("Done");
-    }
+    } */
 
     public void LateUpdate()
     {
-        foreach (Chunk c in chunks.Values)
+        for (int i = pendingChunks.Count - 1; i >= 0; i--)
         {
-            if (!c.isInstantiated) {
-                c.jobHandle.Complete();
-                if (c.jobHandle.IsCompleted)
-                {
-                    InstantiateTiles(c.position);
-                    c.isInstantiated = true;
-                }
+            if (chunks[pendingChunks[i]].jobHandle.IsCompleted && !chunks[pendingChunks[i]].isInstantiated)
+            {
+                chunks[pendingChunks[i]].jobHandle.Complete();
+                InstantiateTiles(pendingChunks[i]);
+                chunks[pendingChunks[i]].jobWFC.OnDestroy();
+                chunks[pendingChunks[i]].isInstantiated = true;
+                pendingChunks.RemoveAt(i);
             }
         }
     }
@@ -129,11 +105,101 @@ public class WFCManager : MonoBehaviour
         hasConnectionData.Dispose();
 
         // Dispose of data - This should be done earlier for at least tileMapArray and tilesToProcess
-        foreach (Chunk c in chunks.Values)
+        foreach (ChunkWFC c in chunks.Values)
         {
             c.tileMap.Dispose();
             c.tileMapArray.Dispose();
             c.tilesToProcess.Dispose();
+        }
+    }
+
+    public void UpdateChunks(Vector2Int playerPosition, int chunkCount)
+    {
+        /*
+        if (!chunks.ContainsKey(playerPosition))
+        {
+            Debug.Log(playerPosition);
+            CreateChunk(playerPosition);
+        } */
+
+        // Loop through the chunks surrounding the player and load/unload as needed
+        for (int x = playerPosition.x - chunkCount; x <= playerPosition.x + chunkCount; x++)
+        {
+            for (int y = playerPosition.y - 1; y <= playerPosition.y + chunkCount; y++)
+            {
+                Vector2Int chunkPos = new Vector2Int(x, y);
+
+                // Check if the chunk is already loaded
+                if (!chunks.ContainsKey(chunkPos))
+                {
+                    CreateChunk(chunkPos);
+                    //InstantiateTiles(chunkPos);
+                    // Instantiate a new chunk prefab
+                    /*
+                    GameObject chunk = Instantiate(chunkPrefab, new Vector3(x * chunkSize, 0f, y * chunkSize), Quaternion.identity);
+                    chunk.transform.parent = transform;
+                    chunks.Add(chunkPos, chunk);
+                    */
+                }
+            }
+        }
+    
+        /*
+        // Unload chunks that are too far from the player
+        List<Vector2Int> chunksToRemove = new List<Vector2Int>();
+        foreach (var chunk in chunks)
+        {
+            if (Mathf.Abs(chunk.Key.x - playerPosition.x) > chunkCount || chunk.Key.y - playerPosition.y > chunkCount || chunk.Key.y - playerPosition.y < -1)
+            {
+                chunksToRemove.Add(chunk.Key);
+            }
+        }
+        /*
+        foreach (var chunkPos in chunksToRemove)
+        {
+            Destroy(chunks[chunkPos]);
+            chunks.Remove(chunkPos);
+        }
+        */
+
+    }
+
+    private void CreateChunk(Vector2Int chunkPos)
+    {
+        // Create chunk
+        ChunkWFC chunk = new ChunkWFC();
+        chunk.position = chunkPos;
+
+        // Allocate memory for the chunk/job
+        NativeArray<int> tileMap = new NativeArray<int>(dimensions.x * dimensions.y * dimensions.z, Allocator.Persistent);
+        NativeArray<bool> tileMapArray = new NativeArray<bool>(dimensions.x * dimensions.y * dimensions.z * tileCount, Allocator.Persistent);
+        NativeList<Vector3Int> tilesToProcess = new NativeList<Vector3Int>(0, Allocator.Persistent);
+
+        // Create job
+        JobWFC job = new JobWFC(chunkPos, dimensions, tileTypes.AsReadOnly(), tileCount, tileMap, neighborData.AsReadOnly(), hasConnectionData.AsReadOnly());
+
+        // Fill chunk with datachunks
+        chunk.tileMap = tileMap;
+        chunk.tileMapArray = tileMapArray;
+        chunk.tilesToProcess = tilesToProcess;
+        chunk.jobWFC = job;
+
+        // Store chunk
+        //chunks[chunkPos] = chunk;
+        chunks.Add(chunkPos, chunk);
+
+        pendingChunks.Add(chunkPos);
+
+        chunks[chunkPos].jobHandle = chunks[chunkPos].jobWFC.Schedule();
+        Debug.Log("Scheduled job @ " + chunkPos);
+    }
+
+    private void CreateChunks(List<Vector2Int> positions)
+    {
+        // Create chunk & jobs
+        for (int i = 0; i < positions.Count; i++)
+        {
+            CreateChunk(positions[i]);
         }
     }
 

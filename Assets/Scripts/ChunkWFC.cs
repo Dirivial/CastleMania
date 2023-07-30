@@ -3,10 +3,9 @@ using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
 using Unity.Burst;
-using Unity.VisualScripting;
 
 [BurstCompile]
-public class Chunk
+public class ChunkWFC
 {
     public Vector2Int position;
     public bool isInstantiated;

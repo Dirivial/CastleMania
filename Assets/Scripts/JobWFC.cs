@@ -7,6 +7,7 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 using Unity.Burst;
+using Unity.VisualScripting;
 
 [BurstCompile]
 public struct JobWFC: IJob
@@ -14,25 +15,31 @@ public struct JobWFC: IJob
 
 	public Vector2Int position;
 
-	// Pain
 	private NativeArray<int> tileMap;
-	private NativeArray<bool> tileMapArray;
+	
+	// Readonly
 	private NativeArray<NativeTileType>.ReadOnly tileTypes;
 	private NativeArray<bool>.ReadOnly neighborData;
 	private NativeArray<bool>.ReadOnly hasConnectionData;
+	
+	// Whatever
 	private Vector3Int dimensions;
 	private int tileCount;
 
 	private static readonly int UNDECIDED = -1;
 	private static readonly int EMPTY_TILE = -2;
 
-	private NativeList<Vector3Int> tilesToProcess;
     private Unity.Mathematics.Random random;
 
-	public JobWFC(Vector2Int position, Vector3Int dimensions, 
-		NativeArray<NativeTileType>.ReadOnly tileTypes, NativeArray<bool> tileMapArray, int tileCount, 
+	// Temporary things
+    private NativeList<Vector3Int> tilesToProcess;
+	[DeallocateOnJobCompletion]
+    private NativeArray<bool> tileMapArray;
+
+    public JobWFC(Vector2Int position, Vector3Int dimensions, 
+		NativeArray<NativeTileType>.ReadOnly tileTypes, int tileCount, 
 		NativeArray<int> tileMap, NativeArray<bool>.ReadOnly neighborData, 
-		NativeArray<bool>.ReadOnly hasConnectionData, NativeList<Vector3Int> tilesToProcess)
+		NativeArray<bool>.ReadOnly hasConnectionData)
 	{
 		this.position = position;
 		this.dimensions = dimensions;
@@ -40,9 +47,11 @@ public struct JobWFC: IJob
         this.tileCount = tileCount;
 		this.neighborData = neighborData;
 		this.hasConnectionData = hasConnectionData;
-        this.tilesToProcess = tilesToProcess;
         this.tileMap = tileMap;
-        this.tileMapArray = tileMapArray;
+
+		// Allocate memory for the temporary stuff
+        tilesToProcess = new NativeList<Vector3Int>(0, Allocator.Persistent);
+        tileMapArray = new NativeArray<bool>(dimensions.x * dimensions.y * dimensions.z * tileCount, Allocator.Persistent);
 
         //currentTileToProcess = 0;
 
@@ -84,6 +93,11 @@ public struct JobWFC: IJob
 
 		Debug.Log("I have completed my job");
 	}
+
+	public void OnDestroy()
+	{
+        tilesToProcess.Dispose();
+    }
 
 	// Convert coordinates to singular coordinate for tile map
 	private int ConvertTo1D(int x, int y, int z)
