@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfPrototypeXML xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <PrototypeXML>
-    <Name>BridgeX_0</Name>
-    <weight>0.9</weight>
+    <Name>bridgex_0</Name>
+    <weight>0.2</weight>
+    <constraints />
     <posX>0s</posX>
     <posY>-1</posY>
     <posZ>0s</posZ>
@@ -10,51 +11,52 @@
     <negY>-1</negY>
     <negZ>0s</negZ>
     <npX>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>Bridge_0</string>
-      <string>Bridge_i_0</string>
+      <string>bridgex_0</string>
+      <string>bridget_0</string>
+      <string>bridget_1</string>
+      <string>bridget_2</string>
+      <string>bridgel_0</string>
+      <string>bridgel_1</string>
+      <string>bridge_0</string>
+      <string>bridge_i_0</string>
     </npX>
     <npY />
     <npZ>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_3</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_1</string>
-      <string>Bridge_i_3</string>
+      <string>bridgex_0</string>
+      <string>bridget_0</string>
+      <string>bridget_1</string>
+      <string>bridget_3</string>
+      <string>bridgel_0</string>
+      <string>bridgel_3</string>
+      <string>bridge_1</string>
+      <string>bridge_i_3</string>
     </npZ>
     <nnX>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_i_2</string>
+      <string>bridgex_0</string>
+      <string>bridget_0</string>
+      <string>bridget_2</string>
+      <string>bridget_3</string>
+      <string>bridgel_2</string>
+      <string>bridgel_3</string>
+      <string>bridge_0</string>
+      <string>bridge_i_2</string>
     </nnX>
     <nnY />
     <nnZ>
-      <string>BridgeX_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>Bridge_1</string>
-      <string>Bridge_i_1</string>
+      <string>bridgex_0</string>
+      <string>bridget_1</string>
+      <string>bridget_2</string>
+      <string>bridget_3</string>
+      <string>bridgel_1</string>
+      <string>bridgel_2</string>
+      <string>bridge_1</string>
+      <string>bridge_i_1</string>
     </nnZ>
   </PrototypeXML>
   <PrototypeXML>
-    <Name>BridgeT_0</Name>
-    <weight>0.5</weight>
+    <Name>bridget_0</Name>
+    <weight>0.3</weight>
+    <constraints />
     <posX>0s</posX>
     <posY>-1</posY>
     <posZ>-1</posZ>
@@ -62,42 +64,43 @@
     <negY>-1</negY>
     <negZ>0s</negZ>
     <npX>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>Bridge_0</string>
-      <string>Bridge_i_0</string>
+      <string>bridgex_0</string>
+      <string>bridget_0</string>
+      <string>bridget_1</string>
+      <string>bridget_2</string>
+      <string>bridgel_0</string>
+      <string>bridgel_1</string>
+      <string>bridge_0</string>
+      <string>bridge_i_0</string>
     </npX>
     <npY />
     <npZ />
     <nnX>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_i_2</string>
+      <string>bridgex_0</string>
+      <string>bridget_0</string>
+      <string>bridget_2</string>
+      <string>bridget_3</string>
+      <string>bridgel_2</string>
+      <string>bridgel_3</string>
+      <string>bridge_0</string>
+      <string>bridge_i_2</string>
     </nnX>
     <nnY />
     <nnZ>
-      <string>BridgeX_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>Bridge_1</string>
-      <string>Bridge_i_1</string>
+      <string>bridgex_0</string>
+      <string>bridget_1</string>
+      <string>bridget_2</string>
+      <string>bridget_3</string>
+      <string>bridgel_1</string>
+      <string>bridgel_2</string>
+      <string>bridge_1</string>
+      <string>bridge_i_1</string>
     </nnZ>
   </PrototypeXML>
   <PrototypeXML>
-    <Name>BridgeT_1</Name>
-    <weight>0.5</weight>
+    <Name>bridget_1</Name>
+    <weight>0.3</weight>
+    <constraints />
     <posX>-1</posX>
     <posY>-1</posY>
     <posZ>0s</posZ>
@@ -107,40 +110,41 @@
     <npX />
     <npY />
     <npZ>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_3</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_1</string>
-      <string>Bridge_i_3</string>
+      <string>bridgex_0</string>
+      <string>bridget_0</string>
+      <string>bridget_1</string>
+      <string>bridget_3</string>
+      <string>bridgel_0</string>
+      <string>bridgel_3</string>
+      <string>bridge_1</string>
+      <string>bridge_i_3</string>
     </npZ>
     <nnX>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_i_2</string>
+      <string>bridgex_0</string>
+      <string>bridget_0</string>
+      <string>bridget_2</string>
+      <string>bridget_3</string>
+      <string>bridgel_2</string>
+      <string>bridgel_3</string>
+      <string>bridge_0</string>
+      <string>bridge_i_2</string>
     </nnX>
     <nnY />
     <nnZ>
-      <string>BridgeX_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>Bridge_1</string>
-      <string>Bridge_i_1</string>
+      <string>bridgex_0</string>
+      <string>bridget_1</string>
+      <string>bridget_2</string>
+      <string>bridget_3</string>
+      <string>bridgel_1</string>
+      <string>bridgel_2</string>
+      <string>bridge_1</string>
+      <string>bridge_i_1</string>
     </nnZ>
   </PrototypeXML>
   <PrototypeXML>
-    <Name>BridgeT_2</Name>
-    <weight>0.5</weight>
+    <Name>bridget_2</Name>
+    <weight>0.3</weight>
+    <constraints />
     <posX>0s</posX>
     <posY>-1</posY>
     <posZ>0s</posZ>
@@ -148,42 +152,43 @@
     <negY>-1</negY>
     <negZ>-1</negZ>
     <npX>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>Bridge_0</string>
-      <string>Bridge_i_0</string>
+      <string>bridgex_0</string>
+      <string>bridget_0</string>
+      <string>bridget_1</string>
+      <string>bridget_2</string>
+      <string>bridgel_0</string>
+      <string>bridgel_1</string>
+      <string>bridge_0</string>
+      <string>bridge_i_0</string>
     </npX>
     <npY />
     <npZ>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_3</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_1</string>
-      <string>Bridge_i_3</string>
+      <string>bridgex_0</string>
+      <string>bridget_0</string>
+      <string>bridget_1</string>
+      <string>bridget_3</string>
+      <string>bridgel_0</string>
+      <string>bridgel_3</string>
+      <string>bridge_1</string>
+      <string>bridge_i_3</string>
     </npZ>
     <nnX>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_i_2</string>
+      <string>bridgex_0</string>
+      <string>bridget_0</string>
+      <string>bridget_2</string>
+      <string>bridget_3</string>
+      <string>bridgel_2</string>
+      <string>bridgel_3</string>
+      <string>bridge_0</string>
+      <string>bridge_i_2</string>
     </nnX>
     <nnY />
     <nnZ />
   </PrototypeXML>
   <PrototypeXML>
-    <Name>BridgeT_3</Name>
-    <weight>0.5</weight>
+    <Name>bridget_3</Name>
+    <weight>0.3</weight>
+    <constraints />
     <posX>0s</posX>
     <posY>-1</posY>
     <posZ>0s</posZ>
@@ -191,42 +196,43 @@
     <negY>-1</negY>
     <negZ>0s</negZ>
     <npX>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>Bridge_0</string>
-      <string>Bridge_i_0</string>
+      <string>bridgex_0</string>
+      <string>bridget_0</string>
+      <string>bridget_1</string>
+      <string>bridget_2</string>
+      <string>bridgel_0</string>
+      <string>bridgel_1</string>
+      <string>bridge_0</string>
+      <string>bridge_i_0</string>
     </npX>
     <npY />
     <npZ>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_3</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_1</string>
-      <string>Bridge_i_3</string>
+      <string>bridgex_0</string>
+      <string>bridget_0</string>
+      <string>bridget_1</string>
+      <string>bridget_3</string>
+      <string>bridgel_0</string>
+      <string>bridgel_3</string>
+      <string>bridge_1</string>
+      <string>bridge_i_3</string>
     </npZ>
     <nnX />
     <nnY />
     <nnZ>
-      <string>BridgeX_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>Bridge_1</string>
-      <string>Bridge_i_1</string>
+      <string>bridgex_0</string>
+      <string>bridget_1</string>
+      <string>bridget_2</string>
+      <string>bridget_3</string>
+      <string>bridgel_1</string>
+      <string>bridgel_2</string>
+      <string>bridge_1</string>
+      <string>bridge_i_1</string>
     </nnZ>
   </PrototypeXML>
   <PrototypeXML>
-    <Name>BridgeL_0</Name>
-    <weight>0.5</weight>
+    <Name>bridgel_0</Name>
+    <weight>0.4</weight>
+    <constraints />
     <posX>-1</posX>
     <posY>-1</posY>
     <posZ>-1</posZ>
@@ -237,30 +243,31 @@
     <npY />
     <npZ />
     <nnX>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_i_2</string>
+      <string>bridgex_0</string>
+      <string>bridget_0</string>
+      <string>bridget_2</string>
+      <string>bridget_3</string>
+      <string>bridgel_2</string>
+      <string>bridgel_3</string>
+      <string>bridge_0</string>
+      <string>bridge_i_2</string>
     </nnX>
     <nnY />
     <nnZ>
-      <string>BridgeX_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>Bridge_1</string>
-      <string>Bridge_i_1</string>
+      <string>bridgex_0</string>
+      <string>bridget_1</string>
+      <string>bridget_2</string>
+      <string>bridget_3</string>
+      <string>bridgel_1</string>
+      <string>bridgel_2</string>
+      <string>bridge_1</string>
+      <string>bridge_i_1</string>
     </nnZ>
   </PrototypeXML>
   <PrototypeXML>
-    <Name>BridgeL_1</Name>
-    <weight>0.5</weight>
+    <Name>bridgel_1</Name>
+    <weight>0.4</weight>
+    <constraints />
     <posX>-1</posX>
     <posY>-1</posY>
     <posZ>0s</posZ>
@@ -270,31 +277,32 @@
     <npX />
     <npY />
     <npZ>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_3</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_1</string>
-      <string>Bridge_i_3</string>
+      <string>bridgex_0</string>
+      <string>bridget_0</string>
+      <string>bridget_1</string>
+      <string>bridget_3</string>
+      <string>bridgel_0</string>
+      <string>bridgel_3</string>
+      <string>bridge_1</string>
+      <string>bridge_i_3</string>
     </npZ>
     <nnX>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_i_2</string>
+      <string>bridgex_0</string>
+      <string>bridget_0</string>
+      <string>bridget_2</string>
+      <string>bridget_3</string>
+      <string>bridgel_2</string>
+      <string>bridgel_3</string>
+      <string>bridge_0</string>
+      <string>bridge_i_2</string>
     </nnX>
     <nnY />
     <nnZ />
   </PrototypeXML>
   <PrototypeXML>
-    <Name>BridgeL_2</Name>
-    <weight>0.5</weight>
+    <Name>bridgel_2</Name>
+    <weight>0.4</weight>
+    <constraints />
     <posX>0s</posX>
     <posY>-1</posY>
     <posZ>0s</posZ>
@@ -302,33 +310,34 @@
     <negY>-1</negY>
     <negZ>-1</negZ>
     <npX>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>Bridge_0</string>
-      <string>Bridge_i_0</string>
+      <string>bridgex_0</string>
+      <string>bridget_0</string>
+      <string>bridget_1</string>
+      <string>bridget_2</string>
+      <string>bridgel_0</string>
+      <string>bridgel_1</string>
+      <string>bridge_0</string>
+      <string>bridge_i_0</string>
     </npX>
     <npY />
     <npZ>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_3</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_1</string>
-      <string>Bridge_i_3</string>
+      <string>bridgex_0</string>
+      <string>bridget_0</string>
+      <string>bridget_1</string>
+      <string>bridget_3</string>
+      <string>bridgel_0</string>
+      <string>bridgel_3</string>
+      <string>bridge_1</string>
+      <string>bridge_i_3</string>
     </npZ>
     <nnX />
     <nnY />
     <nnZ />
   </PrototypeXML>
   <PrototypeXML>
-    <Name>BridgeL_3</Name>
-    <weight>0.5</weight>
+    <Name>bridgel_3</Name>
+    <weight>0.4</weight>
+    <constraints />
     <posX>0s</posX>
     <posY>-1</posY>
     <posZ>-1</posZ>
@@ -336,33 +345,34 @@
     <negY>-1</negY>
     <negZ>0s</negZ>
     <npX>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>Bridge_0</string>
-      <string>Bridge_i_0</string>
+      <string>bridgex_0</string>
+      <string>bridget_0</string>
+      <string>bridget_1</string>
+      <string>bridget_2</string>
+      <string>bridgel_0</string>
+      <string>bridgel_1</string>
+      <string>bridge_0</string>
+      <string>bridge_i_0</string>
     </npX>
     <npY />
     <npZ />
     <nnX />
     <nnY />
     <nnZ>
-      <string>BridgeX_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>Bridge_1</string>
-      <string>Bridge_i_1</string>
+      <string>bridgex_0</string>
+      <string>bridget_1</string>
+      <string>bridget_2</string>
+      <string>bridget_3</string>
+      <string>bridgel_1</string>
+      <string>bridgel_2</string>
+      <string>bridge_1</string>
+      <string>bridge_i_1</string>
     </nnZ>
   </PrototypeXML>
   <PrototypeXML>
-    <Name>Bridge_0</Name>
-    <weight>0.1</weight>
+    <Name>bridge_0</Name>
+    <weight>0.8</weight>
+    <constraints />
     <posX>0s</posX>
     <posY>-1</posY>
     <posZ>-1</posZ>
@@ -370,33 +380,34 @@
     <negY>-1</negY>
     <negZ>-1</negZ>
     <npX>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>Bridge_0</string>
-      <string>Bridge_i_0</string>
+      <string>bridgex_0</string>
+      <string>bridget_0</string>
+      <string>bridget_1</string>
+      <string>bridget_2</string>
+      <string>bridgel_0</string>
+      <string>bridgel_1</string>
+      <string>bridge_0</string>
+      <string>bridge_i_0</string>
     </npX>
     <npY />
     <npZ />
     <nnX>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_i_2</string>
+      <string>bridgex_0</string>
+      <string>bridget_0</string>
+      <string>bridget_2</string>
+      <string>bridget_3</string>
+      <string>bridgel_2</string>
+      <string>bridgel_3</string>
+      <string>bridge_0</string>
+      <string>bridge_i_2</string>
     </nnX>
     <nnY />
     <nnZ />
   </PrototypeXML>
   <PrototypeXML>
-    <Name>Bridge_1</Name>
-    <weight>0.1</weight>
+    <Name>bridge_1</Name>
+    <weight>0.8</weight>
+    <constraints />
     <posX>-1</posX>
     <posY>-1</posY>
     <posZ>0s</posZ>
@@ -406,31 +417,32 @@
     <npX />
     <npY />
     <npZ>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_3</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_1</string>
-      <string>Bridge_i_3</string>
+      <string>bridgex_0</string>
+      <string>bridget_0</string>
+      <string>bridget_1</string>
+      <string>bridget_3</string>
+      <string>bridgel_0</string>
+      <string>bridgel_3</string>
+      <string>bridge_1</string>
+      <string>bridge_i_3</string>
     </npZ>
     <nnX />
     <nnY />
     <nnZ>
-      <string>BridgeX_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>Bridge_1</string>
-      <string>Bridge_i_1</string>
+      <string>bridgex_0</string>
+      <string>bridget_1</string>
+      <string>bridget_2</string>
+      <string>bridget_3</string>
+      <string>bridgel_1</string>
+      <string>bridgel_2</string>
+      <string>bridge_1</string>
+      <string>bridge_i_1</string>
     </nnZ>
   </PrototypeXML>
   <PrototypeXML>
-    <Name>Bridge_i_0</Name>
+    <Name>bridge_i_0</Name>
     <weight>0.01</weight>
+    <constraints />
     <posX>-1</posX>
     <posY>-1</posY>
     <posZ>-1</posZ>
@@ -441,21 +453,22 @@
     <npY />
     <npZ />
     <nnX>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>BridgeL_2</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_0</string>
-      <string>Bridge_i_2</string>
+      <string>bridgex_0</string>
+      <string>bridget_0</string>
+      <string>bridget_2</string>
+      <string>bridget_3</string>
+      <string>bridgel_2</string>
+      <string>bridgel_3</string>
+      <string>bridge_0</string>
+      <string>bridge_i_2</string>
     </nnX>
     <nnY />
     <nnZ />
   </PrototypeXML>
   <PrototypeXML>
-    <Name>Bridge_i_1</Name>
+    <Name>bridge_i_1</Name>
     <weight>0.01</weight>
+    <constraints />
     <posX>-1</posX>
     <posY>-1</posY>
     <posZ>0s</posZ>
@@ -465,22 +478,23 @@
     <npX />
     <npY />
     <npZ>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_3</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_3</string>
-      <string>Bridge_1</string>
-      <string>Bridge_i_3</string>
+      <string>bridgex_0</string>
+      <string>bridget_0</string>
+      <string>bridget_1</string>
+      <string>bridget_3</string>
+      <string>bridgel_0</string>
+      <string>bridgel_3</string>
+      <string>bridge_1</string>
+      <string>bridge_i_3</string>
     </npZ>
     <nnX />
     <nnY />
     <nnZ />
   </PrototypeXML>
   <PrototypeXML>
-    <Name>Bridge_i_2</Name>
+    <Name>bridge_i_2</Name>
     <weight>0.01</weight>
+    <constraints />
     <posX>0s</posX>
     <posY>-1</posY>
     <posZ>-1</posZ>
@@ -488,14 +502,14 @@
     <negY>-1</negY>
     <negZ>-1</negZ>
     <npX>
-      <string>BridgeX_0</string>
-      <string>BridgeT_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeL_0</string>
-      <string>BridgeL_1</string>
-      <string>Bridge_0</string>
-      <string>Bridge_i_0</string>
+      <string>bridgex_0</string>
+      <string>bridget_0</string>
+      <string>bridget_1</string>
+      <string>bridget_2</string>
+      <string>bridgel_0</string>
+      <string>bridgel_1</string>
+      <string>bridge_0</string>
+      <string>bridge_i_0</string>
     </npX>
     <npY />
     <npZ />
@@ -504,8 +518,9 @@
     <nnZ />
   </PrototypeXML>
   <PrototypeXML>
-    <Name>Bridge_i_3</Name>
+    <Name>bridge_i_3</Name>
     <weight>0.01</weight>
+    <constraints />
     <posX>-1</posX>
     <posY>-1</posY>
     <posZ>-1</posZ>
@@ -518,19 +533,20 @@
     <nnX />
     <nnY />
     <nnZ>
-      <string>BridgeX_0</string>
-      <string>BridgeT_1</string>
-      <string>BridgeT_2</string>
-      <string>BridgeT_3</string>
-      <string>BridgeL_1</string>
-      <string>BridgeL_2</string>
-      <string>Bridge_1</string>
-      <string>Bridge_i_1</string>
+      <string>bridgex_0</string>
+      <string>bridget_1</string>
+      <string>bridget_2</string>
+      <string>bridget_3</string>
+      <string>bridgel_1</string>
+      <string>bridgel_2</string>
+      <string>bridge_1</string>
+      <string>bridge_i_1</string>
     </nnZ>
   </PrototypeXML>
   <PrototypeXML>
-    <Name>Tower_0</Name>
-    <weight>0.1</weight>
+    <Name>tower_0</Name>
+    <weight>0.8</weight>
+    <constraints>MC</constraints>
     <posX>-1</posX>
     <posY>v0_0</posY>
     <posZ>-1</posZ>
@@ -539,20 +555,21 @@
     <negZ>-1</negZ>
     <npX />
     <npY>
-      <string>Tower_0</string>
-      <string>Tower_top_0</string>
+      <string>tower_0</string>
+      <string>tower_top_0</string>
     </npY>
     <npZ />
     <nnX />
     <nnY>
-      <string>Tower_0</string>
-      <string>Tower_bot_0</string>
+      <string>tower_0</string>
+      <string>tower_bot_0</string>
     </nnY>
     <nnZ />
   </PrototypeXML>
   <PrototypeXML>
-    <Name>Tower_top_0</Name>
+    <Name>tower_top_0</Name>
     <weight>0.1</weight>
+    <constraints>MC</constraints>
     <posX>-1</posX>
     <posY>-1</posY>
     <posZ>-1</posZ>
@@ -564,14 +581,15 @@
     <npZ />
     <nnX />
     <nnY>
-      <string>Tower_0</string>
-      <string>Tower_bot_0</string>
+      <string>tower_0</string>
+      <string>tower_bot_0</string>
     </nnY>
     <nnZ />
   </PrototypeXML>
   <PrototypeXML>
-    <Name>Tower_bot_0</Name>
-    <weight>0.01</weight>
+    <Name>tower_bot_0</Name>
+    <weight>0.05</weight>
+    <constraints>G,NRH</constraints>
     <posX>-1</posX>
     <posY>v0_0</posY>
     <posZ>-1</posZ>
@@ -580,9 +598,25 @@
     <negZ>-1</negZ>
     <npX />
     <npY>
-      <string>Tower_0</string>
-      <string>Tower_top_0</string>
+      <string>tower_0</string>
+      <string>tower_top_0</string>
     </npY>
+    <npZ />
+    <nnX />
+    <nnY />
+    <nnZ />
+  </PrototypeXML>
+  <PrototypeXML>
+    <Name>-1</Name>
+    <weight>0.5</weight>
+    <posX>-1</posX>
+    <posY>-1</posY>
+    <posZ>-1</posZ>
+    <negX>-1</negX>
+    <negY>-1</negY>
+    <negZ>-1</negZ>
+    <npX />
+    <npY />
     <npZ />
     <nnX />
     <nnY />

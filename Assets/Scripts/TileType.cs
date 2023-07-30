@@ -2,28 +2,20 @@ using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
-public class TileType
+public struct TileType
 {
     public string name;
     public Quaternion rotation;
-    public float weight = 1.0f;
-    public bool grounded = false;
-    public bool mustConnect = false;
+    public float weight;
+    public bool grounded; // If the tile needs to be on the ground
+    public bool mustConnect; // If the tile needs to have at least one its connections satisfied
+    public bool noRepeatH;
+    public bool noRepeatV;
 
     public GameObject tileObject;
 
     public bool[][] neighbors;
     public bool[] hasConnection;
-
-    public TileType()
-    {
-        rotation = Quaternion.identity; // Might need to change this
-        neighbors = new bool[6][];
-        name = string.Empty;
-        weight = 0.5f;
-        tileObject = null;
-        hasConnection = new bool[6];
-    }
 
     public TileType(string name, int rotation, float weight, GameObject tileObject)
     {
@@ -31,6 +23,11 @@ public class TileType
         this.name = name;
         this.weight = weight;
         this.tileObject = tileObject;
+
+        grounded = false; // If the tile needs to be on the ground
+        mustConnect = false; // If the tile needs to have at least one its connections satisfied
+        noRepeatH = false;
+        noRepeatV = false;
 
         neighbors = new bool[6][];
         hasConnection = new bool[6];

@@ -34,11 +34,13 @@ public class TileEntry
     public Symmetry Symmetry;
     public float Weight = 1f;
     public List<Direction> ignoreSide;
+    public string constraints;
 
     public TileEntry()
     {
         Name = string.Empty;
         Symmetry = Symmetry.X;
+        constraints = string.Empty;
     }
 
     public TileEntry(string name, Symmetry symmetry, float weight)
@@ -56,6 +58,7 @@ public class PrototypeXML
     public string Name;
 
     public float weight;
+    public string constraints;
 
     // Sockets
     public string posX = "-1";
@@ -78,9 +81,11 @@ public class PrototypeXML
 
     }
 
-    public PrototypeXML(string name, float weight) {
+    public PrototypeXML(string name, float weight, string constraints)
+    {
         this.Name = name;
         this.weight = weight;
+        this.constraints = constraints;
     }
 }
 
@@ -90,6 +95,7 @@ public class XML_IO : ScriptableObject
     public Vector3Int meshRotation = new Vector3Int();
     public string xmlPath = "models";
     public List<TileEntry> Tiles;
+    public float emptyTileWeight = 0.99f;
 
     private MeshSockets Sockets = new MeshSockets();
     private List<TileType> tileTypes = new List<TileType>();
@@ -132,7 +138,7 @@ public class XML_IO : ScriptableObject
                     // Find tileObject associated with the current tile
                     foreach (TileEntry t in Tiles)
                     {
-                        if (tile.Name.Substring(0, tile.Name.Length - 2) == t.Name)
+                        if (tile.Name.Substring(0, tile.Name.Length - 2) == t.Name.ToLower())
                         {
                             //Debug.Log("Found game object! " + t.tileObject.name);
                             tileObject = t.tileObject;
@@ -146,7 +152,33 @@ public class XML_IO : ScriptableObject
                     // Make sure to have at least a very low weight
                     float weight = tile.weight > 0 ? tile.weight : 0.001f;
 
-                    TileType tileType = new TileType(tile.Name, rotation, weight, tileObject);
+                    TileType tileType = new TileType(tile.Name.ToLower(), rotation, weight, tileObject);
+
+                    // Assign any constraints to the tile
+                    if (tile.constraints != null)
+                    {
+                        string[] parts = tile.constraints.Split(',');
+                        foreach (string part in parts)
+                        {
+                            switch (part)
+                            {
+                                case "G":
+                                    tileType.grounded = true;
+                                    break;
+                                case "MC":
+                                    tileType.mustConnect = true;
+                                    break;
+                                case "NRH":
+                                    tileType.noRepeatH = true;
+                                    break;
+                                case "NRV":
+                                    tileType.noRepeatV = true;
+                                    break;
+                                default:
+                                    continue;
+                            }
+                        }
+                    }
 
                     tileTypes.Add(tileType);
                 }
@@ -161,6 +193,8 @@ public class XML_IO : ScriptableObject
                     tileTypes[i].SetNeighbors(Direction.Up, CreateNeighborsArray(tiles[i].npY));
                     tileTypes[i].SetNeighbors(Direction.Down, CreateNeighborsArray(tiles[i].nnY));
                 }
+
+                Debug.Log("Number of tiles: " + tileTypes.Count);
             }
         }
         else
@@ -181,7 +215,7 @@ public class XML_IO : ScriptableObject
 
         foreach (string neighbor in neighbors)
         {
-            int index = tileTypes.FindIndex(tile => tile.name.Equals(neighbor));
+            int index = tileTypes.FindIndex(tile => tile.name.ToLower().Equals(neighbor));
             if (index < 0)
             {
                 Debug.LogError("Neighbor not found");
@@ -201,7 +235,7 @@ public class XML_IO : ScriptableObject
 
             int totalTileCount = ComputeTileCount();
 
-            PrototypeXML[] tileXML = new PrototypeXML[totalTileCount];
+            PrototypeXML[] tileXML = new PrototypeXML[totalTileCount + 1];
 
             int k = 0;
 
@@ -222,22 +256,25 @@ public class XML_IO : ScriptableObject
                 }
 
                 // Create XML prototype of the tile
-                tileXML[k] = new PrototypeXML(Tiles[i].Name + "_0", Tiles[i].Weight);
+                tileXML[k] = new PrototypeXML(Tiles[i].Name.ToLower() + "_0", Tiles[i].Weight, Tiles[i].constraints);
                 List<string> sockets = Sockets.ComputeMeshSockets(mesh, meshRotation, sidesToIgnore);
 
                 // Get cardinality of the current tile
                 int cardinality = GetCardinality(Tiles[i].Symmetry);
 
-                // This is a bit odd. In my case a cardinality of 2 means that the tile should be flipped 180 degrees
-                for (int j = 1; j < cardinality; j++)
+                // Cardinality is the amount of rotated versions that look different -> so create rotated versions
+                for (int j = 1; j < cardinality; j++) // Note that I start at 1 since the original one is already created
                 {
-                    tileXML[k + j] = new PrototypeXML(Tiles[i].Name + "_" + j, Tiles[i].Weight);
+                    tileXML[k + j] = new PrototypeXML(Tiles[i].Name.ToLower() + "_" + j, Tiles[i].Weight, Tiles[i].constraints);
                 }
 
                 // Assign sockets
                 AssignSockets(sockets, tileXML, k, Tiles[i].Symmetry);
                 k += cardinality;
             }
+
+            // Add the empty tile
+            tileXML[totalTileCount] = CreateEmpty();
 
             // Compute neighbors with the earlier assigned sockets
             ComputeNeighbors(tileXML);
@@ -262,6 +299,30 @@ public class XML_IO : ScriptableObject
         {
             Debug.Log("No path specified");
         }
+    }
+
+    private PrototypeXML CreateEmpty()
+    {
+        PrototypeXML emptyTile = new PrototypeXML();
+
+        emptyTile.Name = "-1";
+        emptyTile.weight = emptyTileWeight;
+
+        emptyTile.posX = "-1";
+        emptyTile.negX = "-1";
+        emptyTile.posY = "-1";
+        emptyTile.negY = "-1";
+        emptyTile.posZ = "-1";
+        emptyTile.negZ = "-1";
+
+        emptyTile.npX = new string[0];
+        emptyTile.nnX = new string[0];
+        emptyTile.npY = new string[0];
+        emptyTile.nnY = new string[0];
+        emptyTile.npZ = new string[0];
+        emptyTile.nnZ = new string[0];
+
+        return emptyTile;
     }
 
     // I am switching stuff around a bit because my models are rotated

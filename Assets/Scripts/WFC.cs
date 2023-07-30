@@ -1,14 +1,10 @@
-using System.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using Debug = UnityEngine.Debug;
-using UnityEngine.Tilemaps;
-using JetBrains.Annotations;
-using static UnityEditor.PlayerSettings;
-using Unity.VisualScripting;
+using System.Data;
 
 public enum Direction
 {
@@ -29,6 +25,8 @@ public enum Symmetry
     D,
 }
 
+// Todo - rename or remove
+// This is used to display the connections
 public struct Thing
 {
     public int type;
@@ -47,6 +45,9 @@ public class WFC : MonoBehaviour
     [SerializeField] public Vector3Int dimensions = new Vector3Int(5, 5, 5);
     [SerializeField] public Vector3Int tileScaling = new Vector3Int(100, 100, 100);
     [SerializeField] private int tileSize = 4;
+    [SerializeField] private int floorGapMax = 5;
+    [SerializeField] private int floorGapMin = 1;
+    [SerializeField] private AnimationCurve towerGrowth;
 
 
     public static int UNDECIDED = -1;
@@ -58,10 +59,20 @@ public class WFC : MonoBehaviour
     private int[,,] tileMap;
     private bool[,,][] tileMapArray;
     private Stack<Vector3Int> tilesToProcess;
+    private List<GameObject> instantiatedTiles;
+    private bool stepping = false;
+    private float count = 0;
 
-    private List<GameObject> InstantiatedTiles;
-    
+    private int[] floorHeights;
+
+    // For debugging
     private List<Thing> viewConnections = new List<Thing>();
+
+    // For my game
+    private int tower_T;
+    private int tower_N;
+    private int tower_B;
+
 
     private void Awake()
     {
@@ -73,7 +84,12 @@ public class WFC : MonoBehaviour
         tileCount = tileTypes.Count;
 
         tileMapArray = new bool[dimensions.x, dimensions.y, dimensions.z][];
-        InstantiatedTiles = new List<GameObject>();
+        instantiatedTiles = new List<GameObject>();
+
+        // For my game
+        tower_T = tileTypes.FindIndex(t => t.name == "tower_top_0");
+        tower_N = tileTypes.FindIndex(t => t.name == "tower_0");
+        tower_B = tileTypes.FindIndex(t => t.name == "tower_bot_0");
     }
 
     void Start()
@@ -85,6 +101,21 @@ public class WFC : MonoBehaviour
         //PrintConnectionCount();
 
         GenerateFull();
+    }
+
+    private void Update()
+    {
+        if (stepping)
+        {
+            if (count <= 0)
+            {
+                count = 1;
+                TakeStep();
+            } else
+            {
+                count -= Time.deltaTime * 8;
+            }
+        }
     }
 
     private void PrintConnectionCount()
@@ -111,6 +142,7 @@ public class WFC : MonoBehaviour
     {
         // Setup clears everything anyways so just call that one instead - a bit unnecessary if you change the dimensions though
         Setup();
+        setupComplete = false;
     }
 
     // Do any necessary steps for running the WFC algorithm
@@ -119,11 +151,11 @@ public class WFC : MonoBehaviour
         //Debug.Log("Generating a new model - Clearing " + boi.Count + " items");
 
         // Clear any already instantiated tiles
-        for (int i = InstantiatedTiles.Count - 1; i >= 0; i--)
+        for (int i = instantiatedTiles.Count - 1; i >= 0; i--)
         {
-            Destroy(InstantiatedTiles[i]);
+            Destroy(instantiatedTiles[i]);
         }
-        InstantiatedTiles.Clear();
+        instantiatedTiles.Clear();
 
         // In the start we do not have any tiles to process
         tilesToProcess.Clear();
@@ -154,36 +186,150 @@ public class WFC : MonoBehaviour
                 }
             }
         }
+
+        // Generate floor heights
+        GenerateFloorHeights();
+
         setupComplete = true;
     }
 
     // Insert any important features before starting WFC
     private void PrePopulate()
     {
-        Vector3Int v = new Vector3Int(Random.Range(0, dimensions.x), 0, Random.Range(0, dimensions.z));
-        int c = 0;
+        List<Vector3Int> list = new List<Vector3Int>();
 
-        tileMap[v.x, v.y, v.z] = c;
-        for (int i = 0; i < tileTypes.Count; i++) // THIS MIGHT MAKE STUFF BREAK IN THE FUTURE
+        // Sprinkle in some bottom tower pieces tiles
+        for (int i = 0; i < Mathf.RoundToInt(dimensions.x); i++)
         {
-            tileMapArray[v.x, v.y, v.z][i] = false;
+            Vector3Int v = new Vector3Int(Random.Range(0, dimensions.x), 0, Random.Range(0, dimensions.z));
+
+            if (!list.Contains(v) && HasEmptySpaceAround(v))
+            {
+                tileMap[v.x, v.y, v.z] = tower_B;
+                for (int j = 0; j < tileTypes.Count; j++)
+                {
+                    tileMapArray[v.x, v.y, v.z][j] = false;
+                }
+                UpdateNeighbors(v);
+                tilesToProcess.Push(v);
+            }
+            list.Add(v);
         }
-        //Debug.Log("Initialized with tower @ " + v.ToString());
-        //Debug.Log("Currently, we have " + tileTypes.Count + " many tile types");
-        UpdateNeighbors(v);
-        tilesToProcess.Push(v);
-
+ 
         ProcessTiles();
+        if (stepping) InstantiateTiles();
+    }
 
-        InstantiateTiles();
+    // Look at spaces around the given position, if they are undecided then this position has empty space around it
+    private bool HasEmptySpaceAround(Vector3Int pos)
+    {
+        for (int i = -1; i < 2; i++)
+        {
+            for (int j = -1; j < 2; j++)
+            {
+                // Note that I do not have to care about i && j both being 0
+                if (pos.x + i >= 0 && pos.z + j >= 0 && pos.x + i < dimensions.x && pos.z + j < dimensions.z)
+                {
+                    if (tileMap[pos.x + i, 0, pos.z + j] >= 0)
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    // I did this to make my towers look neater
+    private void PostProcess()
+    {
+        for (int x = 0; x < dimensions.x; x++)
+        {
+            for (int y = 0; y < dimensions.y; y++)
+            {
+                for (int z = 0; z < dimensions.z; z++)
+                {
+                    int i = tileMap[x, y, z];
+                    if (i >= 0)
+                    {
+                        if (i == tower_B)
+                        {
+                            // The selected tower is a bottom piece, remove it if there is no connection upwards
+                            if (tileMap[x, y + 1, z] == EMPTY_TILE) { 
+                                tileMap[x, y, z] = EMPTY_TILE; 
+                            } else
+                            {
+                                // Put a couple of extra tower pieces in there to avoid starting at the same floor as all of the other tiles
+                                for (int j = -1; j > -floorGapMin; j--)
+                                {
+                                    InstantiateTile(tileTypes[tower_N].tileObject, x, j, z, tileTypes[tower_N].rotation);
+                                }
+                                InstantiateTile(tileTypes[tower_B].tileObject, x, -floorGapMin, z, tileTypes[tower_B].rotation);
+                            }
+                            
+
+                        } else if (i == tower_N)
+                        {
+                            // Swap to top piece if no upward connection
+                            if (y == dimensions.y - 1 || tileMap[x, y + 1, z] == EMPTY_TILE)
+                            {
+                                GrowTower(x, y, z);
+                            }
+                        } else if (i == tower_T)
+                        {
+                            GrowTower(x, y, z);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void GrowTower(int x, int y, int z)
+    {
+        tileMap[x, y, z] = tower_N;
+
+        // Get a number to grow to
+        float f = Random.Range(0.0f, 1.0f);
+        float height = towerGrowth.Evaluate(f);
+        int height_i = Mathf.RoundToInt(height) + 1;
+
+        int start = floorHeights[y] + 1;
+        int end = floorHeights[y] + height_i;
+
+        // Make sure that the growth does not lead to poking through floors
+        // If we are at the top, there is no need to worry about breaking through floors
+        if (y != dimensions.y - 1 && floorHeights[y + 1] < end) end = floorHeights[y + 1] - 1;
+
+        InstantiateTile(tileTypes[tower_T].tileObject, x, end, z, tileTypes[tower_T].rotation);
+
+        for (int i = start; i < end; i++)
+        {
+            InstantiateTile(tileTypes[tower_N].tileObject, x, i, z, tileTypes[tower_N].rotation);
+        }
+    }
+
+    private void InstantiateTile(GameObject gameObject, int x, int y, int z, Quaternion rotation)
+    {
+        GameObject obj = Instantiate(gameObject, new Vector3(x * tileSize, y * tileSize, z * tileSize), rotation);
+        obj.transform.localScale = tileScaling;
+        obj.transform.parent = transform;
+        instantiatedTiles.Add(obj);
     }
 
     // Generate a complete volume of tiles
     public void GenerateFull()
     {
-        Setup();
+        Debug.Log("Pre 'Processing' Started...");
 
-        Debug.Log("Start");
+        Setup();
+        PrePopulate();
+
+        Debug.Log("Pre 'Processing' Done.");
+
+
+
+        Debug.Log("WFC Started...");
 
         int maxIterationsLeft = dimensions.x * dimensions.y * dimensions.z;
         Vector3Int nextWave = FindLowestEntropy();
@@ -196,17 +342,31 @@ public class WFC : MonoBehaviour
             nextWave = FindLowestEntropy();
             maxIterationsLeft--;
         }
+        Debug.Log("WFC Done");
+
+        Debug.Log("Post 'Processing' Started...");
+
+        PostProcess();
+
+        Debug.Log("Post 'Processing' Done.");
+
         InstantiateTiles();
-        //PrintArrayCount();
-        Debug.Log("End");
     }
 
-    public void TakeStep()
+    public void ToggleStepping()
+    {
+        stepping = !stepping;
+        Debug.Log("Stepping " + (stepping ? "ON" : "OFF"));
+    }
+
+    private void TakeStep()
     {
         // Run setup if needed
         if (!setupComplete)
         {
             Setup();
+            PrePopulate();
+            count = 10;
             setupComplete = true;
         }
 
@@ -221,6 +381,7 @@ public class WFC : MonoBehaviour
         }
         else
         {
+            stepping = false;
             Debug.Log("Could not get any further");
         }
     }
@@ -230,7 +391,7 @@ public class WFC : MonoBehaviour
     {
         float z = -3;
         float x = 0;
-        for (int i = 0; i < tileCount; i++)
+        for (int i = 0; i < tileCount - 1; i++)
         {
             if (tileTypes[i].name.EndsWith('0'))
             {
@@ -255,18 +416,29 @@ public class WFC : MonoBehaviour
                 for (int y = 0; y < dimensions.y; y++)
                 {
                     int index = tileMap[x, y, z];
-                    if (index >= 0)
+                    if (index >= 0 && tileTypes[index].name != "-1")
                     {
-                        GameObject obj = Instantiate(tileTypes[index].tileObject, new Vector3(x * tileSize, y * tileSize, z * tileSize), tileTypes[index].rotation);
+                        int height = floorHeights[y]; 
+
+                        GameObject obj = Instantiate(tileTypes[index].tileObject, new Vector3(x * tileSize, height * tileSize, z * tileSize), tileTypes[index].rotation);
                         obj.transform.localScale = tileScaling;
                         obj.transform.parent = transform;
-                        InstantiatedTiles.Add(obj);
-                    } else
-                    {
-                        continue;
-/*                        GameObject obj = Instantiate(tileTypes[0].tileObject, new Vector3(x * tileSize, y * tileSize, z * tileSize), tileTypes[0].rotation);
-                        obj.transform.parent = transform;
-                        boi.Add(obj);*/
+                        instantiatedTiles.Add(obj);
+                        
+                        // Fill in towers
+                        if (y > 0 && (index == tower_N || index == tower_T))
+                        {
+                            int start = floorHeights[y-1] * tileSize + tileSize;
+                            int end = height * tileSize;
+                            for (int y2 = start; y2 < end; y2 += tileSize)
+                            {
+                                obj = Instantiate(tileTypes[tower_N].tileObject, new Vector3(x * tileSize, y2, z * tileSize), tileTypes[tower_N].rotation);
+                                obj.transform.localScale = tileScaling;
+                                obj.transform.parent = transform;
+                                instantiatedTiles.Add(obj);
+                                //Debug.Log(y2);
+                            }
+                        } 
                     }
                 }
             }
@@ -277,12 +449,34 @@ public class WFC : MonoBehaviour
     {
         foreach (Vector3Int v in toInstantiate)
         {
+            // Ignore empty tiles
             if (tileMap[v.x, v.y, v.z] == EMPTY_TILE) continue;
+
             TileType tileType = tileTypes[tileMap[v.x, v.y, v.z]];
-            GameObject obj = Instantiate(tileType.tileObject, new Vector3(v.x * tileSize, v.y * tileSize, v.z * tileSize), tileType.rotation);
+            
+            if (tileType.name == "-1") continue;
+
+            int height = floorHeights[v.y];
+            
+            GameObject obj = Instantiate(tileType.tileObject, new Vector3(v.x * tileSize, height * tileSize, v.z * tileSize), tileType.rotation);
             obj.transform.localScale = tileScaling;
             obj.transform.parent = transform;
-            InstantiatedTiles.Add(obj);
+            instantiatedTiles.Add(obj);
+
+            // Fill in towers
+            if (height > 0 && tileMap[v.x, v.y, v.z] == tower_N)
+            {
+                int start = floorHeights[v.y - 1] * tileSize + tileSize;
+                int end = height * tileSize;
+                for (int y2 = start; y2 < end; y2 += tileSize)
+                {
+                    obj = Instantiate(tileTypes[tower_N].tileObject, new Vector3(v.x * tileSize, y2, v.z * tileSize), tileTypes[tower_N].rotation);
+                    obj.transform.localScale = tileScaling;
+                    obj.transform.parent = transform;
+                    instantiatedTiles.Add(obj);
+                    //Debug.Log(y2);
+                }
+            }
         }
     }
 
@@ -364,8 +558,92 @@ public class WFC : MonoBehaviour
     // If you do not have any custom constraints, just return true here or remove the function
     private bool EnforceCustomConstraints(int x, int y, int z, int i)
     {
+        if (tileTypes[i].grounded && y != 0)
+        {
+            return false;
+        }
+
+        if (tileTypes[i].mustConnect && !CanConnect(x, y, z, i))
+        {
+            return false;
+        }
+
+        if (tileTypes[i].noRepeatH)
+        {
+            if (x > 0 && tileMap[x-1, y, z] == i) { return false; }
+            if (x < dimensions.x - 1 && tileMap[x+1, y, z] == i) { return false; }
+            if (z > 0 && tileMap[x, y, z - 1] == i) { return false; }
+            if (z < dimensions.z - 1 && tileMap[x, y, z + 1] == i) { return false; }
+        }
+
+        if (tileTypes[i].noRepeatH)
+        {
+            if (y > 0 && tileMap[x, y - 1, z] == i) { return false; }
+            if (y < dimensions.y - 1 && tileMap[x, y + 1, z] == i) { return false; }
+        }
 
         return true;
+    }
+
+    private bool CanConnectTo(int x, int y, int z, bool[] neighbors)
+    {
+        for (int i = 0; i < neighbors.Length; i++)
+        {
+            if (neighbors[i] && tileMap[x, y, z] == i) return true;
+        }
+        return false;
+    }
+
+    private bool CanConnect(int x, int y, int z, int i)
+    {
+
+        if (tileTypes[i].hasConnection[(int)Direction.West])
+        {
+            if (x > 0 && CanConnectTo(x-1, y, z, tileTypes[i].neighbors[(int)Direction.West]))
+            {
+                return true;
+            }
+        }
+
+        if (tileTypes[i].hasConnection[(int)Direction.East])
+        {
+            if (x < dimensions.x - 1 && CanConnectTo(x + 1, y, z, tileTypes[i].neighbors[(int)Direction.East]))
+            {
+                //Debug.Log("Failed East.");
+                return true;
+            }
+        }
+
+        if (tileTypes[i].hasConnection[(int)Direction.South])
+        {
+            if (z > 0 && CanConnectTo(x, y, z - 1, tileTypes[i].neighbors[(int)Direction.South]))
+            {
+                //Debug.Log("Failed South.");
+                return true;
+            }
+        }
+
+        if (tileTypes[i].hasConnection[(int)Direction.North])
+        {
+            if (z < dimensions.z - 1 && CanConnectTo(x, y, z + 1, tileTypes[i].neighbors[(int)Direction.North]))
+            {
+                //Debug.Log("Failed North.");
+                return true;
+            }
+        }
+
+        if (tileTypes[i].hasConnection[(int)Direction.Down] && (y > 0 && CanConnectTo(x, y - 1, z, tileTypes[i].neighbors[(int)Direction.Down])))
+        {
+            //Debug.Log("Failed Down.");
+            return true;
+        }
+
+        if (tileTypes[i].hasConnection[(int)Direction.Up] && (y < dimensions.y - 1 && CanConnectTo(x, y + 1, z, tileTypes[i].neighbors[(int)Direction.Up])))
+        {
+            //Debug.Log("Failed Up.");
+            return true;
+        }
+        return false;
     }
 
     // Thank you chatGPT :-)
@@ -445,17 +723,6 @@ public class WFC : MonoBehaviour
 
         //Debug.Log("Passed");
         return true;
-    }
-
-    private bool HasConnection(int x, int y, int z, int i)
-    {
-        /*
-        if (x > 0 && tileMap[x - 1, y, z] != -1 && tileTypes[tileMap[x - 1, y, z]].connections[(int)Direction.East] == tileTypes[i].connections[(int)Direction.West]) return true;
-        if (x < dimensions.x - 1 && tileMap[x + 1, y, z] != -1 && tileTypes[tileMap[x + 1, y, z]].connections[(int)Direction.West] == tileTypes[i].connections[(int)Direction.East]) return true;
-        if (z > 0 && tileMap[x, y, z - 1] != -1 && tileTypes[tileMap[x, y, z - 1]].connections[(int)Direction.North] == tileTypes[i].connections[(int)Direction.South]) return true;
-        if (z < dimensions.z - 1 && tileMap[x, y, z + 1] != -1 && tileTypes[tileMap[x, y, z + 1]].connections[(int)Direction.South] == tileTypes[i].connections[(int)Direction.North]) return true;
-        */
-        return false;
     }
 
 
@@ -611,6 +878,19 @@ public class WFC : MonoBehaviour
             }
         }
     }
+
+    // Generate a random gap between floors
+    private void GenerateFloorHeights()
+    {
+        floorHeights = new int[dimensions.y];
+        int height = 0;
+        for (int i = 0; i < dimensions.y; i++)
+        {
+            floorHeights[i] = height;
+            height = Random.Range(height + floorGapMin, height + floorGapMax);
+        }
+    }
+
 
     // Get the entropy of a tile
     private float GetEntropy(Vector3Int pos)

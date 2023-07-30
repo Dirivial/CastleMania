@@ -1,0 +1,8 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <ui:Vector3IntField label="Dimensions" binding-path="dimensions" />
+    <ui:Vector3IntField label="Scaling" binding-path="tileScaling" />
+    <ui:IntegerField label="Tile Size" value="8" binding-path="tileSize" />
+    <ui:IntegerField label="Y - Gap Max" value="4" binding-path="floorGapMax" />
+    <ui:IntegerField label="Y - Gap Min" value="2" binding-path="floorGapMin" />
+    <uie:CurveField label="Tower Growth Curve" binding-path="towerGrowth" />
+</ui:UXML>
