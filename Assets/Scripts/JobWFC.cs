@@ -6,7 +6,9 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
+using Unity.Burst;
 
+[BurstCompile]
 public struct JobWFC: IJob
 {
 
@@ -15,22 +17,22 @@ public struct JobWFC: IJob
 	// Pain
 	private NativeArray<int> tileMap;
 	private NativeArray<bool> tileMapArray;
-	private NativeArray<NativeTileType> tileTypes;
-	private NativeArray<bool> neighborData;
-	private NativeArray<bool> hasConnectionData;
+	private NativeArray<NativeTileType>.ReadOnly tileTypes;
+	private NativeArray<bool>.ReadOnly neighborData;
+	private NativeArray<bool>.ReadOnly hasConnectionData;
 	private Vector3Int dimensions;
 	private int tileCount;
 
-	private static int UNDECIDED = -1;
-	private static int EMPTY_TILE = -2;
-	//private int currentTileToProcess;
+	private static readonly int UNDECIDED = -1;
+	private static readonly int EMPTY_TILE = -2;
+
 	private NativeList<Vector3Int> tilesToProcess;
     private Unity.Mathematics.Random random;
 
 	public JobWFC(Vector2Int position, Vector3Int dimensions, 
-		NativeArray<NativeTileType> tileTypes, NativeArray<bool> tileMapArray, int tileCount, 
-		NativeArray<int> tileMap, NativeArray<bool> neighborData, 
-		NativeArray<bool> hasConnectionData, NativeList<Vector3Int> tilesToProcess)
+		NativeArray<NativeTileType>.ReadOnly tileTypes, NativeArray<bool> tileMapArray, int tileCount, 
+		NativeArray<int> tileMap, NativeArray<bool>.ReadOnly neighborData, 
+		NativeArray<bool>.ReadOnly hasConnectionData, NativeList<Vector3Int> tilesToProcess)
 	{
 		this.position = position;
 		this.dimensions = dimensions;
@@ -102,6 +104,7 @@ public struct JobWFC: IJob
 
 	// Check two tiles are valid neighbors
 	private bool IsNeighbor(int index, Direction direction, int otherIndex) {
+		if (otherIndex < 0) return false;
 		return neighborData[index + tileCount * ((int)direction + 6 * otherIndex)];
 	}
 
@@ -111,7 +114,7 @@ public struct JobWFC: IJob
 	{
 		// Look for the lowest entropy in the tile map
 		float lowestEntropy = tileCount + 1;
-		List<Vector3Int> possiblePositions = new List<Vector3Int>();
+		NativeList<Vector3Int> possiblePositions = new NativeList<Vector3Int>(0, Allocator.Temp);
 		Vector3Int lowestEntropyPosition = new Vector3Int(-1, -1, -1);
 		for (int x = 0; x < dimensions.x; x++)
 		{
@@ -135,7 +138,7 @@ public struct JobWFC: IJob
 
 		if (lowestEntropy != tileCount + 1) return lowestEntropyPosition;
 
-		return possiblePositions.Count > 0 ? possiblePositions[random.NextInt(0, possiblePositions.Count - 1)] : new Vector3Int(-1, -1, -1);
+		return possiblePositions.Length > 0 ? possiblePositions[random.NextInt(0, possiblePositions.Length - 1)] : new Vector3Int(-1, -1, -1);
 	}
 
 	// Get the entropy of a tile
@@ -164,11 +167,10 @@ public struct JobWFC: IJob
 	}
 
 	// Process the tiles that were have been but in the tilesToProcess stack. Returns list of coordinates for tiles that have been set
-	private List<Vector3Int> ProcessTiles()
+	private void ProcessTiles()
 	{
 		int maxIterations = 1000;
 		int i = 0;
-		List<Vector3Int> setTiles = new List<Vector3Int>();
 		while (tilesToProcess.Length > 0 && maxIterations > i)
 		{
 			Vector3Int tilePosition = tilesToProcess[tilesToProcess.Length - 1];
@@ -192,7 +194,6 @@ public struct JobWFC: IJob
 
 					tileMap[ConvertTo1D(tilePosition.x, tilePosition.y, tilePosition.z)] = chosenTile;
 					UpdateNeighbors(tilePosition);
-					setTiles.Add(tilePosition);
 
 					// We have a single chunk type, so we can set it
 					for (int j = tileCount - 1; j >= 0; j--)
@@ -209,11 +210,9 @@ public struct JobWFC: IJob
 			else
 			{
 				UpdateNeighbors(tilePosition);
-				setTiles.Add(tilePosition);
 			}
 			i++;
 		}
-		return setTiles;
 	}
 
 	// Update the neighbors of the given chunk position
@@ -320,10 +319,11 @@ public struct JobWFC: IJob
 			}
 		}
 	}
+
 	private int ChooseTileTypeAt(int x, int y, int z)
 	{
 		//Debug.Log("Position: " + x + " , " + y + ", " + z);
-		List<int> choices = new List<int>(); // All possible choices
+		NativeList<int> choices = new NativeList<int>(0, Allocator.Temp); // All possible choices
 
 		for (int i = 0; i < tileCount; i++)
 		{
@@ -338,7 +338,7 @@ public struct JobWFC: IJob
 		}
 
 		// Choose a random tile type from the list of possible tile types
-		if (choices.Count > 0)
+		if (choices.Length > 0)
 		{
 			return ChooseWithWeights(choices);
 		}
@@ -357,11 +357,10 @@ public struct JobWFC: IJob
             return false;
         }
 
-		/*
         if (tileTypes[i].mustConnect && !CanConnect(x, y, z, i))
         {
             return false;
-        } */
+        }
 
         if (tileTypes[i].noRepeatH)
         {
@@ -380,12 +379,12 @@ public struct JobWFC: IJob
         return true;
     }
 
-    private int ChooseWithWeights(List<int> indices)
+    private int ChooseWithWeights(NativeList<int> indices)
 	{
 		float cumulativeSum = 0.0f;
-		float[] cumulativeWeights = new float[indices.Count];
+		NativeArray<float> cumulativeWeights = new NativeArray<float>(indices.Length, Allocator.Temp);
 
-		for (int i = 0; i < indices.Count; i++)
+		for (int i = 0; i < indices.Length; i++)
 		{
 			cumulativeSum += tileTypes[indices[i]].weight;
 			cumulativeWeights[i] = cumulativeSum;
@@ -393,7 +392,7 @@ public struct JobWFC: IJob
 
 		float r = random.NextFloat(0, cumulativeSum);
 
-		int index = Array.BinarySearch(cumulativeWeights, r);
+		int index = NativeSortExtension.BinarySearch(cumulativeWeights, r);
 		if (index < 0) index = ~index;
 
 		return indices[index];
@@ -455,65 +454,63 @@ public struct JobWFC: IJob
 		return true;
 	}
 
-	/*
-    private bool CanConnectTo(int x, int y, int z, bool[] neighbors)
-    {
-        for (int i = 0; i < neighbors.Length; i++)
-        {
-            if (neighbors[i] && tileMap[x, y, z] == i) return true;
-        }
-        return false;
-    }
 
     private bool CanConnect(int x, int y, int z, int i)
     {
 
-        if (HasConnection(i, Direction.West))
+        if (HasConnection(i, Direction.West) && x > 0)
         {
-            if (x > 0 && CanConnectTo(x - 1, y, z, neighborData[(int)Direction.West]))
+            int neighbor = tileMap[ConvertTo1D(x-1, y, z)];
+            if (IsNeighbor(i, Direction.West, neighbor))
             {
                 return true;
             }
         }
 
-        if (HasConnection(i, Direction.East))
+        if (HasConnection(i, Direction.East) && x < dimensions.x - 1)
         {
-            if (x < dimensions.x - 1 && CanConnectTo(x + 1, y, z, tileTypes[i].neighbors[(int)Direction.East]))
+            int neighbor = tileMap[ConvertTo1D(x + 1, y, z)];
+            if (IsNeighbor(i, Direction.East, neighbor))
             {
-                //Debug.Log("Failed East.");
                 return true;
             }
         }
 
-        if (HasConnection(i, Direction.South))
+        if (HasConnection(i, Direction.South) && z > 0)
         {
-            if (z > 0 && CanConnectTo(x, y, z - 1, tileTypes[i].neighbors[(int)Direction.South]))
+            int neighbor = tileMap[ConvertTo1D(x, y, z - 1)];
+            if (IsNeighbor(i, Direction.South, neighbor))
             {
-                //Debug.Log("Failed South.");
                 return true;
             }
         }
 
-        if (HasConnection(i, Direction.North))
+        if (HasConnection(i, Direction.North) && z < dimensions.z - 1)
         {
-            if (z < dimensions.z - 1 && CanConnectTo(x, y, z + 1, tileTypes[i].neighbors[(int)Direction.North]))
+            int neighbor = tileMap[ConvertTo1D(x, y, z + 1)];
+            if (IsNeighbor(i, Direction.North, neighbor))
             {
-                //Debug.Log("Failed North.");
                 return true;
             }
         }
 
-        if (HasConnection(i, Direction.Down) && (y > 0 && CanConnectTo(x, y - 1, z, tileTypes[i].neighbors[(int)Direction.Down])))
+        if (HasConnection(i, Direction.Down) && y > 0)
         {
-            //Debug.Log("Failed Down.");
-            return true;
+            int neighbor = tileMap[ConvertTo1D(x, y - 1, z)];
+            if (IsNeighbor(i, Direction.Down, neighbor))
+            {
+                return true;
+            }
         }
 
-        if (HasConnection(i, Direction.Up) && (y < dimensions.y - 1 && CanConnectTo(x, y + 1, z, tileTypes[i].neighbors[(int)Direction.Up])))
+        if (HasConnection(i, Direction.Up) && y < dimensions.y - 1)
         {
-            //Debug.Log("Failed Up.");
-            return true;
+            int neighbor = tileMap[ConvertTo1D(x, y + 1, z)];
+            if (IsNeighbor(i, Direction.Up, neighbor))
+            {
+                return true;
+            }
         }
         return false;
-    } */
+    }
 }

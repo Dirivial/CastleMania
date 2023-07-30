@@ -546,7 +546,7 @@
   <PrototypeXML>
     <Name>tower_0</Name>
     <weight>0.8</weight>
-    <constraints>MC</constraints>
+    <constraints>MC,NRH</constraints>
     <posX>-1</posX>
     <posY>v0_0</posY>
     <posZ>-1</posZ>
@@ -569,7 +569,7 @@
   <PrototypeXML>
     <Name>tower_top_0</Name>
     <weight>0.1</weight>
-    <constraints>MC</constraints>
+    <constraints>MC,NRH</constraints>
     <posX>-1</posX>
     <posY>-1</posY>
     <posZ>-1</posZ>

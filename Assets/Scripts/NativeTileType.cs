@@ -1,8 +1,9 @@
 using System.Linq;
 using Unity.Collections;
 using UnityEngine;
+using Unity.Burst;
 
-[System.Serializable]
+[BurstCompile]
 public struct NativeTileType
 {
     public float weight;

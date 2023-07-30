@@ -56,14 +56,14 @@ MonoBehaviour:
     Symmetry: 0
     Weight: 0.8
     ignoreSide: 
-    constraints: MC
+    constraints: MC,NRH
   - Name: Tower_top
     tileObject: {fileID: 919132149155446097, guid: 256376ffb7de42c44b3b86ac949091cd,
       type: 3}
     Symmetry: 0
     Weight: 0.1
     ignoreSide: 
-    constraints: MC
+    constraints: MC,NRH
   - Name: Tower_bot
     tileObject: {fileID: 919132149155446097, guid: 2e1f6c956ddc18f478ee9fe2e782f444,
       type: 3}
