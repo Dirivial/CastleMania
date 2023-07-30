@@ -12,9 +12,6 @@ using Unity.VisualScripting;
 [BurstCompile]
 public struct JobWFC: IJob
 {
-
-	public Vector2Int position;
-
 	private NativeArray<int> tileMap;
 	
 	// Readonly
@@ -36,12 +33,11 @@ public struct JobWFC: IJob
 	[DeallocateOnJobCompletion]
     private NativeArray<bool> tileMapArray;
 
-    public JobWFC(Vector2Int position, Vector3Int dimensions, 
+    public JobWFC(Vector3Int dimensions, 
 		NativeArray<NativeTileType>.ReadOnly tileTypes, int tileCount, 
 		NativeArray<int> tileMap, NativeArray<bool>.ReadOnly neighborData, 
 		NativeArray<bool>.ReadOnly hasConnectionData)
 	{
-		this.position = position;
 		this.dimensions = dimensions;
 		this.tileTypes = tileTypes;
         this.tileCount = tileCount;

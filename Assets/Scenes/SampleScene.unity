@@ -153,7 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerTransform: {fileID: 571415301}
-  chunkSize: 10
+  chunkSize: 120
   chunkCount: 2
   wfcManager: {fileID: 656479663}
 --- !u!4 &389366917
@@ -336,8 +336,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 717bb370d68d432458b3a07c594a1d6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkingSpeed: 15
-  runningSpeed: 16.5
+  walkingSpeed: 10
+  runningSpeed: 12
   jumpSpeed: 8
   gravity: 0
   playerCamera: {fileID: 1105266931}
@@ -400,6 +400,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chunkSize: 15
+  numberOfFloors: 3
   numberOfJobs: 5
   XML_IO: {fileID: 11400000, guid: a1d8e7e02f31f3749b67dbd042250b03, type: 2}
   tileSize: 8

@@ -29,6 +29,7 @@ public class ChunkManager: MonoBehaviour
         // If the player has moved to a new chunk, update the chunks
         if (playerChunk != currentPlayerChunk)
         {
+            Debug.Log(playerTransform.position + " in chunk " + playerChunk);
             currentPlayerChunk = playerChunk;
             UpdateChunks();
         }

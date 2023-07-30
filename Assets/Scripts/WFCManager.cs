@@ -9,7 +9,7 @@ using UnityEngine.UIElements;
 
 public class WFCManager : MonoBehaviour
 {
-    public int chunkSize;
+    public int chunkSize = 15;
     public int numberOfFloors = 3;
     public int numberOfJobs = 1;
     public XML_IO XML_IO;
@@ -67,26 +67,11 @@ public class WFCManager : MonoBehaviour
         chunks = new Dictionary<Vector2Int, ChunkWFC> ();
     }
 
-    /*
-    public void Start()
-    {
-        Debug.Log("Starting Jobs");
-
-        for (int i = 0; i < numberOfJobs; i++)
-        {
-            Vector2Int position = new Vector2Int(i, i);
-            chunks[position].jobHandle = chunks[position].jobWFC.Schedule();
-            Debug.Log("Scheduled job #" + i);
-        }
-
-        Debug.Log("Done");
-    } */
-
     public void LateUpdate()
     {
         for (int i = pendingChunks.Count - 1; i >= 0; i--)
         {
-            if (chunks[pendingChunks[i]].jobHandle.IsCompleted && !chunks[pendingChunks[i]].isInstantiated)
+            if (chunks.ContainsKey(pendingChunks[i]) && chunks[pendingChunks[i]].jobHandle.IsCompleted)
             {
                 chunks[pendingChunks[i]].jobHandle.Complete();
                 InstantiateTiles(pendingChunks[i]);
@@ -115,13 +100,6 @@ public class WFCManager : MonoBehaviour
 
     public void UpdateChunks(Vector2Int playerPosition, int chunkCount)
     {
-        /*
-        if (!chunks.ContainsKey(playerPosition))
-        {
-            Debug.Log(playerPosition);
-            CreateChunk(playerPosition);
-        } */
-
         // Loop through the chunks surrounding the player and load/unload as needed
         for (int x = playerPosition.x - chunkCount; x <= playerPosition.x + chunkCount; x++)
         {
@@ -133,35 +111,29 @@ public class WFCManager : MonoBehaviour
                 if (!chunks.ContainsKey(chunkPos))
                 {
                     CreateChunk(chunkPos);
-                    //InstantiateTiles(chunkPos);
-                    // Instantiate a new chunk prefab
-                    /*
-                    GameObject chunk = Instantiate(chunkPrefab, new Vector3(x * chunkSize, 0f, y * chunkSize), Quaternion.identity);
-                    chunk.transform.parent = transform;
-                    chunks.Add(chunkPos, chunk);
-                    */
                 }
             }
         }
     
-        /*
         // Unload chunks that are too far from the player
         List<Vector2Int> chunksToRemove = new List<Vector2Int>();
-        foreach (var chunk in chunks)
+        foreach (Vector2Int chunk in chunks.Keys)
         {
-            if (Mathf.Abs(chunk.Key.x - playerPosition.x) > chunkCount || chunk.Key.y - playerPosition.y > chunkCount || chunk.Key.y - playerPosition.y < -1)
+            if (Mathf.Abs(chunk.x - playerPosition.x) > chunkCount || Mathf.Abs(chunk.y - playerPosition.y) > chunkCount)
             {
-                chunksToRemove.Add(chunk.Key);
+                chunksToRemove.Add(chunk);
             }
         }
-        /*
+
         foreach (var chunkPos in chunksToRemove)
         {
-            Destroy(chunks[chunkPos]);
+            if (!chunks.ContainsKey(chunkPos)) { continue; }
+            foreach (GameObject tile in chunks[chunkPos].tiles)
+            {
+                Destroy(tile);
+            }
             chunks.Remove(chunkPos);
         }
-        */
-
     }
 
     private void CreateChunk(Vector2Int chunkPos)
@@ -176,7 +148,7 @@ public class WFCManager : MonoBehaviour
         NativeList<Vector3Int> tilesToProcess = new NativeList<Vector3Int>(0, Allocator.Persistent);
 
         // Create job
-        JobWFC job = new JobWFC(chunkPos, dimensions, tileTypes.AsReadOnly(), tileCount, tileMap, neighborData.AsReadOnly(), hasConnectionData.AsReadOnly());
+        JobWFC job = new JobWFC(dimensions, tileTypes.AsReadOnly(), tileCount, tileMap, neighborData.AsReadOnly(), hasConnectionData.AsReadOnly());
 
         // Fill chunk with datachunks
         chunk.tileMap = tileMap;
@@ -185,7 +157,6 @@ public class WFCManager : MonoBehaviour
         chunk.jobWFC = job;
 
         // Store chunk
-        //chunks[chunkPos] = chunk;
         chunks.Add(chunkPos, chunk);
 
         pendingChunks.Add(chunkPos);
@@ -211,8 +182,8 @@ public class WFCManager : MonoBehaviour
     private void InstantiateTiles(Vector2Int position)
     {
         NativeArray<int> tileMap = chunks[position].tileMap;
-        int xOffset = position.x * dimensions.x * tileSize;
-        int zOffset = position.y * dimensions.z * tileSize;
+        int xOffset = position.x * chunkSize * tileSize;
+        int zOffset = position.y * chunkSize * tileSize;
         int scale = 50 * tileSize;
         Vector3Int tileScaling = new Vector3Int(scale, scale, scale);
         for (int x = 0; x < dimensions.x; x++)
@@ -228,7 +199,8 @@ public class WFCManager : MonoBehaviour
 
                         GameObject obj = Instantiate(imported_tiles[index].tileObject, new Vector3(x * tileSize + xOffset, height * tileSize, z * tileSize + zOffset), imported_tiles[index].rotation);
                         obj.transform.localScale = tileScaling;
-                        obj.transform.parent = transform;
+                        chunks[position].tiles.Add(obj);
+                        //obj.transform.parent = transform;
                         //instantiatedTiles.Add(obj);
                     }
                 }
