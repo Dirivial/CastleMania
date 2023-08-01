@@ -8,17 +8,12 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.UIElements;
 
 public struct Interval
 {
     public int start;
     public int end;
-}
-
-public struct Filter
-{
-    public string position;
-    public bool isNew;
 }
 
 public class WFCManager : MonoBehaviour
@@ -44,7 +39,7 @@ public class WFCManager : MonoBehaviour
     // Gaming
     private int tileCount;
     private Dictionary<Vector2Int, ChunkWFC> chunks;
-    private Dictionary<string, NativeArray<bool>> filters;
+    private Dictionary<string, NativeArray<int>> bufferZones;
     List<Vector2Int> pendingChunks = new List<Vector2Int>();
     private Vector3Int dimensions = new Vector3Int(5, 5, 5);
     private static int EMPTY_TILE = -2;
@@ -59,7 +54,7 @@ public class WFCManager : MonoBehaviour
     private void Awake()
     {
         dimensions = new Vector3Int(chunkSize, numberOfFloors, chunkSize);
-        filters = new Dictionary<string, NativeArray<bool>>();
+        bufferZones = new Dictionary<string, NativeArray<int>>();
 
         XML_IO.ClearTileTypes();
         XML_IO.Import();
@@ -114,7 +109,7 @@ public class WFCManager : MonoBehaviour
                 chunks[pos].jobWFC.OnDestroy();
                 chunks[pos].isInstantiated = true;
                 //Debug.Log("Job completed @ " + pendingChunks[i]);
-                FillFilters(pos);
+                //FillFilters(pos);
 
                 pendingChunks.RemoveAt(i);
 
@@ -134,11 +129,11 @@ public class WFCManager : MonoBehaviour
         {
             c.tileMap.Dispose();
             c.jobWFC.OnDestroy();
-            if (c.dependencies != null)
-            {
-                c.dependencies.Dispose();
-                allocations--;
-            }
+            c.outNorth.Dispose();
+            c.outSouth.Dispose();
+            c.outEast.Dispose();
+            c.outWest.Dispose();
+
             allocations--;
 
             //Debug.Log("Disposed of chunk @ " + c.position);
@@ -183,13 +178,11 @@ public class WFCManager : MonoBehaviour
             }
             chunks[chunkPos].jobHandle.Complete();
             chunks[chunkPos].tileMap.Dispose();
+            chunks[chunkPos].outNorth.Dispose();
+            chunks[chunkPos].outSouth.Dispose();
+            chunks[chunkPos].outEast.Dispose();
+            chunks[chunkPos].outWest.Dispose();
             chunks[chunkPos].jobWFC.OnDestroy();
-
-            if (chunks[chunkPos].dependencies != null)
-            {
-                chunks[chunkPos].dependencies.Dispose();
-                allocations--;
-            }
 
             allocations--;
 
@@ -206,15 +199,21 @@ public class WFCManager : MonoBehaviour
 
         // Allocate memory for the chunk/job
         NativeArray<int> tileMap = new NativeArray<int>(dimensions.x * dimensions.y * dimensions.z, Allocator.Persistent);
-        allocations += 1;
+        chunk.outNorth = new NativeArray<bool>(dimensions.y * dimensions.x, Allocator.Persistent);
+        chunk.outSouth = new NativeArray<bool>(dimensions.y * dimensions.x, Allocator.Persistent);
+        chunk.outEast = new NativeArray<bool>(dimensions.y * dimensions.z, Allocator.Persistent);
+        chunk.outWest = new NativeArray<bool>(dimensions.y * dimensions.z, Allocator.Persistent);
+        allocations += 5;
 
-        float x = chunkPos.x, y = chunkPos.y;
+        //float x = chunkPos.x, y = chunkPos.y;
 
-        Filter[] f = CreateMissingFilters(x, y);
+        //Filter[] f = CreateMissingFilters(x, y);
+
+
 
         // Create job
         JobWFC job = new JobWFC(dimensions, tileTypes.AsReadOnly(), tileCount, tileMap, neighborData.AsReadOnly(), hasConnectionData.AsReadOnly(),
-            filters[f[0].position].AsReadOnly(), filters[f[1].position].AsReadOnly(), filters[f[2].position].AsReadOnly(), filters[f[3].position].AsReadOnly(), f[0].isNew, f[1].isNew, f[2].isNew, f[3].isNew);
+            chunk.outNorth, chunk.outSouth, chunk.outEast, chunk.outWest);
 
         // Fill chunk with the data we want to access later
         chunk.tileMap = tileMap;
@@ -223,35 +222,8 @@ public class WFCManager : MonoBehaviour
         // Store chunk
         chunks.Add(chunkPos, chunk);
 
-        List<Vector2Int> adjacentPendingChunks = new List<Vector2Int>();
-        foreach (Vector2Int pos in pendingChunks)
-        {
-            if (Mathf.Abs(chunkPos.x - pos.x) + Mathf.Abs(chunkPos.y - pos.y) <= 1) {
-                adjacentPendingChunks.Add(pos);
-            }
-        }
-
         pendingChunks.Add(chunkPos);
-
-        if (adjacentPendingChunks.Count > 0)
-        {
-            NativeArray<JobHandle> dependencies = new NativeArray<JobHandle>(adjacentPendingChunks.Count, Allocator.Persistent);
-            allocations++;
-            string str = "";
-            for (int i = 0; i < adjacentPendingChunks.Count; i++)
-            {
-                dependencies[i] = chunks[adjacentPendingChunks[i]].jobHandle;
-                str += adjacentPendingChunks[i] + ", ";
-            }
-            JobHandle sickHandle = JobHandle.CombineDependencies(dependencies);
-            chunks[chunkPos].dependencies = dependencies;
-            Debug.Log(chunkPos + " has " + adjacentPendingChunks.Count + " dependencies: " + str);
-            chunks[chunkPos].jobHandle = chunks[chunkPos].jobWFC.Schedule(sickHandle);
-        }
-        else
-        {
-            chunks[chunkPos].jobHandle = chunks[chunkPos].jobWFC.Schedule();
-        }
+        chunks[chunkPos].jobHandle = chunks[chunkPos].jobWFC.Schedule();
     }
 
     private void CreateChunks(List<Vector2Int> positions)
@@ -271,8 +243,8 @@ public class WFCManager : MonoBehaviour
     private void InstantiateTiles(Vector2Int position)
     {
         NativeArray<int> tileMap = chunks[position].tileMap;
-        int xOffset = position.x * chunkSize * tileSize;
-        int zOffset = position.y * chunkSize * tileSize;
+        int xOffset = position.x * chunkSize * tileSize + tileSize * position.x;
+        int zOffset = position.y * chunkSize * tileSize + tileSize * position.y;
         for (int x = 0; x < dimensions.x; x++)
         {
             for (int z = 0; z < dimensions.z; z++)
@@ -414,6 +386,7 @@ public class WFCManager : MonoBehaviour
         }
     }
 
+    /*
     private Filter[] CreateMissingFilters(float x, float z)
     {
         Filter[] result = new Filter[4];
@@ -424,56 +397,26 @@ public class WFCManager : MonoBehaviour
 
         for (int i = 0; i < 4; i++)
         {
-            if (!filters.ContainsKey(result[i].position))
+            if (!bufferZones.ContainsKey(result[i].position))
             {
                 result[i].isNew = true;
                 if (i < 2)
                 {
-                    filters.Add(result[i].position, new NativeArray<bool>(dimensions.y * dimensions.x, Allocator.Persistent));
+                    bufferZones.Add(result[i].position, new NativeArray<bool>(dimensions.y * dimensions.x, Allocator.Persistent));
                 } else
                 {
-                    filters.Add(result[i].position, new NativeArray<bool>(dimensions.y * dimensions.z, Allocator.Persistent));
+                    bufferZones.Add(result[i].position, new NativeArray<bool>(dimensions.y * dimensions.z, Allocator.Persistent));
                 }
                 
             }
         }
 
         return result;
-    }
-
-    private void FillFilters(Vector2Int chunkPos)
-    {
-        float x = chunkPos.x;
-        float z = chunkPos.y;
-
-        if (chunks[chunkPos].jobWFC.openSlotNorth)
-        {
-            string str = "" + x + ";" + (z + 0.5f);
-            filters[str] = chunks[chunkPos].jobWFC.northOut;
-        }
-
-        if (chunks[chunkPos].jobWFC.openSlotSouth)
-        {
-            string str = "" + x + ";" + (z - 0.5f);
-            filters[str] = chunks[chunkPos].jobWFC.southOut;
-        }
-
-        if (chunks[chunkPos].jobWFC.openSlotEast)
-        {
-            string str = "" + (x + 0.5f) + ";" + z;
-            filters[str] = chunks[chunkPos].jobWFC.eastOut;
-        }
-
-        if (chunks[chunkPos].jobWFC.openSlotWest)
-        {
-            string str = "" + (x - 0.5f) + ";" + z;
-            filters[str] = chunks[chunkPos].jobWFC.westOut;
-        }
-    }
+    } */
 
     private void OnDrawGizmos()
     {
-        if (filters == null)
+        if (chunks == null)
         {
             return;
         }
@@ -483,45 +426,63 @@ public class WFCManager : MonoBehaviour
         Vector3 sizeA = new Vector3(2f, 1f, 1f);
         Vector3 sizeB = new Vector3(1f, 1f, 2f);
 
-        Gizmos.DrawCube(new Vector3(8, 0, 8), new Vector3(2f ,2f, 2f));
+        Gizmos.DrawCube(new Vector3(tileSize * chunkSize / 2 - tileSize / 2, 0, tileSize * chunkSize / 2 - tileSize / 2), new Vector3(2f ,2f, 2f));
         Gizmos.color = Color.white;
-        foreach (var filter in filters)
+        foreach (ChunkWFC chunk in chunks.Values)
         {
-            string[] str = filter.Key.Split(";");
-            float x = float.Parse(str[0]);
-            float z = float.Parse(str[1]);
-
-            if (str[0].Contains("."))
+            if(!chunk.jobHandle.IsCompleted)
             {
-                for (int i = 0; i < dimensions.z; i++)
-                {
-                    if (filter.Value[i])
-                    {
-                        Gizmos.color = Color.green;
-                    } else
-                    {
-                        Gizmos.color = Color.red;
-                    }
-                    Vector3 p = new Vector3(x * tileSize * chunkSize + tileSize, 1f, z * tileSize * chunkSize + i * tileSize);
-                    Gizmos.DrawCube(p, sizeB);
-                }
-            } else
-            {
-                for (int i = 0; i < dimensions.x; i++)
-                {
-                    if (filter.Value[i])
-                    {
-                        Gizmos.color = Color.green;
-                    }
-                    else
-                    {
-                        Gizmos.color = Color.red;
-                    }
-                    Vector3 p = new Vector3(x * tileSize * chunkSize + i * tileSize, 1f, z * tileSize * chunkSize + tileSize);
-                    Gizmos.DrawCube(p, sizeA);
-                }
+                continue;
             }
+            int xOffset = chunk.position.x * chunkSize * tileSize + tileSize * chunk.position.x;
+            int zOffset = chunk.position.y * chunkSize * tileSize + tileSize * chunk.position.y;
+            for (int i = 0; i < dimensions.z; i++)
+            {
+                if (chunk.outWest[i])
+                {
+                    Gizmos.color = Color.green;
+                } else
+                {
+                    Gizmos.color = Color.red;
+                }
+                Vector3 p = new Vector3(xOffset - tileSize / 2, 1f, zOffset + i * tileSize);
+                Gizmos.DrawCube(p, sizeB);
 
+                if (chunk.outEast[i])
+                {
+                    Gizmos.color = Color.green;
+                }
+                else
+                {
+                    Gizmos.color = Color.red;
+                }
+                p = new Vector3(xOffset + tileSize * chunkSize - tileSize / 2, 1f, zOffset + i * tileSize);
+                Gizmos.DrawCube(p, sizeB);
+            }
+            for (int i = 0; i < dimensions.x; i++)
+            {
+                if (chunk.outNorth[i])
+                {
+                    Gizmos.color = Color.green;
+                }
+                else
+                {
+                    Gizmos.color = Color.red;
+                }
+                Vector3 p = new Vector3(xOffset + i * tileSize, 1f, zOffset + tileSize * chunkSize - tileSize / 2);
+                Gizmos.DrawCube(p, sizeA);
+
+                if (chunk.outSouth[i])
+                {
+                    Gizmos.color = Color.green;
+                }
+                else
+                {
+                    Gizmos.color = Color.red;
+                }
+                p = new Vector3(xOffset + i * tileSize, 1f, zOffset - tileSize / 2);
+                Gizmos.DrawCube(p, sizeA);
+            }
         }
     }
 }

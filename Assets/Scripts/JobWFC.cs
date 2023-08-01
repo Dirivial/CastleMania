@@ -12,21 +12,12 @@ using Unity.VisualScripting;
 //[BurstCompile]
 public struct JobWFC: IJob
 {
-	public NativeArray<bool> northOut;
-    public NativeArray<bool> southOut;
-    public NativeArray<bool> eastOut;
-    public NativeArray<bool> westOut;
+	public NativeArray<bool> outNorth;
+    public NativeArray<bool> outSouth;
+    public NativeArray<bool> outEast;
+    public NativeArray<bool> outWest;
 
     private NativeArray<int> tileMap;
-	private NativeArray<bool>.ReadOnly connectionsNorth;
-    private NativeArray<bool>.ReadOnly connectionsSouth;
-    private NativeArray<bool>.ReadOnly connectionsEast;
-    private NativeArray<bool>.ReadOnly connectionsWest;
-
-	public bool openSlotNorth;
-	public bool openSlotSouth;
-	public bool openSlotEast;
-	public bool openSlotWest;
 
     // Readonly
     private NativeArray<NativeTileType>.ReadOnly tileTypes;
@@ -51,12 +42,10 @@ public struct JobWFC: IJob
 		NativeArray<NativeTileType>.ReadOnly tileTypes, int tileCount, 
 		NativeArray<int> tileMap, NativeArray<bool>.ReadOnly neighborData, 
 		NativeArray<bool>.ReadOnly hasConnectionData,
-        NativeArray<bool>.ReadOnly connectionsNorth,
-        NativeArray<bool>.ReadOnly connectionsSouth,
-        NativeArray<bool>.ReadOnly connectionsEast,
-        NativeArray<bool>.ReadOnly connectionsWest,
-		bool openSlotNorth, bool openSlotSouth,
-		bool openSlotEast, bool openSlotWest)
+        NativeArray<bool> outNorth,
+        NativeArray<bool> outSouth,
+        NativeArray<bool> outEast,
+        NativeArray<bool> outWest)
 	{
 		this.dimensions = dimensions;
 		this.tileTypes = tileTypes;
@@ -66,21 +55,11 @@ public struct JobWFC: IJob
         this.tileMap = tileMap;
 
 		// Outside connections
-		this.connectionsNorth = connectionsNorth;
-		this.connectionsSouth = connectionsSouth;
-		this.connectionsEast = connectionsEast;
-		this.connectionsWest = connectionsWest;
+		this.outNorth = outNorth;
+		this.outSouth = outSouth;
+		this.outEast = outEast;
+		this.outWest = outWest;
 
-		this.openSlotNorth = openSlotNorth;
-		this.openSlotSouth = openSlotSouth;
-		this.openSlotEast = openSlotEast;
-		this.openSlotWest = openSlotWest;
-
-
-        northOut = new NativeArray<bool>(openSlotNorth ? dimensions.x * dimensions.y : 0, Allocator.Persistent);
-		southOut = new NativeArray<bool>(openSlotSouth ? dimensions.x * dimensions.y : 0, Allocator.Persistent);
-		eastOut = new NativeArray<bool>(openSlotEast ? dimensions.z * dimensions.y : 0, Allocator.Persistent);
-		westOut = new NativeArray<bool>(openSlotWest ? dimensions.z * dimensions.y : 0, Allocator.Persistent);
 
 		// Allocate memory for the temporary stuff
 		tilesToProcess = new NativeList<Vector3Int>(0, Allocator.Persistent);
@@ -228,22 +207,22 @@ public struct JobWFC: IJob
 	{
         // If the tile has a connection outside, it should be marked in one of the corresponding lists
         // Note that we do not check up/down
-        if (openSlotSouth && pos.z == 0 && HasConnection(index, Direction.South))
+        if (pos.z == 0 && HasConnection(index, Direction.South))
         {
-            northOut[pos.x + pos.y * dimensions.x] = true;
+            outSouth[pos.x + pos.y * dimensions.x] = true;
         }
-        if (openSlotNorth && pos.z == dimensions.z - 1 && HasConnection(index, Direction.North))
+        if (pos.z == dimensions.z - 1 && HasConnection(index, Direction.North))
         {
-            southOut[pos.x + pos.y * dimensions.x] = true;
+            outNorth[pos.x + pos.y * dimensions.x] = true;
         }
 
-        if (openSlotWest && pos.x == 0 && HasConnection(index, Direction.West))
+        if (pos.x == 0 && HasConnection(index, Direction.West))
         {
-            westOut[pos.z + pos.y * dimensions.z] = true;
+            outWest[pos.z + pos.y * dimensions.z] = true;
         }
-        if (openSlotEast && pos.x == dimensions.x - 1 && HasConnection(index, Direction.East))
+        if (pos.x == dimensions.x - 1 && HasConnection(index, Direction.East))
         {
-            eastOut[pos.z + pos.y * dimensions.z] = true;
+            outEast[pos.z + pos.y * dimensions.z] = true;
         }
     }
 
@@ -485,14 +464,7 @@ public struct JobWFC: IJob
 
 		if (HasConnection(i, Direction.West))
 		{
-			if (x == 0)
-			{
-				if (!openSlotWest && !connectionsWest[z + y * dimensions.z])
-				{
-                    return false;
-				}
-			} 
-			else if (x > 0 && tileMap[ConvertTo1D(x - 1, y, z)] == EMPTY_TILE)
+			if (x > 0 && tileMap[ConvertTo1D(x - 1, y, z)] == EMPTY_TILE)
 			{
 				return false;
 			}
@@ -500,14 +472,7 @@ public struct JobWFC: IJob
 
 		if (HasConnection(i, Direction.East))
 		{
-			if (x == dimensions.x - 1)
-			{
-                if (!openSlotEast && !connectionsEast[z + y * dimensions.z])
-                {
-                    return false;
-                }
-            }
-			else if (x < dimensions.x - 1 && tileMap[ConvertTo1D(x + 1, y, z)] == EMPTY_TILE)
+			if (x < dimensions.x - 1 && tileMap[ConvertTo1D(x + 1, y, z)] == EMPTY_TILE)
 			{
 				//Debug.Log("Failed East.");
 				return false;
@@ -516,14 +481,7 @@ public struct JobWFC: IJob
 
 		if (HasConnection(i, Direction.South))
 		{
-			if (z == 0)
-			{
-                if (openSlotSouth && !connectionsSouth[x + y * dimensions.x])
-                {
-                    return false;
-                }
-            }
-			else if (z > 0 && tileMap[ConvertTo1D(x, y, z - 1)] == EMPTY_TILE)
+			if (z > 0 && tileMap[ConvertTo1D(x, y, z - 1)] == EMPTY_TILE)
 			{
 				//Debug.Log("Failed South.");
 				return false;
@@ -532,14 +490,7 @@ public struct JobWFC: IJob
 
 		if (HasConnection(i, Direction.North))
 		{
-			if (z == dimensions.z - 1)
-			{
-                if ( openSlotNorth && !connectionsNorth[x + y * dimensions.x])
-                {
-                    return false;
-                }
-            }
-			else if (z < dimensions.z - 1 && tileMap[ConvertTo1D(x, y, z + 1)] == EMPTY_TILE)
+			if (z < dimensions.z - 1 && tileMap[ConvertTo1D(x, y, z + 1)] == EMPTY_TILE)
 			{
 				//Debug.Log("Failed North.");
 				return false;

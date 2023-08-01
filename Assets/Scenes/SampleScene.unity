@@ -400,7 +400,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tileScale: {x: 400, y: 400, z: 400}
-  chunkSize: 3
+  chunkSize: 15
   numberOfFloors: 1
   floorHeight: 5
   XML_IO: {fileID: 11400000, guid: a1d8e7e02f31f3749b67dbd042250b03, type: 2}

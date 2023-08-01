@@ -14,7 +14,11 @@ public class ChunkWFC
 
     // Remember to deallocate
     public NativeArray<int> tileMap;
-    public NativeArray<JobHandle> dependencies;
+
+    public NativeArray<bool> outNorth;
+    public NativeArray<bool> outSouth;
+    public NativeArray<bool> outEast;
+    public NativeArray<bool> outWest;
 
     // Job information
     public JobWFC jobWFC;
