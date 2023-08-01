@@ -153,8 +153,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerTransform: {fileID: 571415301}
-  chunkSize: 120
-  chunkCount: 2
+  chunkSize: 12
+  chunkCount: 1
   wfcManager: {fileID: 656479663}
 --- !u!4 &389366917
 Transform:
@@ -399,11 +399,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56a3c3c4bd4791e41a4c7e752294727f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chunkSize: 15
-  numberOfFloors: 3
-  numberOfJobs: 5
+  tileScale: {x: 400, y: 400, z: 400}
+  chunkSize: 3
+  numberOfFloors: 1
+  floorHeight: 5
   XML_IO: {fileID: 11400000, guid: a1d8e7e02f31f3749b67dbd042250b03, type: 2}
   tileSize: 8
+  towerGrowth:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 4.0040255
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!4 &656479664
 Transform:
   m_ObjectHideFlags: 0

@@ -9,13 +9,27 @@ using UnityEngine;
 using Unity.Burst;
 using Unity.VisualScripting;
 
-[BurstCompile]
+//[BurstCompile]
 public struct JobWFC: IJob
 {
-	private NativeArray<int> tileMap;
-	
-	// Readonly
-	private NativeArray<NativeTileType>.ReadOnly tileTypes;
+	public NativeArray<bool> northOut;
+    public NativeArray<bool> southOut;
+    public NativeArray<bool> eastOut;
+    public NativeArray<bool> westOut;
+
+    private NativeArray<int> tileMap;
+	private NativeArray<bool>.ReadOnly connectionsNorth;
+    private NativeArray<bool>.ReadOnly connectionsSouth;
+    private NativeArray<bool>.ReadOnly connectionsEast;
+    private NativeArray<bool>.ReadOnly connectionsWest;
+
+	public bool openSlotNorth;
+	public bool openSlotSouth;
+	public bool openSlotEast;
+	public bool openSlotWest;
+
+    // Readonly
+    private NativeArray<NativeTileType>.ReadOnly tileTypes;
 	private NativeArray<bool>.ReadOnly neighborData;
 	private NativeArray<bool>.ReadOnly hasConnectionData;
 	
@@ -36,7 +50,13 @@ public struct JobWFC: IJob
     public JobWFC(Vector3Int dimensions, 
 		NativeArray<NativeTileType>.ReadOnly tileTypes, int tileCount, 
 		NativeArray<int> tileMap, NativeArray<bool>.ReadOnly neighborData, 
-		NativeArray<bool>.ReadOnly hasConnectionData)
+		NativeArray<bool>.ReadOnly hasConnectionData,
+        NativeArray<bool>.ReadOnly connectionsNorth,
+        NativeArray<bool>.ReadOnly connectionsSouth,
+        NativeArray<bool>.ReadOnly connectionsEast,
+        NativeArray<bool>.ReadOnly connectionsWest,
+		bool openSlotNorth, bool openSlotSouth,
+		bool openSlotEast, bool openSlotWest)
 	{
 		this.dimensions = dimensions;
 		this.tileTypes = tileTypes;
@@ -45,8 +65,25 @@ public struct JobWFC: IJob
 		this.hasConnectionData = hasConnectionData;
         this.tileMap = tileMap;
 
+		// Outside connections
+		this.connectionsNorth = connectionsNorth;
+		this.connectionsSouth = connectionsSouth;
+		this.connectionsEast = connectionsEast;
+		this.connectionsWest = connectionsWest;
+
+		this.openSlotNorth = openSlotNorth;
+		this.openSlotSouth = openSlotSouth;
+		this.openSlotEast = openSlotEast;
+		this.openSlotWest = openSlotWest;
+
+
+        northOut = new NativeArray<bool>(openSlotNorth ? dimensions.x * dimensions.y : 0, Allocator.Persistent);
+		southOut = new NativeArray<bool>(openSlotSouth ? dimensions.x * dimensions.y : 0, Allocator.Persistent);
+		eastOut = new NativeArray<bool>(openSlotEast ? dimensions.z * dimensions.y : 0, Allocator.Persistent);
+		westOut = new NativeArray<bool>(openSlotWest ? dimensions.z * dimensions.y : 0, Allocator.Persistent);
+
 		// Allocate memory for the temporary stuff
-        tilesToProcess = new NativeList<Vector3Int>(0, Allocator.Persistent);
+		tilesToProcess = new NativeList<Vector3Int>(0, Allocator.Persistent);
         tileMapArray = new NativeArray<bool>(dimensions.x * dimensions.y * dimensions.z * tileCount, Allocator.Persistent);
 
         //currentTileToProcess = 0;
@@ -86,14 +123,22 @@ public struct JobWFC: IJob
 			nextWave = FindLowestEntropy();
 			maxIterationsLeft--;
 		}
-
-		Debug.Log("I have completed my job");
+		//Debug.Log("I have completed my job");
 	}
 
 	public void OnDestroy()
 	{
-        tilesToProcess.Dispose();
-    }
+		if (tilesToProcess.IsCreated) // I got an error and this fixed it :)
+		{
+            tilesToProcess.Dispose();
+        }
+		/*
+        southOut.Dispose();
+		northOut.Dispose();
+		eastOut.Dispose();
+		westOut.Dispose();
+		*/	
+	}
 
 	// Convert coordinates to singular coordinate for tile map
 	private int ConvertTo1D(int x, int y, int z)
@@ -166,15 +211,41 @@ public struct JobWFC: IJob
 	// Pick a tile at the given tile position
 	private void PickTileAt(Vector3Int pos)
 	{
-		tileMap[ConvertTo1D(pos.x, pos.y, pos.z)] = ChooseTileTypeAt(pos.x, pos.y, pos.z);
+		int index = ChooseTileTypeAt(pos.x, pos.y, pos.z);
+		tileMap[ConvertTo1D(pos.x, pos.y, pos.z)] = index;
 
         for (int i = 0; i < tileCount; i++)
 		{
             tileMapArray[TileMapArrayCoord(pos.x, pos.y, pos.z, i)] = false;
 		}
 
-		tilesToProcess.Add(pos);
+		StoreConnectionOut(pos, index);
+
+        tilesToProcess.Add(pos);
 	}
+
+	private void StoreConnectionOut(Vector3Int pos, int index)
+	{
+        // If the tile has a connection outside, it should be marked in one of the corresponding lists
+        // Note that we do not check up/down
+        if (openSlotSouth && pos.z == 0 && HasConnection(index, Direction.South))
+        {
+            northOut[pos.x + pos.y * dimensions.x] = true;
+        }
+        if (openSlotNorth && pos.z == dimensions.z - 1 && HasConnection(index, Direction.North))
+        {
+            southOut[pos.x + pos.y * dimensions.x] = true;
+        }
+
+        if (openSlotWest && pos.x == 0 && HasConnection(index, Direction.West))
+        {
+            westOut[pos.z + pos.y * dimensions.z] = true;
+        }
+        if (openSlotEast && pos.x == dimensions.x - 1 && HasConnection(index, Direction.East))
+        {
+            eastOut[pos.z + pos.y * dimensions.z] = true;
+        }
+    }
 
 	// Process the tiles that were have been but in the tilesToProcess stack. Returns list of coordinates for tiles that have been set
 	private void ProcessTiles()
@@ -414,16 +485,29 @@ public struct JobWFC: IJob
 
 		if (HasConnection(i, Direction.West))
 		{
-			if (x == 0 || tileMap[ConvertTo1D(x - 1, y, z)] == EMPTY_TILE)
+			if (x == 0)
 			{
-				//Debug.Log("Failed West.");
+				if (!openSlotWest && !connectionsWest[z + y * dimensions.z])
+				{
+                    return false;
+				}
+			} 
+			else if (x > 0 && tileMap[ConvertTo1D(x - 1, y, z)] == EMPTY_TILE)
+			{
 				return false;
 			}
 		}
 
 		if (HasConnection(i, Direction.East))
 		{
-			if (x == dimensions.x - 1 || tileMap[ConvertTo1D(x + 1, y, z)] == EMPTY_TILE)
+			if (x == dimensions.x - 1)
+			{
+                if (!openSlotEast && !connectionsEast[z + y * dimensions.z])
+                {
+                    return false;
+                }
+            }
+			else if (x < dimensions.x - 1 && tileMap[ConvertTo1D(x + 1, y, z)] == EMPTY_TILE)
 			{
 				//Debug.Log("Failed East.");
 				return false;
@@ -432,7 +516,14 @@ public struct JobWFC: IJob
 
 		if (HasConnection(i, Direction.South))
 		{
-			if (z == 0 || tileMap[ConvertTo1D(x, y, z - 1)] == EMPTY_TILE)
+			if (z == 0)
+			{
+                if (openSlotSouth && !connectionsSouth[x + y * dimensions.x])
+                {
+                    return false;
+                }
+            }
+			else if (z > 0 && tileMap[ConvertTo1D(x, y, z - 1)] == EMPTY_TILE)
 			{
 				//Debug.Log("Failed South.");
 				return false;
@@ -441,26 +532,32 @@ public struct JobWFC: IJob
 
 		if (HasConnection(i, Direction.North))
 		{
-			if (z == dimensions.z - 1 || tileMap[ConvertTo1D(x, y, z + 1)] == EMPTY_TILE)
+			if (z == dimensions.z - 1)
+			{
+                if ( openSlotNorth && !connectionsNorth[x + y * dimensions.x])
+                {
+                    return false;
+                }
+            }
+			else if (z < dimensions.z - 1 && tileMap[ConvertTo1D(x, y, z + 1)] == EMPTY_TILE)
 			{
 				//Debug.Log("Failed North.");
 				return false;
 			}
 		}
 
-		if (HasConnection(i, Direction.Down) && (y == 0 || tileMap[ConvertTo1D(x, y - 1, z)] == EMPTY_TILE))
+		if (HasConnection(i, Direction.Down) && (y > 0 && tileMap[ConvertTo1D(x, y - 1, z)] == EMPTY_TILE))
 		{
 			//Debug.Log("Failed Down.");
 			return false;
 		}
 
-		if (HasConnection(i, Direction.Up) && (y == dimensions.y - 1 || tileMap[ConvertTo1D(x, y + 1, z)] == EMPTY_TILE))
+		if (HasConnection(i, Direction.Up) && (y < dimensions.y - 1 && tileMap[ConvertTo1D(x, y + 1, z)] == EMPTY_TILE))
 		{
 			//Debug.Log("Failed Up.");
 			return false;
 		}
 
-		//Debug.Log("Passed");
 		return true;
 	}
 

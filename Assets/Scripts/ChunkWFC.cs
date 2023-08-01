@@ -14,8 +14,7 @@ public class ChunkWFC
 
     // Remember to deallocate
     public NativeArray<int> tileMap;
-    public NativeArray<bool> tileMapArray;
-    public NativeList<Vector3Int> tilesToProcess;
+    public NativeArray<JobHandle> dependencies;
 
     // Job information
     public JobWFC jobWFC;

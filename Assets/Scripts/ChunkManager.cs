@@ -22,8 +22,8 @@ public class ChunkManager: MonoBehaviour
     {
         // Calculate the player's current chunk position
         Vector2Int playerChunk = new Vector2Int(
-            Mathf.FloorToInt(playerTransform.position.x / chunkSize),
-            Mathf.FloorToInt(playerTransform.position.z / chunkSize)
+            Mathf.FloorToInt((playerTransform.position.x) / chunkSize),
+            Mathf.FloorToInt((playerTransform.position.z) / chunkSize)
         );
 
         // If the player has moved to a new chunk, update the chunks
@@ -37,7 +37,6 @@ public class ChunkManager: MonoBehaviour
 
     private void UpdateChunks()
     {
-        Debug.Log("Yo");
         wfcManager.UpdateChunks(currentPlayerChunk, chunkCount);
     }
 }
