@@ -1,21 +1,16 @@
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Unity.Collections;
 using Unity.Jobs;
-using Unity.Mathematics;
 using UnityEngine;
 using Unity.Burst;
-using Unity.VisualScripting;
 
-//[BurstCompile]
+[BurstCompile]
 public struct JobWFC: IJob
 {
-	public NativeArray<bool> outNorth;
-    public NativeArray<bool> outSouth;
-    public NativeArray<bool> outEast;
-    public NativeArray<bool> outWest;
+	public NativeArray<int> outNorth;
+    public NativeArray<int> outSouth;
+    public NativeArray<int> outEast;
+    public NativeArray<int> outWest;
 
     private NativeArray<int> tileMap;
 
@@ -42,10 +37,11 @@ public struct JobWFC: IJob
 		NativeArray<NativeTileType>.ReadOnly tileTypes, int tileCount, 
 		NativeArray<int> tileMap, NativeArray<bool>.ReadOnly neighborData, 
 		NativeArray<bool>.ReadOnly hasConnectionData,
-        NativeArray<bool> outNorth,
-        NativeArray<bool> outSouth,
-        NativeArray<bool> outEast,
-        NativeArray<bool> outWest)
+        NativeArray<int> outNorth,
+        NativeArray<int> outSouth,
+        NativeArray<int> outEast,
+        NativeArray<int> outWest,
+		uint seed)
 	{
 		this.dimensions = dimensions;
 		this.tileTypes = tileTypes;
@@ -65,9 +61,8 @@ public struct JobWFC: IJob
 		tilesToProcess = new NativeList<Vector3Int>(0, Allocator.Persistent);
         tileMapArray = new NativeArray<bool>(dimensions.x * dimensions.y * dimensions.z * tileCount, Allocator.Persistent);
 
-        //currentTileToProcess = 0;
-
-        random = new Unity.Mathematics.Random(1);
+		//currentTileToProcess = 0;
+        random = new Unity.Mathematics.Random(seed);
 
 		for (int x = 0; x < dimensions.x; x++)
 		{
@@ -111,12 +106,6 @@ public struct JobWFC: IJob
 		{
             tilesToProcess.Dispose();
         }
-		/*
-        southOut.Dispose();
-		northOut.Dispose();
-		eastOut.Dispose();
-		westOut.Dispose();
-		*/	
 	}
 
 	// Convert coordinates to singular coordinate for tile map
@@ -207,22 +196,22 @@ public struct JobWFC: IJob
 	{
         // If the tile has a connection outside, it should be marked in one of the corresponding lists
         // Note that we do not check up/down
-        if (pos.z == 0 && HasConnection(index, Direction.South))
+        if (pos.z == 0)
         {
-            outSouth[pos.x + pos.y * dimensions.x] = true;
+            outSouth[pos.x + pos.y * dimensions.x] = index;
         }
-        if (pos.z == dimensions.z - 1 && HasConnection(index, Direction.North))
+        if (pos.z == dimensions.z - 1)
         {
-            outNorth[pos.x + pos.y * dimensions.x] = true;
+            outNorth[pos.x + pos.y * dimensions.x] = index;
         }
 
-        if (pos.x == 0 && HasConnection(index, Direction.West))
+        if (pos.x == 0)
         {
-            outWest[pos.z + pos.y * dimensions.z] = true;
+            outWest[pos.z + pos.y * dimensions.z] = index;
         }
-        if (pos.x == dimensions.x - 1 && HasConnection(index, Direction.East))
+        if (pos.x == dimensions.x - 1)
         {
-            outEast[pos.z + pos.y * dimensions.z] = true;
+            outEast[pos.z + pos.y * dimensions.z] = index;
         }
     }
 

@@ -153,8 +153,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerTransform: {fileID: 571415301}
-  chunkSize: 12
-  chunkCount: 1
+  chunkSize: 128
+  chunkCount: 2
   wfcManager: {fileID: 656479663}
 --- !u!4 &389366917
 Transform:
@@ -401,7 +401,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileScale: {x: 400, y: 400, z: 400}
   chunkSize: 15
-  numberOfFloors: 1
+  numberOfFloors: 5
   floorHeight: 5
   XML_IO: {fileID: 11400000, guid: a1d8e7e02f31f3749b67dbd042250b03, type: 2}
   tileSize: 8

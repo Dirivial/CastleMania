@@ -1,28 +1,27 @@
-
+﻿
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
-using Unity.Burst;
 using System.Collections.Generic;
 
-public class ChunkWFC
+public class BufferZone
 {
-    public Vector2Int position;
-    public bool isInstantiated;
+    public Vector2Int positionA;
+    public Vector2Int positionB;
+    private bool isInstantiated;
+    private bool isHorizontal;
 
     public List<GameObject> tiles = new List<GameObject>();
 
     // Remember to deallocate
     public NativeArray<int> tileMap;
 
-    public NativeArray<int> outNorth;
-    public NativeArray<int> outSouth;
-    public NativeArray<int> outEast;
-    public NativeArray<int> outWest;
-
     // Job information
-    public JobWFC jobWFC;
+    public BufferJob bufferJob;
     public JobHandle jobHandle;
+
+    public bool IsInstantiated { get => isInstantiated; set => isInstantiated = value; }
+    public bool IsHorizontal { get => isHorizontal; set => isHorizontal = value; }
 
     public void SetJobHandle(JobHandle jobHandle)
     {
@@ -31,6 +30,6 @@ public class ChunkWFC
 
     public void SetIsInstantiated(bool isInstantiated)
     {
-        this.isInstantiated = isInstantiated;
+        this.IsInstantiated = isInstantiated;
     }
 }
