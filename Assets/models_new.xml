@@ -546,7 +546,7 @@
   <PrototypeXML>
     <Name>tower_bot_0</Name>
     <weight>0.05</weight>
-    <constraints>G,NRH</constraints>
+    <constraints>G,NRH,TT</constraints>
     <posX>-1</posX>
     <posY>v0_0</posY>
     <posZ>-1</posZ>
@@ -567,7 +567,7 @@
   <PrototypeXML>
     <Name>tower_top_0</Name>
     <weight>0.05</weight>
-    <constraints>NRH,MC</constraints>
+    <constraints>NRH,MC,TT</constraints>
     <posX>-1</posX>
     <posY>-1</posY>
     <posZ>-1</posZ>
@@ -588,7 +588,7 @@
   <PrototypeXML>
     <Name>tower_0</Name>
     <weight>0.8</weight>
-    <constraints>MC,NRH</constraints>
+    <constraints>MC,NRH,TT</constraints>
     <posX>-1</posX>
     <posY>v0_0</posY>
     <posZ>-1</posZ>
@@ -613,7 +613,7 @@
   <PrototypeXML>
     <Name>tower_window_0</Name>
     <weight>0.8</weight>
-    <constraints>MC,NRH</constraints>
+    <constraints>MC,NRH,TT</constraints>
     <posX>-1</posX>
     <posY>v0_0</posY>
     <posZ>-1</posZ>

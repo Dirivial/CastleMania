@@ -240,12 +240,8 @@ public class MeshSockets
             if (id == String.Empty)
             {
                 id = GenerateID(true) + "_0";
-                Debug.Log("Adding on Y: " + id);
+                //Debug.Log("Adding on Y: " + id);
                 sockets.Add(new Socket(id, posY.ToArray()));
-                foreach (Vector2 v in posY)
-                {
-                    Debug.Log(v);
-                }
                 GenerateRotated(posY, id);
             }
             meshSockets.Add(id);
@@ -263,12 +259,8 @@ public class MeshSockets
             { 
                 
                 id = GenerateID(true) + "_0";
-                Debug.Log("Adding on -Y: " + id);
+                //Debug.Log("Adding on -Y: " + id);
                 sockets.Add(new Socket(id, negY.ToArray()));
-                foreach (Vector2 v in negY)
-                {
-                    Debug.Log(v);
-                }
                 GenerateRotated(negY, id);
             }
             meshSockets.Add(id);

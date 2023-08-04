@@ -2,15 +2,17 @@ using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
-public struct TileType
+public class TileType
 {
     public string name;
+    public int id;
     public Quaternion rotation;
     public float weight;
     public bool grounded; // If the tile needs to be on the ground
     public bool mustConnect; // If the tile needs to have at least one its connections satisfied
     public bool noRepeatH;
     public bool noRepeatV;
+    public bool isTowerType;
 
     public GameObject tileObject;
 
@@ -28,6 +30,7 @@ public struct TileType
         mustConnect = false; // If the tile needs to have at least one its connections satisfied
         noRepeatH = false;
         noRepeatV = false;
+        isTowerType = false;
 
         neighbors = new bool[6][];
         hasConnection = new bool[6];

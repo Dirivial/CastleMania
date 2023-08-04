@@ -61,6 +61,8 @@ public class WFCManager : Manager
 
     private uint seed = 1;
 
+    private TilePooler pooler;
+
     public int TilesPerChunk { get => tilesPerChunk; set =>  tilesPerChunk = value / tileSize - 1; }
 
     public void Setup()
@@ -88,15 +90,16 @@ public class WFCManager : Manager
             tile.noRepeatV = tileType.noRepeatV;
             tile.mustConnect = tileType.mustConnect;
             tile.grounded = tileType.grounded;
+            tile.isTowerTile = tileType.isTowerType;
 
             ComputeNeighborData(tileType, i);
             ComputeHasConnection(tileType, i);
 
             // Set indices of the tower tiles
-            if (tileType.name.Equals("tower_0")) { tower = i; tile.isTowerTile = true; }
-            if (tileType.name.Equals("tower_top_0")) { tower_top = i; tile.isTowerTile = true; }
-            if (tileType.name.Equals("tower_bot_0")) { tower_bottom = i; tile.isTowerTile = true; }
-            if (tileType.name.Equals("tower_window_0")) { tower_window = i; tile.isTowerTile = true; }
+            if (tileType.name.Equals("tower_0")) { tower = i; }
+            if (tileType.name.Equals("tower_top_0")) { tower_top = i; }
+            if (tileType.name.Equals("tower_bot_0")) { tower_bottom = i; }
+            if (tileType.name.Equals("tower_window_0")) { tower_window = i; }
 
             tileTypes[i] = tile;
 
@@ -112,10 +115,9 @@ public class WFCManager : Manager
         floorHeights = new int[numberOfFloors];
         GenerateFloorHeights();
 
-        foreach (int h in floorHeights)
-        {
-            Debug.Log(h);
-        }
+        // Get Pooler
+        pooler = GetComponent<TilePooler>();
+        pooler.CreateTilePools(imported_tiles);
     }
 
     public void LateUpdate()
@@ -168,6 +170,7 @@ public class WFCManager : Manager
                 job.job.Complete();
                 job.towerJob.heights.Dispose();
                 InstantiateTowerTiles(job);
+                chunks[job.chunkPos].towers.Dispose();
 
                 scheduledTowerJobs.RemoveAt(i);
             }
@@ -183,9 +186,8 @@ public class WFCManager : Manager
         // Dispose of data - This should be done earlier for at least tileMapArray and tilesToProcess
         foreach (ChunkWFC c in chunks.Values)
         {
-            c.tileMap.Dispose();
             c.jobWFC.OnDestroy();
-            c.towers.Dispose();
+            c.tileMap.Dispose();
             c.outNorth.Dispose();
             c.outSouth.Dispose();
             c.outEast.Dispose();
@@ -198,16 +200,35 @@ public class WFCManager : Manager
             bufferZone.tileMap.Dispose();
         }
 
-        //Debug.Log("Number of allocations left without disposing: " + allocations);
+        for (int i = scheduledTowerJobs.Count - 1; i >= 0; i--)
+        {
+            TowerJob job = scheduledTowerJobs[i];
+
+            job.towerJob.heights.Dispose();
+        }
     }
 
     public override void DestroyChunk(Vector2Int chunkPos)
     {
         RemoveLeftOverBufferZones(chunkPos);
-        foreach (GameObject tile in chunks[chunkPos].tiles)
+        int i = 0;
+        for (int x = 0; x < dimensions.x; x++)
         {
-            Destroy(tile);
+            for (int z = 0; z < dimensions.z; z++)
+            {
+                for (int y = 0; y < dimensions.y; y++)
+                {
+                    int convertedTileIndex = ConvertTo1D(x, y, z);
+                    int index = chunks[chunkPos].tileMap[convertedTileIndex];
+                    if (index >= 0 && imported_tiles[index].name != "-1" && !tileTypes[index].isTowerTile)
+                    {
+                        pooler.DespawnTile(imported_tiles[index].id, chunks[chunkPos].tiles[i]);
+                        i++;
+                    }
+                }
+            }
         }
+
         chunks[chunkPos].jobHandle.Complete();
         chunks[chunkPos].tileMap.Dispose();
         chunks[chunkPos].outNorth.Dispose();
@@ -216,7 +237,6 @@ public class WFCManager : Manager
         chunks[chunkPos].outWest.Dispose();
         chunks[chunkPos].jobWFC.OnDestroy();
 
-        //Debug.Log("Disposed of chunk @ " + chunkPos);
         chunks.Remove(chunkPos);
     }
 
@@ -256,9 +276,16 @@ public class WFCManager : Manager
     {
         BufferZone bufferZone = bufferZones[key];
 
-        for (int i = bufferZone.tiles.Count-1; i >= 0; i--)
+        int i = 0;
+        for (int x = 0; x < dimensions.x; x++)
         {
-            Destroy(bufferZone.tiles[i]);
+            for (int y = 0; y < dimensions.y; y++)
+            {
+                int index = bufferZone.tileMap[x + y * dimensions.x];
+                if (index < 0 || index == tower_bottom || imported_tiles[index].id < 0) continue;
+                pooler.DespawnTile(imported_tiles[index].id, bufferZone.tiles[i]);
+                i++;
+            }
         }
         bufferZone.tileMap.Dispose();
         bufferZones.Remove(key);
@@ -454,7 +481,8 @@ public class WFCManager : Manager
                         int a = x * tileSize + xOffset;
                         int b = z * tileSize + zOffset;
 
-                        chunks[position].tiles.Add(InstantiateTile(index, a, height, b));
+                        //chunks[position].tiles.Add(InstantiateTile(index, a, height, b));
+                        chunks[position].tiles.Add(pooler.SpawnTile(imported_tiles[index].id, new Vector3Int(a, height * tileSize, b), imported_tiles[index].rotation, tileScale));
                     }
                 }
             }
@@ -468,19 +496,17 @@ public class WFCManager : Manager
         int zOffset = chunkPos.y * TilesPerChunk * tileSize + tileSize * chunkPos.y;
         foreach (TowerTile t in chunks[chunkPos].towers)
         {
-            GameObject obj = Instantiate(imported_tiles[t.tileId].tileObject, new Vector3(xOffset + t.position.x * tileSize, t.position.y * tileSize, zOffset + t.position.z * tileSize), imported_tiles[t.tileId].rotation);
-            obj.transform.localScale = tileScale;
-            chunks[chunkPos].tiles.Add(obj);
+            chunks[chunkPos].tiles.Add(pooler.SpawnTile(imported_tiles[t.tileId].id, new Vector3Int(xOffset + t.position.x * tileSize, t.position.y * tileSize, zOffset + t.position.z * tileSize), imported_tiles[t.tileId].rotation, tileScale));
         }
     }
 
     private void InstantiateBuffer(BufferZone bufferZone)
     {
         
-        float xOffset = bufferZone.positionA.x;
+        int xOffset = bufferZone.positionA.x;
         xOffset = xOffset * TilesPerChunk * tileSize + xOffset * tileSize;
 
-        float zOffset = bufferZone.positionA.y;
+        int zOffset = bufferZone.positionA.y;
         zOffset = zOffset * TilesPerChunk * tileSize + zOffset * tileSize;
 
         bufferZone.IsInstantiated = true;
@@ -492,11 +518,12 @@ public class WFCManager : Manager
             {
                 for (int y = 0; y < dimensions.y; y++)
                 {
-                    int height = floorHeights[y];
+                    int height = floorHeights[y] * tileSize;
                     //Debug.Log("Yo " + bufferZone.tileMap[x + y * dimensions.x]);
                     int index = bufferZone.tileMap[x + y * dimensions.x];
-                    if (index < 0 || index == tower_bottom) continue;
-                    bufferZone.tiles.Add(InstantiateTile(index, xOffset + x * tileSize, height, zOffset));
+                    if (index < 0 || index == tower_bottom || imported_tiles[index].id < 0) continue;
+                    //bufferZone.tiles.Add(InstantiateTile(index, xOffset + x * tileSize, height, zOffset));
+                    bufferZone.tiles.Add(pooler.SpawnTile(imported_tiles[index].id, new Vector3Int(xOffset + x * tileSize, height, zOffset), imported_tiles[index].rotation, tileScale));
                 }
             }
         } else
@@ -507,11 +534,12 @@ public class WFCManager : Manager
             {
                 for (int y = 0; y < dimensions.y; y++)
                 {
-                    int height = floorHeights[y];
+                    int height = floorHeights[y] * tileSize;
                     //Debug.Log("Yoy " + bufferZone.tileMap[z + y * dimensions.z]);
                     int index = bufferZone.tileMap[z + y * dimensions.z];
-                    if (index < 0 || index == tower_bottom) continue;
-                    bufferZone.tiles.Add(InstantiateTile(index, xOffset, height, zOffset + z * tileSize));
+                    if (index < 0 || index == tower_bottom || imported_tiles[index].id < 0) continue;
+                    //bufferZone.tiles.Add(InstantiateTile(index, xOffset, height, zOffset + z * tileSize));
+                    bufferZone.tiles.Add(pooler.SpawnTile(imported_tiles[index].id, new Vector3Int(xOffset, height, zOffset + z * tileSize), imported_tiles[index].rotation, tileScale));
                 }
             }
         }

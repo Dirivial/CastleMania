@@ -14,8 +14,8 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
-  m_Fog: 0
-  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_Fog: 1
+  m_FogColor: {r: 0.4528302, g: 0.057671774, b: 0.0879464, a: 1}
   m_FogMode: 3
   m_FogDensity: 0.01
   m_LinearFogStart: 0
@@ -272,6 +272,7 @@ GameObject:
   - component: {fileID: 389366916}
   - component: {fileID: 389366918}
   - component: {fileID: 389366919}
+  - component: {fileID: 389366920}
   m_Layer: 0
   m_Name: ChunkManager
   m_TagString: Untagged
@@ -293,8 +294,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerTransform: {fileID: 571415301}
   chunkSize: 128
-  chunkSpawnDistance: 1
-  chunkDestroyDistance: 2
+  chunkSpawnDistance: 2
+  chunkDestroyDistance: 3
 --- !u!4 &389366917
 Transform:
   m_ObjectHideFlags: 0
@@ -326,7 +327,7 @@ MonoBehaviour:
   numberOfFloors: 3
   floorGapMin: 3
   floorGapMax: 4
-  tilesBelowBottomFloor: 1
+  tilesBelowBottomFloor: 4
   XML_IO: {fileID: 11400000, guid: 06a75397a1277264ca3cee111181171d, type: 2}
   tileSize: 8
   towerGrowth:
@@ -368,6 +369,20 @@ MonoBehaviour:
   lavaPrefab: {fileID: 6695338019797790684, guid: 5cb5e9010fca0f842a133d79c78c83ba,
     type: 3}
   lavaHeight: -40
+--- !u!114 &389366920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 389366915}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a625fd301ab4154cace76377b91d663, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  initialPoolSize: 1000
+  maximumPoolSize: 10000
 --- !u!1 &571415300
 GameObject:
   m_ObjectHideFlags: 0
@@ -416,9 +431,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   walkingSpeed: 10
-  runningSpeed: 12
+  runningSpeed: 18
   jumpSpeed: 8
-  gravity: 0
+  gravity: 15
   playerCamera: {fileID: 338083989}
   lookSpeed: 2
   lookXLimit: 45

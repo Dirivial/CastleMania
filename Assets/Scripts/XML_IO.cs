@@ -128,13 +128,12 @@ public class XML_IO : ScriptableObject
             {
                 PrototypeXML[] tiles = (PrototypeXML[])serializer.Deserialize(reader);
 
-
                 // Now you have your data in the 'people' array
                 foreach (PrototypeXML tile in tiles)
                 {
-                    
                     GameObject tileObject = null;
-                    
+                    int foundId = 0;
+
                     // Find tileObject associated with the current tile
                     foreach (TileEntry t in Tiles)
                     {
@@ -144,6 +143,7 @@ public class XML_IO : ScriptableObject
                             tileObject = t.tileObject;
                             break;
                         }
+                        foundId++;
                     }
 
                     // The times of rotation is stored as the last character in the name
@@ -153,6 +153,14 @@ public class XML_IO : ScriptableObject
                     float weight = tile.weight > 0 ? tile.weight : 0.001f;
 
                     TileType tileType = new TileType(tile.Name.ToLower(), rotation, weight, tileObject);
+
+                    if (foundId < Tiles.Count)
+                    {
+                        tileType.id = foundId;
+                    } else
+                    {
+                        tileType.id = -1;
+                    }
 
                     // Assign any constraints to the tile
                     if (tile.constraints != null)
@@ -173,6 +181,9 @@ public class XML_IO : ScriptableObject
                                     break;
                                 case "NRV":
                                     tileType.noRepeatV = true;
+                                    break;
+                                case "TT":
+                                    tileType.isTowerType = true;
                                     break;
                                 default:
                                     continue;
