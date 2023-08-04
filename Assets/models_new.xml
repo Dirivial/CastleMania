@@ -556,28 +556,7 @@
     <npX />
     <npY>
       <string>tower_0</string>
-      <string>tower_top_0</string>
     </npY>
-    <npZ />
-    <nnX />
-    <nnY>
-      <string>tower_0</string>
-      <string>tower_bot_0</string>
-    </nnY>
-    <nnZ />
-  </PrototypeXML>
-  <PrototypeXML>
-    <Name>tower_top_0</Name>
-    <weight>0.1</weight>
-    <constraints>MC,NRH</constraints>
-    <posX>-1</posX>
-    <posY>-1</posY>
-    <posZ>-1</posZ>
-    <negX>-1</negX>
-    <negY>v0_0</negY>
-    <negZ>-1</negZ>
-    <npX />
-    <npY />
     <npZ />
     <nnX />
     <nnY>
@@ -599,32 +578,10 @@
     <npX />
     <npY>
       <string>tower_0</string>
-      <string>tower_top_0</string>
     </npY>
     <npZ />
     <nnX />
     <nnY />
-    <nnZ />
-  </PrototypeXML>
-  <PrototypeXML>
-    <Name>tower_window_0</Name>
-    <weight>0.05</weight>
-    <constraints>NRH</constraints>
-    <posX>-1</posX>
-    <posY>v1_0</posY>
-    <posZ>-1</posZ>
-    <negX>-1</negX>
-    <negY>v1_0</negY>
-    <negZ>-1</negZ>
-    <npX />
-    <npY>
-      <string>tower_window_0</string>
-    </npY>
-    <npZ />
-    <nnX />
-    <nnY>
-      <string>tower_window_0</string>
-    </nnY>
     <nnZ />
   </PrototypeXML>
   <PrototypeXML>

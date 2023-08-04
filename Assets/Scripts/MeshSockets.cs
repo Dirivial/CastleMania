@@ -61,6 +61,7 @@ public class MeshSockets
             if (v.y  > maxY) maxY = v.y ;
             if (v.z  < minZ) minZ = v.z ;
             if (v.z  > maxZ) maxZ = v.z ;
+
         }
 
         //Debug.Log(maxX + ", " + minX + ", " + maxY + ", " + minY + ", " + maxZ + ", " + minZ);
@@ -241,6 +242,10 @@ public class MeshSockets
                 id = GenerateID(true) + "_0";
                 Debug.Log("Adding on Y: " + id);
                 sockets.Add(new Socket(id, posY.ToArray()));
+                foreach (Vector2 v in posY)
+                {
+                    Debug.Log(v);
+                }
                 GenerateRotated(posY, id);
             }
             meshSockets.Add(id);
@@ -258,8 +263,12 @@ public class MeshSockets
             { 
                 
                 id = GenerateID(true) + "_0";
-                //Debug.Log("Adding on -Y: " + id);
+                Debug.Log("Adding on -Y: " + id);
                 sockets.Add(new Socket(id, negY.ToArray()));
+                foreach (Vector2 v in negY)
+                {
+                    Debug.Log(v);
+                }
                 GenerateRotated(negY, id);
             }
             meshSockets.Add(id);
@@ -296,8 +305,25 @@ public class MeshSockets
                 
                 foreach (Vector2Int v in sockets[i].vertices)
                 {
-                    if (!vertices.Contains(v))
+                    bool foundSimilar = false;
+                    int smallestDiffX = 100;
+                    int smallestDiffY = 100;
+                    foreach (Vector2Int v2 in vertices)
                     {
+                        Vector2Int difference = new Vector2Int(Math.Abs(v.x - v2.x), Math.Abs(v.y - v2.y));
+
+                        if (difference.x < smallestDiffX) smallestDiffX = difference.x;
+                        if (difference.y < smallestDiffY) smallestDiffY = difference.y;
+
+                        if (difference.x < 2 && difference.y < 2)
+                        {
+                            foundSimilar = true;
+                            break;
+                        }
+                    }
+                    if (!foundSimilar)
+                    {
+                        Debug.Log("Did not contain: " + v + " smallest difference: " + smallestDiffX + ", " + smallestDiffY);
                         isIdentical = false;
                         break;
                     }
@@ -377,8 +403,35 @@ public class MeshSockets
     {
         bool symmetrical = true;
         foreach (Vector2Int v in vertices) {
-            if(!vertices.Contains(new Vector2Int(Y ? -v.x : v.x, X ? -v.y : v.y)))
+            Vector2Int rotated = new Vector2Int(Y ? -v.x : v.x, X ? -v.y : v.y);
+            bool found = false;
+
+            foreach (Vector2Int v2 in vertices)
             {
+                /*
+                for (int i = -1; i < 2; i++)
+                {
+                    for (int j = 0; j < 2; j++)
+                    {
+                        if (v2.x + i == rotated.x && v2.y + j == rotated.y)
+                        {
+                            found = true;
+                        } 
+                    }
+                    
+                }
+                if (found) break;
+                */
+                Vector2Int difference = new Vector2Int(Math.Abs(v2.x - rotated.x), Math.Abs(v2.y - rotated.y));
+                if (difference.x < 3 && difference.y < 3)
+                {
+                    //if (Y) { Debug.Log(-v.x + " " + v.y + " diff: " + difference); }
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                Debug.Log("Rotated version of " + rotated + " had no equivalent ");
                 symmetrical = false;
                 break;
             }

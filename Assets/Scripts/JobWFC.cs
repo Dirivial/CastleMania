@@ -13,6 +13,7 @@ public struct JobWFC: IJob
     public NativeArray<int> outWest;
 
     private NativeArray<int> tileMap;
+	private NativeList<TowerTile> towers;
 
     // Readonly
     private NativeArray<NativeTileType>.ReadOnly tileTypes;
@@ -33,10 +34,11 @@ public struct JobWFC: IJob
 	[DeallocateOnJobCompletion]
     private NativeArray<bool> tileMapArray;
 
-    public JobWFC(Vector3Int dimensions, 
-		NativeArray<NativeTileType>.ReadOnly tileTypes, int tileCount, 
-		NativeArray<int> tileMap, NativeArray<bool>.ReadOnly neighborData, 
+	public JobWFC(Vector3Int dimensions,
+		NativeArray<NativeTileType>.ReadOnly tileTypes, int tileCount,
+		NativeArray<int> tileMap, NativeArray<bool>.ReadOnly neighborData,
 		NativeArray<bool>.ReadOnly hasConnectionData,
+		NativeList<TowerTile> towers,
         NativeArray<int> outNorth,
         NativeArray<int> outSouth,
         NativeArray<int> outEast,
@@ -49,6 +51,7 @@ public struct JobWFC: IJob
 		this.neighborData = neighborData;
 		this.hasConnectionData = hasConnectionData;
         this.tileMap = tileMap;
+		this.towers = towers;
 
 		// Outside connections
 		this.outNorth = outNorth;
@@ -187,6 +190,14 @@ public struct JobWFC: IJob
             tileMapArray[TileMapArrayCoord(pos.x, pos.y, pos.z, i)] = false;
 		}
 
+		if (tileTypes[index].isTowerTile)
+		{
+			TowerTile towerTile = new TowerTile();
+			towerTile.position = pos;
+			towerTile.tileId = index;
+			towers.Add(towerTile);
+		}
+
 		StoreConnectionOut(pos, index);
 
         tilesToProcess.Add(pos);
@@ -238,7 +249,6 @@ public struct JobWFC: IJob
 
 				if (numTrue == 1)
 				{
-					Debug.Log("GAMING");
 					int chosenTile = ChooseTileTypeAt(tilePosition.x, tilePosition.y, tilePosition.z);
 
 					tileMap[ConvertTo1D(tilePosition.x, tilePosition.y, tilePosition.z)] = chosenTile;

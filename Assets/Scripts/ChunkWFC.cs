@@ -2,7 +2,6 @@
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
-using Unity.Burst;
 using System.Collections.Generic;
 
 public class ChunkWFC
@@ -14,6 +13,7 @@ public class ChunkWFC
 
     // Remember to deallocate
     public NativeArray<int> tileMap;
+    public NativeList<TowerTile> towers;
 
     public NativeArray<int> outNorth;
     public NativeArray<int> outSouth;
@@ -23,14 +23,4 @@ public class ChunkWFC
     // Job information
     public JobWFC jobWFC;
     public JobHandle jobHandle;
-
-    public void SetJobHandle(JobHandle jobHandle)
-    {
-        this.jobHandle = jobHandle;
-    }
-
-    public void SetIsInstantiated(bool isInstantiated)
-    {
-        this.isInstantiated = isInstantiated;
-    }
 }

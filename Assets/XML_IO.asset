@@ -13,53 +13,55 @@ MonoBehaviour:
   m_Name: XML_IO
   m_EditorClassIdentifier: 
   meshRotation: {x: -90, y: 0, z: 0}
-  xmlPath: models
+  xmlPath: models_new
   Tiles:
   - Name: BridgeX
-    tileObject: {fileID: 919132149155446097, guid: 5c4d7957faf68e54b98815c53a9942c4,
+    tileObject: {fileID: 919132149155446097, guid: 0bd6b5a4305dec546af2303021dfb965,
       type: 3}
     Symmetry: 0
-    Weight: 0.9
+    Weight: 0.2
     ignoreSide: 
+    constraints: 
   - Name: BridgeT
-    tileObject: {fileID: 919132149155446097, guid: 0e3f11d671ed7c34797277ce529377e8,
+    tileObject: {fileID: 919132149155446097, guid: 00523a47966361e43b7caad9c347a6b2,
       type: 3}
     Symmetry: 3
-    Weight: 0.5
+    Weight: 0.3
     ignoreSide: 
+    constraints: 
   - Name: BridgeL
-    tileObject: {fileID: 919132149155446097, guid: e86189cba95638d448241b4f2b7c1557,
+    tileObject: {fileID: 919132149155446097, guid: 34881eb130a56314797c8d89082caecf,
       type: 3}
     Symmetry: 1
-    Weight: 0.5
+    Weight: 0.4
     ignoreSide: 
+    constraints: 
   - Name: Bridge
-    tileObject: {fileID: 919132149155446097, guid: 22c98cad2d12ac2458701c9e192eec53,
+    tileObject: {fileID: 919132149155446097, guid: e7444b6a6b370be499c6549a74fd0042,
       type: 3}
     Symmetry: 2
-    Weight: 0.1
+    Weight: 0.8
     ignoreSide: 
+    constraints: 
   - Name: Bridge_i
-    tileObject: {fileID: 919132149155446097, guid: f92a7381e550a8d42b10e047c96a0b9e,
+    tileObject: {fileID: 919132149155446097, guid: d39c909f79a03414989e3b042622cf1c,
       type: 3}
     Symmetry: 3
     Weight: 0.01
     ignoreSide: 
+    constraints: 
   - Name: Tower
     tileObject: {fileID: 919132149155446097, guid: 5d15d460ae77fe64db6feeb89a9d10ea,
       type: 3}
     Symmetry: 0
-    Weight: 0.1
-    ignoreSide: 
-  - Name: Tower_top
-    tileObject: {fileID: 919132149155446097, guid: 256376ffb7de42c44b3b86ac949091cd,
-      type: 3}
-    Symmetry: 0
-    Weight: 0.1
-    ignoreSide: 
+    Weight: 0.8
+    ignoreSide: 00000000010000000200000003000000
+    constraints: MC,NRH
   - Name: Tower_bot
-    tileObject: {fileID: 919132149155446097, guid: 2e1f6c956ddc18f478ee9fe2e782f444,
+    tileObject: {fileID: 919132149155446097, guid: 5d15d460ae77fe64db6feeb89a9d10ea,
       type: 3}
     Symmetry: 0
-    Weight: 0.01
-    ignoreSide: 05000000
+    Weight: 0.05
+    ignoreSide: 0500000000000000010000000200000003000000
+    constraints: G,NRH
+  emptyTileWeight: 0.5
