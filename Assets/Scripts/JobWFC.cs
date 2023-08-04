@@ -183,20 +183,7 @@ public struct JobWFC: IJob
 	private void PickTileAt(Vector3Int pos)
 	{
 		int index = ChooseTileTypeAt(pos.x, pos.y, pos.z);
-		tileMap[ConvertTo1D(pos.x, pos.y, pos.z)] = index;
-
-        for (int i = 0; i < tileCount; i++)
-		{
-            tileMapArray[TileMapArrayCoord(pos.x, pos.y, pos.z, i)] = false;
-		}
-
-		if (tileTypes[index].isTowerTile)
-		{
-			TowerTile towerTile = new TowerTile();
-			towerTile.position = pos;
-			towerTile.tileId = index;
-			towers.Add(towerTile);
-		}
+		AssignTile(pos, index);
 
 		StoreConnectionOut(pos, index);
 
@@ -250,15 +237,8 @@ public struct JobWFC: IJob
 				if (numTrue == 1)
 				{
 					int chosenTile = ChooseTileTypeAt(tilePosition.x, tilePosition.y, tilePosition.z);
-
-					tileMap[ConvertTo1D(tilePosition.x, tilePosition.y, tilePosition.z)] = chosenTile;
+					AssignTile(tilePosition, chosenTile);
 					UpdateNeighbors(tilePosition);
-
-					// We have a single chunk type, so we can set it
-					for (int j = tileCount - 1; j >= 0; j--)
-					{
-                        tileMapArray[TileMapArrayCoord(tilePosition.x, tilePosition.y, tilePosition.z, j)] = false;
-					}
 				}
 				else if (numTrue == 0)
 				{
@@ -273,6 +253,24 @@ public struct JobWFC: IJob
 			i++;
 		}
 	}
+
+	private void AssignTile(Vector3Int pos, int tileType)
+    {
+        tileMap[ConvertTo1D(pos.x, pos.y, pos.z)] = tileType;
+        for (int i = 0; i < tileCount; i++)
+        {
+            tileMapArray[TileMapArrayCoord(pos.x, pos.y, pos.z, i)] = false;
+        }
+
+        if (tileTypes[tileType].isTowerTile)
+        {
+            TowerTile towerTile = new TowerTile();
+            towerTile.position = pos;
+            towerTile.tileId = tileType;
+            towers.Add(towerTile);
+        }
+    }
+
 
 	// Update the neighbors of the given chunk position
 	private void UpdateNeighbors(Vector3Int tilePosition)

@@ -1,6 +1,7 @@
 
 
 using JetBrains.Annotations;
+using System;
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Jobs;
@@ -101,6 +102,8 @@ public class WFCManager : Manager
 
             i++;
         }
+
+        //Debug.Log("tower" + tower + " tower_bottom " + tower_bottom);
 
         // Create dictionary to access chunks
         chunks = new Dictionary<Vector2Int, ChunkWFC>();
@@ -303,7 +306,7 @@ public class WFCManager : Manager
         {
             heights[i] = floorHeights[i];
         }
-        job.towerJob = new TowerGrowthJob(towers, heights, dimensions, tower, tower_bottom, tower_top, tower_window, tilesBelowBottomFloor);
+        job.towerJob = new TowerGrowthJob(towers, heights, dimensions, tower, tower_bottom, tower_top, tower_window, tilesBelowBottomFloor, seed++);
         job.job = job.towerJob.Schedule();
         scheduledTowerJobs.Add(job);
     }
@@ -445,7 +448,7 @@ public class WFCManager : Manager
                 {
                     int convertedTileIndex = ConvertTo1D(x, y, z);
                     int index = tileMap[convertedTileIndex];
-                    if (index >= 0 && imported_tiles[index].name != "-1")
+                    if (index >= 0 && imported_tiles[index].name != "-1" && !tileTypes[index].isTowerTile)
                     {
                         int height = floorHeights[y];
                         int a = x * tileSize + xOffset;
@@ -465,7 +468,9 @@ public class WFCManager : Manager
         int zOffset = chunkPos.y * TilesPerChunk * tileSize + tileSize * chunkPos.y;
         foreach (TowerTile t in chunks[chunkPos].towers)
         {
-            chunks[chunkPos].tiles.Add(InstantiateTile(t.tileId, xOffset + t.position.x * tileSize, t.position.y, zOffset + t.position.z * tileSize));
+            GameObject obj = Instantiate(imported_tiles[t.tileId].tileObject, new Vector3(xOffset + t.position.x * tileSize, t.position.y * tileSize, zOffset + t.position.z * tileSize), imported_tiles[t.tileId].rotation);
+            obj.transform.localScale = tileScale;
+            chunks[chunkPos].tiles.Add(obj);
         }
     }
 
@@ -645,7 +650,7 @@ public class WFCManager : Manager
         for (int i = 0; i < dimensions.y; i++)
         {
             floorHeights[i] = height;
-            height = Random.Range(height + floorGapMin, height + floorGapMax);
+            height = UnityEngine.Random.Range(height + floorGapMin, height + floorGapMax);
         }
     }
 }
