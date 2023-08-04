@@ -293,8 +293,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerTransform: {fileID: 571415301}
   chunkSize: 128
-  chunkSpawnDistance: 2
-  chunkDestroyDistance: 3
+  chunkSpawnDistance: 1
+  chunkDestroyDistance: 2
 --- !u!4 &389366917
 Transform:
   m_ObjectHideFlags: 0
@@ -325,8 +325,8 @@ MonoBehaviour:
   tileScale: {x: 400, y: 400, z: 400}
   numberOfFloors: 3
   floorGapMin: 3
-  floorGapMax: 8
-  tilesBelowBottomFloor: 5
+  floorGapMax: 4
+  tilesBelowBottomFloor: 1
   XML_IO: {fileID: 11400000, guid: 06a75397a1277264ca3cee111181171d, type: 2}
   tileSize: 8
   towerGrowth:

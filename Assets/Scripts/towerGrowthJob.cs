@@ -9,7 +9,7 @@ public struct Interval
     public int end;
 }
 
-[BurstCompile]
+//[BurstCompile]
 public struct TowerGrowthJob: IJob
 {
 
@@ -48,6 +48,12 @@ public struct TowerGrowthJob: IJob
         {
             ProcessTile(towers[i]);
         }
+        for (int i = 0; i < tilesToProcess; i++)
+        {
+            TowerTile t = towers[i];
+            t.position = new Vector3Int(t.position.x, heights[t.position.y], t.position.z);
+            towers[i] = t;
+        }
     }
 
     private void ProcessTile(TowerTile towerTile)
@@ -57,13 +63,12 @@ public struct TowerGrowthJob: IJob
         {
             HandleBottomTower(towerTile);
         }
-        else if (index == tower)
-        {
-            HandleTower(towerTile);
-        }
         else if (index == tower_top)
         {
             GenerateTop(towerTile.position);
+        } else
+        {
+            HandleTower(towerTile);
         }
     }
 
@@ -86,10 +91,10 @@ public struct TowerGrowthJob: IJob
     private void FillBetween(Vector3Int posFrom, Vector3Int posTo)
     {
         // Connect this bottom tower tile with the next floor
-        for (int i = posFrom.y + 1; i < heights[posTo.y]; i++)
+        for (int i = heights[posFrom.y] + 1; i < heights[posTo.y]; i++)
         {
             TowerTile t = new TowerTile();
-            t.tileId = tower;
+            t.tileId = random.NextBool() ? tower : tower_window;
             t.position = new Vector3Int(posTo.x, i, posTo.z);
             towers.Add(t);
         }
@@ -99,7 +104,7 @@ public struct TowerGrowthJob: IJob
     {
         for (int i = 0; i < tilesToProcess; i++)
         {
-            if (towers[i].position.x == pos.x && towers[i].position.y > pos.y && towers[i].position.z == pos.z)
+            if (towers[i].position.x == pos.x && towers[i].position.y == pos.y + 1 && towers[i].position.z == pos.z)
             {
                 return i;
             }
@@ -109,6 +114,7 @@ public struct TowerGrowthJob: IJob
 
     private void HandleBottomTower(TowerTile towerTile)
     {
+
         if (dimensions.y > 1)
         {
             int foundTileAbove = FindTileAbove(towerTile.position);
@@ -120,6 +126,9 @@ public struct TowerGrowthJob: IJob
             {
                 GenerateTop(towerTile.position);
             }
+        } else
+        {
+            GenerateTop(towerTile.position);
         }
 
         // Put a couple of extra tower pieces in there to avoid starting at the same floor as all of the other tiles
@@ -143,7 +152,7 @@ public struct TowerGrowthJob: IJob
         towers.Add(t);
 
         // Fill the tiles from the original position to the head of the tower
-        for (int i = position.y + 1; i < interval.end; i++)
+        for (int i = interval.start; i < interval.end; i++)
         {
             t = new TowerTile();
             t.tileId = tower;
