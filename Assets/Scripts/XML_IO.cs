@@ -10,6 +10,25 @@ using UnityEngine;
 // We only need to rotate around the y-axis.
 // forward/back = z-axis
 // left/right = x-axis
+public enum Direction
+{
+    North,
+    South,
+    East,
+    West,
+    Up,
+    Down,
+}
+
+public enum Symmetry
+{
+    X,
+    L,
+    I,
+    T,
+    D, // This should be '\\', I chose D for diagonal
+}
+
 public enum SocketDirection
 {
     Left, Right, Forward, Back
