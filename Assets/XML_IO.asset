@@ -51,28 +51,28 @@ MonoBehaviour:
     ignoreSide: 
     constraints: 
   - Name: Tower_bot
-    tileObject: {fileID: 919132149155446097, guid: 5d15d460ae77fe64db6feeb89a9d10ea,
+    tileObject: {fileID: 2466918585334256033, guid: 9ab822ca41842004b9f90d2a6c72c62d,
       type: 3}
     Symmetry: 0
     Weight: 0.05
     ignoreSide: 0500000000000000010000000200000003000000
     constraints: G,NRH,TT
   - Name: Tower_top
-    tileObject: {fileID: 919132149155446097, guid: 256376ffb7de42c44b3b86ac949091cd,
+    tileObject: {fileID: 5191954229710594181, guid: 71032597d2d52f94896439f180a6a2f4,
       type: 3}
     Symmetry: 0
     Weight: 0.05
     ignoreSide: 0400000000000000010000000200000003000000
     constraints: NRH,MC,TT
   - Name: Tower
-    tileObject: {fileID: 919132149155446097, guid: 5d15d460ae77fe64db6feeb89a9d10ea,
+    tileObject: {fileID: 2466918585334256033, guid: 9ab822ca41842004b9f90d2a6c72c62d,
       type: 3}
     Symmetry: 0
     Weight: 0.8
     ignoreSide: 00000000010000000200000003000000
     constraints: MC,NRH,TT
   - Name: Tower_window
-    tileObject: {fileID: 919132149155446097, guid: 033061cd3b98fe244b268af3dd770ae6,
+    tileObject: {fileID: 4327195820302135087, guid: a31cc3565b3e7974eafdcd4385c363f9,
       type: 3}
     Symmetry: 0
     Weight: 0.8

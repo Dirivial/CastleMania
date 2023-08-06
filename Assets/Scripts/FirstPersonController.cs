@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using MoreMountains.Feedbacks;
+using System;
+using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -20,6 +22,13 @@ namespace StarterAssets
 		public float RotationSpeed = 1.0f;
 		[Tooltip("Acceleration and deceleration")]
 		public float SpeedChangeRate = 10.0f;
+
+		[Header("Shoot/Hook")]
+		[Tooltip("Time required between shots")]
+		public float ShootTimeout = 0.1f;
+
+		[Tooltip("Time required between hooks")]
+		public float HookTimeout = 1.0f;
 
 		[Space(10)]
 		[Tooltip("The height the player can jump")]
@@ -51,8 +60,17 @@ namespace StarterAssets
 		[Tooltip("How far in degrees can you move the camera down")]
 		public float BottomClamp = -90.0f;
 
-		// cinemachine
-		private float _cinemachineTargetPitch;
+		[Header("Feedbacks")]
+		[Tooltip("Zoom feedback for zooming out when player moves faster")]
+		public MMFeedbacks MMZoomFeedback;
+
+		[Header("Weapons Manager")]
+		[Tooltip("The weapon manager is used to shoot and switch weapons")]
+        public WeaponManager _weaponManager;
+		public GameObject weapon;
+
+        // cinemachine
+        private float _cinemachineTargetPitch;
 
 		// player
 		private float _speed;
@@ -63,16 +81,19 @@ namespace StarterAssets
 		// timeout deltatime
 		private float _jumpTimeoutDelta;
 		private float _fallTimeoutDelta;
+		private float _shootTimeoutDelta;
+        private float _hookTimeoutDelta;
 
-	
+
+
+
 #if ENABLE_INPUT_SYSTEM
-		private PlayerInput _playerInput;
+        private PlayerInput _playerInput;
 #endif
 		private CharacterController _controller;
 		private StarterAssetsInputs _input;
 		private GameObject _mainCamera;
-
-		private const float _threshold = 0.01f;
+        private const float _threshold = 0.01f;
 
 		private bool IsCurrentDeviceMouse
 		{
@@ -108,16 +129,43 @@ namespace StarterAssets
 			// reset our timeouts on start
 			_jumpTimeoutDelta = JumpTimeout;
 			_fallTimeoutDelta = FallTimeout;
+			_shootTimeoutDelta = ShootTimeout;
 		}
 
 		private void Update()
 		{
+			Shoot();
+			Hook();
 			JumpAndGravity();
 			GroundedCheck();
 			Move();
 		}
 
-		private void LateUpdate()
+        private void Hook()
+        {
+			if (_input.hook && _hookTimeoutDelta < 0.0f)
+			{
+
+			}
+        }
+
+        private void Shoot()
+        {
+            if (_input.shoot && _shootTimeoutDelta < 0.0f)
+			{
+				_shootTimeoutDelta = ShootTimeout;
+				Vector3 f = CinemachineCameraTarget.transform.forward;
+				Vector3 initialPosition = weapon.transform.TransformPoint(Vector3.zero);
+
+                _weaponManager.OnShoot(initialPosition, f, transform.rotation);
+			}
+            if (_shootTimeoutDelta >= 0.0f)
+            {
+                _shootTimeoutDelta -= Time.deltaTime;
+            }
+        }
+
+        private void LateUpdate()
 		{
 			CameraRotation();
 		}
@@ -216,6 +264,8 @@ namespace StarterAssets
 				{
 					// the square root of H * -2 * G = how much velocity needed to reach desired height
 					_verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
+
+					MMZoomFeedback.PlayFeedbacks();
 				}
 
 				// jump timeout

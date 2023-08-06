@@ -186,7 +186,7 @@ public class WFCManager : Manager
         // Dispose of data - This should be done earlier for at least tileMapArray and tilesToProcess
         foreach (ChunkWFC c in chunks.Values)
         {
-            c.jobWFC.OnDestroy();
+            //c.jobWFC.OnDestroy();
             c.tileMap.Dispose();
             c.outNorth.Dispose();
             c.outSouth.Dispose();

@@ -20,8 +20,12 @@ namespace StarterAssets
 		public bool cursorLocked = true;
 		public bool cursorInputForLook = true;
 
+		[Header("Shooting")]
+		public bool shoot = false;
+        public bool hook = false;
+
 #if ENABLE_INPUT_SYSTEM
-		public void OnMove(InputValue value)
+        public void OnMove(InputValue value)
 		{
 			MoveInput(value.Get<Vector2>());
 		}
@@ -43,10 +47,20 @@ namespace StarterAssets
 		{
 			SprintInput(value.isPressed);
 		}
+
+		public void OnShoot(InputValue value)
+		{
+			ShootInput(value.isPressed);
+		}
+
+        public void OnHook(InputValue value)
+        {
+            HookInput(value.isPressed);
+        }
 #endif
 
 
-		public void MoveInput(Vector2 newMoveDirection)
+        public void MoveInput(Vector2 newMoveDirection)
 		{
 			move = newMoveDirection;
 		} 
@@ -64,6 +78,16 @@ namespace StarterAssets
 		public void SprintInput(bool newSprintState)
 		{
 			sprint = newSprintState;
+		}
+
+		public void ShootInput(bool newShootState)
+		{
+			shoot = newShootState;
+		}
+
+		public void HookInput(bool newHookState)
+		{
+			hook = newHookState;
 		}
 		
 		private void OnApplicationFocus(bool hasFocus)
