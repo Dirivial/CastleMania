@@ -1,8 +1,10 @@
 ﻿using MoreMountains.Feedbacks;
 using System;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.XR;
 #endif
 
 namespace StarterAssets
@@ -29,8 +31,18 @@ namespace StarterAssets
 
 		[Tooltip("Time required between hooks")]
 		public float HookTimeout = 1.0f;
+		[Tooltip("This is determines how much upwards momentum the player get after unhooking")]
+		public float HookVerticalVelocityReset = 10.0f;
+		[Tooltip("Set a scale on how much moving along x/z-axes impacts movement when hooking")]
+		public float HookHorizontalScaling = 0.8f;
+        [Tooltip("How quickly you move when using the grappling hook")]
+        public float HookSpeed = 20f;
+        [Tooltip("Multiplier for how much distance impacts hook speed")]
+		public float HookDistanceMultiplier = 1f;
+        [Tooltip("The grappling hook object")]
+        public GrapplingHook GrapplingHook;
 
-		[Space(10)]
+        [Space(10)]
 		[Tooltip("The height the player can jump")]
 		public float JumpHeight = 1.2f;
 		[Tooltip("The character uses its own gravity value. The engine default is -9.81f")]
@@ -66,8 +78,8 @@ namespace StarterAssets
 
 		[Header("Weapons Manager")]
 		[Tooltip("The weapon manager is used to shoot and switch weapons")]
-        public WeaponManager _weaponManager;
-		public GameObject weapon;
+        public WeaponManager WeaponManager;
+		public GameObject Weapon;
 
         // cinemachine
         private float _cinemachineTargetPitch;
@@ -84,7 +96,10 @@ namespace StarterAssets
 		private float _shootTimeoutDelta;
         private float _hookTimeoutDelta;
 
-
+		// Grappling hook
+		private bool _foundTarget;
+		private Vector3 _hookPoint;
+		private bool isHoldingDownButton = false;
 
 
 #if ENABLE_INPUT_SYSTEM
@@ -130,6 +145,8 @@ namespace StarterAssets
 			_jumpTimeoutDelta = JumpTimeout;
 			_fallTimeoutDelta = FallTimeout;
 			_shootTimeoutDelta = ShootTimeout;
+			_hookTimeoutDelta = -1f;
+			_foundTarget = false;
 		}
 
 		private void Update()
@@ -141,23 +158,47 @@ namespace StarterAssets
 			Move();
 		}
 
+		private void SetTargetFound(Vector3 target)
+		{
+			_foundTarget = true;
+			_hookPoint = target;
+		}
+
         private void Hook()
         {
-			if (_input.hook && _hookTimeoutDelta < 0.0f)
-			{
-
-			}
+            if (_input.hook)
+            {
+				if (_hookTimeoutDelta <= 0.0f && !isHoldingDownButton)
+				{
+                    bool results = GrapplingHook.ShootHook(SetTargetFound, CinemachineCameraTarget.transform.forward);
+                    _hookTimeoutDelta = HookTimeout;
+					isHoldingDownButton = true;
+                } else if (!_foundTarget)
+				{
+                    _hookTimeoutDelta -= Time.deltaTime;
+                }
+            } else {
+				if (_foundTarget)
+				{
+					_foundTarget = false;
+					_hookPoint = Vector3.zero;
+					_hookTimeoutDelta = HookTimeout;
+					GrapplingHook.UnHook();
+				}
+				isHoldingDownButton = false;
+				_hookTimeoutDelta -= Time.deltaTime;
+            }
         }
 
         private void Shoot()
         {
-            if (_input.shoot && _shootTimeoutDelta < 0.0f)
+            if (_input.shoot && _shootTimeoutDelta <= 0.0f)
 			{
 				_shootTimeoutDelta = ShootTimeout;
 				Vector3 f = CinemachineCameraTarget.transform.forward;
-				Vector3 initialPosition = weapon.transform.TransformPoint(Vector3.zero);
+				Vector3 initialPosition = Weapon.transform.TransformPoint(Vector3.zero);
 
-                _weaponManager.OnShoot(initialPosition, f, transform.rotation);
+                WeaponManager.OnShoot(initialPosition, f, transform.rotation);
 			}
             if (_shootTimeoutDelta >= 0.0f)
             {
@@ -242,8 +283,26 @@ namespace StarterAssets
 				inputDirection = transform.right * _input.move.x + transform.forward * _input.move.y;
 			}
 
-			// move the player
-			_controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+			if (_input.hook && _foundTarget)
+			{
+				_verticalVelocity = HookVerticalVelocityReset;
+				inputDirection.x *= HookHorizontalScaling;
+                inputDirection.z *= HookHorizontalScaling;
+
+				Vector3 hookVector = (_hookPoint - transform.position);
+
+                inputDirection += hookVector.normalized;
+
+
+
+                Vector3 hookMagnitude = hookVector * hookVector.magnitude * HookDistanceMultiplier * Time.deltaTime;
+                // move the player
+                _controller.Move(inputDirection.normalized * HookSpeed * Time.deltaTime + hookMagnitude);
+            } else
+			{
+                // move the player
+                _controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+            }
 		}
 
 		private void JumpAndGravity()

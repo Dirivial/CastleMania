@@ -11,7 +11,7 @@ public class LavaManager : Manager
     public int lavaHeight = -32;
     
     private Dictionary<Vector2Int, GameObject> lavaChunks = new Dictionary<Vector2Int, GameObject>();
-    private int chunkSize = 128;
+    public int chunkSize = 128;
 
     public override void CreateChunk(Vector2Int chunkPos)
     {

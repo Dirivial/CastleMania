@@ -4,7 +4,7 @@ using Unity.Jobs;
 using UnityEngine;
 using Unity.Burst;
 
-[BurstCompile]
+//[BurstCompile]
 public struct JobWFC: IJob
 {
 	public NativeArray<int> outNorth;
@@ -262,7 +262,7 @@ public struct JobWFC: IJob
             tileMapArray[TileMapArrayCoord(pos.x, pos.y, pos.z, i)] = false;
         }
 
-        if (tileTypes[tileType].isTowerTile)
+        if (tileType >= 0 && tileTypes[tileType].isTowerTile)
         {
             TowerTile towerTile = new TowerTile();
             towerTile.position = pos;
@@ -494,7 +494,7 @@ public struct JobWFC: IJob
 			}
 		}
 
-		if (HasConnection(i, Direction.Down) && (y > 0 && tileMap[ConvertTo1D(x, y - 1, z)] == EMPTY_TILE))
+		if (HasConnection(i, Direction.Down) && (y == 0 || (y > 0 && tileMap[ConvertTo1D(x, y - 1, z)] == EMPTY_TILE)))
 		{
 			//Debug.Log("Failed Down.");
 			return false;

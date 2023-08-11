@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfPrototypeXML xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <PrototypeXML>
+    <Name>tower_bot_0</Name>
+    <weight>0.05</weight>
+    <constraints>G,NRH,TT</constraints>
+    <posX>-1</posX>
+    <posY>v0_0</posY>
+    <posZ>-1</posZ>
+    <negX>-1</negX>
+    <negY>-1</negY>
+    <negZ>-1</negZ>
+    <npX />
+    <npY>
+      <string>tower_0</string>
+    </npY>
+    <npZ />
+    <nnX />
+    <nnY />
+    <nnZ />
+  </PrototypeXML>
+  <PrototypeXML>
+    <Name>tower_top_0</Name>
+    <weight>0.05</weight>
+    <constraints>NRH,MC,TT</constraints>
+    <posX>-1</posX>
+    <posY>-1</posY>
+    <posZ>-1</posZ>
+    <negX>-1</negX>
+    <negY>-1</negY>
+    <negZ>-1</negZ>
+    <npX />
+    <npY />
+    <npZ />
+    <nnX />
+    <nnY />
+    <nnZ />
+  </PrototypeXML>
+  <PrototypeXML>
+    <Name>tower_0</Name>
+    <weight>0.8</weight>
+    <constraints>MC,NRH,TT</constraints>
+    <posX>-1</posX>
+    <posY>v0_0</posY>
+    <posZ>-1</posZ>
+    <negX>-1</negX>
+    <negY>v0_0</negY>
+    <negZ>-1</negZ>
+    <npX />
+    <npY>
+      <string>tower_0</string>
+    </npY>
+    <npZ />
+    <nnX />
+    <nnY>
+      <string>tower_bot_0</string>
+      <string>tower_0</string>
+    </nnY>
+    <nnZ />
+  </PrototypeXML>
+  <PrototypeXML>
+    <Name>tower_window_0</Name>
+    <weight>0.8</weight>
+    <constraints>MC,NRH,TT</constraints>
+    <posX>-1</posX>
+    <posY>-1</posY>
+    <posZ>-1</posZ>
+    <negX>-1</negX>
+    <negY>-1</negY>
+    <negZ>-1</negZ>
+    <npX />
+    <npY />
+    <npZ />
+    <nnX />
+    <nnY />
+    <nnZ />
+  </PrototypeXML>
+  <PrototypeXML>
+    <Name>x_0</Name>
+    <weight>0.8</weight>
+    <constraints />
+    <posX>0s</posX>
+    <posY>-1</posY>
+    <posZ>0s</posZ>
+    <negX>0s</negX>
+    <negY>-1</negY>
+    <negZ>0s</negZ>
+    <npX>
+      <string>x_0</string>
+      <string>t_0</string>
+      <string>t_2</string>
+      <string>t_3</string>
+      <string>b_i_0</string>
+      <string>b_l_0</string>
+      <string>b_l_3</string>
+    </npX>
+    <npY />
+    <npZ>
+      <string>x_0</string>
+      <string>t_1</string>
+      <string>t_2</string>
+      <string>t_3</string>
+      <string>b_i_1</string>
+      <string>b_l_2</string>
+      <string>b_l_3</string>
+    </npZ>
+    <nnX>
+      <string>x_0</string>
+      <string>t_0</string>
+      <string>t_1</string>
+      <string>t_2</string>
+      <string>b_i_0</string>
+      <string>b_l_1</string>
+      <string>b_l_2</string>
+    </nnX>
+    <nnY />
+    <nnZ>
+      <string>x_0</string>
+      <string>t_0</string>
+      <string>t_1</string>
+      <string>t_3</string>
+      <string>b_i_1</string>
+      <string>b_l_0</string>
+      <string>b_l_1</string>
+    </nnZ>
+  </PrototypeXML>
+  <PrototypeXML>
+    <Name>t_0</Name>
+    <weight>0.8</weight>
+    <constraints />
+    <posX>0s</posX>
+    <posY>-1</posY>
+    <posZ>0s</posZ>
+    <negX>0s</negX>
+    <negY>-1</negY>
+    <negZ>-1</negZ>
+    <npX>
+      <string>x_0</string>
+      <string>t_0</string>
+      <string>t_2</string>
+      <string>t_3</string>
+      <string>b_i_0</string>
+      <string>b_l_0</string>
+      <string>b_l_3</string>
+    </npX>
+    <npY />
+    <npZ>
+      <string>x_0</string>
+      <string>t_1</string>
+      <string>t_2</string>
+      <string>t_3</string>
+      <string>b_i_1</string>
+      <string>b_l_2</string>
+      <string>b_l_3</string>
+    </npZ>
+    <nnX>
+      <string>x_0</string>
+      <string>t_0</string>
+      <string>t_1</string>
+      <string>t_2</string>
+      <string>b_i_0</string>
+      <string>b_l_1</string>
+      <string>b_l_2</string>
+    </nnX>
+    <nnY />
+    <nnZ />
+  </PrototypeXML>
+  <PrototypeXML>
+    <Name>t_1</Name>
+    <weight>0.8</weight>
+    <constraints />
+    <posX>0s</posX>
+    <posY>-1</posY>
+    <posZ>0s</posZ>
+    <negX>-1</negX>
+    <negY>-1</negY>
+    <negZ>0s</negZ>
+    <npX>
+      <string>x_0</string>
+      <string>t_0</string>
+      <string>t_2</string>
+      <string>t_3</string>
+      <string>b_i_0</string>
+      <string>b_l_0</string>
+      <string>b_l_3</string>
+    </npX>
+    <npY />
+    <npZ>
+      <string>x_0</string>
+      <string>t_1</string>
+      <string>t_2</string>
+      <string>t_3</string>
+      <string>b_i_1</string>
+      <string>b_l_2</string>
+      <string>b_l_3</string>
+    </npZ>
+    <nnX />
+    <nnY />
+    <nnZ>
+      <string>x_0</string>
+      <string>t_0</string>
+      <string>t_1</string>
+      <string>t_3</string>
+      <string>b_i_1</string>
+      <string>b_l_0</string>
+      <string>b_l_1</string>
+    </nnZ>
+  </PrototypeXML>
+  <PrototypeXML>
+    <Name>t_2</Name>
+    <weight>0.8</weight>
+    <constraints />
+    <posX>0s</posX>
+    <posY>-1</posY>
+    <posZ>-1</posZ>
+    <negX>0s</negX>
+    <negY>-1</negY>
+    <negZ>0s</negZ>
+    <npX>
+      <string>x_0</string>
+      <string>t_0</string>
+      <string>t_2</string>
+      <string>t_3</string>
+      <string>b_i_0</string>
+      <string>b_l_0</string>
+      <string>b_l_3</string>
+    </npX>
+    <npY />
+    <npZ />
+    <nnX>
+      <string>x_0</string>
+      <string>t_0</string>
+      <string>t_1</string>
+      <string>t_2</string>
+      <string>b_i_0</string>
+      <string>b_l_1</string>
+      <string>b_l_2</string>
+    </nnX>
+    <nnY />
+    <nnZ>
+      <string>x_0</string>
+      <string>t_0</string>
+      <string>t_1</string>
+      <string>t_3</string>
+      <string>b_i_1</string>
+      <string>b_l_0</string>
+      <string>b_l_1</string>
+    </nnZ>
+  </PrototypeXML>
+  <PrototypeXML>
+    <Name>t_3</Name>
+    <weight>0.8</weight>
+    <constraints />
+    <posX>-1</posX>
+    <posY>-1</posY>
+    <posZ>0s</posZ>
+    <negX>0s</negX>
+    <negY>-1</negY>
+    <negZ>0s</negZ>
+    <npX />
+    <npY />
+    <npZ>
+      <string>x_0</string>
+      <string>t_1</string>
+      <string>t_2</string>
+      <string>t_3</string>
+      <string>b_i_1</string>
+      <string>b_l_2</string>
+      <string>b_l_3</string>
+    </npZ>
+    <nnX>
+      <string>x_0</string>
+      <string>t_0</string>
+      <string>t_1</string>
+      <string>t_2</string>
+      <string>b_i_0</string>
+      <string>b_l_1</string>
+      <string>b_l_2</string>
+    </nnX>
+    <nnY />
+    <nnZ>
+      <string>x_0</string>
+      <string>t_0</string>
+      <string>t_1</string>
+      <string>t_3</string>
+      <string>b_i_1</string>
+      <string>b_l_0</string>
+      <string>b_l_1</string>
+    </nnZ>
+  </PrototypeXML>
+  <PrototypeXML>
+    <Name>b_i_0</Name>
+    <weight>0.8</weight>
+    <constraints />
+    <posX>0s</posX>
+    <posY>-1</posY>
+    <posZ>-1</posZ>
+    <negX>0s</negX>
+    <negY>-1</negY>
+    <negZ>-1</negZ>
+    <npX>
+      <string>x_0</string>
+      <string>t_0</string>
+      <string>t_2</string>
+      <string>t_3</string>
+      <string>b_i_0</string>
+      <string>b_l_0</string>
+      <string>b_l_3</string>
+    </npX>
+    <npY />
+    <npZ />
+    <nnX>
+      <string>x_0</string>
+      <string>t_0</string>
+      <string>t_1</string>
+      <string>t_2</string>
+      <string>b_i_0</string>
+      <string>b_l_1</string>
+      <string>b_l_2</string>
+    </nnX>
+    <nnY />
+    <nnZ />
+  </PrototypeXML>
+  <PrototypeXML>
+    <Name>b_i_1</Name>
+    <weight>0.8</weight>
+    <constraints />
+    <posX>-1</posX>
+    <posY>-1</posY>
+    <posZ>0s</posZ>
+    <negX>-1</negX>
+    <negY>-1</negY>
+    <negZ>0s</negZ>
+    <npX />
+    <npY />
+    <npZ>
+      <string>x_0</string>
+      <string>t_1</string>
+      <string>t_2</string>
+      <string>t_3</string>
+      <string>b_i_1</string>
+      <string>b_l_2</string>
+      <string>b_l_3</string>
+    </npZ>
+    <nnX />
+    <nnY />
+    <nnZ>
+      <string>x_0</string>
+      <string>t_0</string>
+      <string>t_1</string>
+      <string>t_3</string>
+      <string>b_i_1</string>
+      <string>b_l_0</string>
+      <string>b_l_1</string>
+    </nnZ>
+  </PrototypeXML>
+  <PrototypeXML>
+    <Name>b_l_0</Name>
+    <weight>0.8</weight>
+    <constraints />
+    <posX>-1</posX>
+    <posY>-1</posY>
+    <posZ>0s</posZ>
+    <negX>0s</negX>
+    <negY>-1</negY>
+    <negZ>-1</negZ>
+    <npX />
+    <npY />
+    <npZ>
+      <string>x_0</string>
+      <string>t_1</string>
+      <string>t_2</string>
+      <string>t_3</string>
+      <string>b_i_1</string>
+      <string>b_l_2</string>
+      <string>b_l_3</string>
+    </npZ>
+    <nnX>
+      <string>x_0</string>
+      <string>t_0</string>
+      <string>t_1</string>
+      <string>t_2</string>
+      <string>b_i_0</string>
+      <string>b_l_1</string>
+      <string>b_l_2</string>
+    </nnX>
+    <nnY />
+    <nnZ />
+  </PrototypeXML>
+  <PrototypeXML>
+    <Name>b_l_1</Name>
+    <weight>0.8</weight>
+    <constraints />
+    <posX>0s</posX>
+    <posY>-1</posY>
+    <posZ>0s</posZ>
+    <negX>-1</negX>
+    <negY>-1</negY>
+    <negZ>-1</negZ>
+    <npX>
+      <string>x_0</string>
+      <string>t_0</string>
+      <string>t_2</string>
+      <string>t_3</string>
+      <string>b_i_0</string>
+      <string>b_l_0</string>
+      <string>b_l_3</string>
+    </npX>
+    <npY />
+    <npZ>
+      <string>x_0</string>
+      <string>t_1</string>
+      <string>t_2</string>
+      <string>t_3</string>
+      <string>b_i_1</string>
+      <string>b_l_2</string>
+      <string>b_l_3</string>
+    </npZ>
+    <nnX />
+    <nnY />
+    <nnZ />
+  </PrototypeXML>
+  <PrototypeXML>
+    <Name>b_l_2</Name>
+    <weight>0.8</weight>
+    <constraints />
+    <posX>0s</posX>
+    <posY>-1</posY>
+    <posZ>-1</posZ>
+    <negX>-1</negX>
+    <negY>-1</negY>
+    <negZ>0s</negZ>
+    <npX>
+      <string>x_0</string>
+      <string>t_0</string>
+      <string>t_2</string>
+      <string>t_3</string>
+      <string>b_i_0</string>
+      <string>b_l_0</string>
+      <string>b_l_3</string>
+    </npX>
+    <npY />
+    <npZ />
+    <nnX />
+    <nnY />
+    <nnZ>
+      <string>x_0</string>
+      <string>t_0</string>
+      <string>t_1</string>
+      <string>t_3</string>
+      <string>b_i_1</string>
+      <string>b_l_0</string>
+      <string>b_l_1</string>
+    </nnZ>
+  </PrototypeXML>
+  <PrototypeXML>
+    <Name>b_l_3</Name>
+    <weight>0.8</weight>
+    <constraints />
+    <posX>-1</posX>
+    <posY>-1</posY>
+    <posZ>-1</posZ>
+    <negX>0s</negX>
+    <negY>-1</negY>
+    <negZ>0s</negZ>
+    <npX />
+    <npY />
+    <npZ />
+    <nnX>
+      <string>x_0</string>
+      <string>t_0</string>
+      <string>t_1</string>
+      <string>t_2</string>
+      <string>b_i_0</string>
+      <string>b_l_1</string>
+      <string>b_l_2</string>
+    </nnX>
+    <nnY />
+    <nnZ>
+      <string>x_0</string>
+      <string>t_0</string>
+      <string>t_1</string>
+      <string>t_3</string>
+      <string>b_i_1</string>
+      <string>b_l_0</string>
+      <string>b_l_1</string>
+    </nnZ>
+  </PrototypeXML>
+  <PrototypeXML>
+    <Name>-1</Name>
+    <weight>0.5</weight>
+    <posX>-1</posX>
+    <posY>-1</posY>
+    <posZ>-1</posZ>
+    <negX>-1</negX>
+    <negY>-1</negY>
+    <negZ>-1</negZ>
+    <npX />
+    <npY />
+    <npZ />
+    <nnX />
+    <nnY />
+    <nnZ />
+  </PrototypeXML>
+</ArrayOfPrototypeXML>

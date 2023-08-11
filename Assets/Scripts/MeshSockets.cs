@@ -34,7 +34,7 @@ public class MeshSockets
     // Note that ignoreSide should contain a value for each direction (North, South, East, West, Up, Down) 
     public List<string> ComputeMeshSockets(Mesh mesh, Vector3Int meshRotation, bool[] ignoreSide)
     {
-        int mult = 10000; // Change to suit your mesh size
+        int mult = 100; // Change to suit your mesh size
 
         List<string> meshSockets = new List<string>();
         Vector3[] verts = mesh.vertices;
@@ -87,18 +87,18 @@ public class MeshSockets
             if (x == maxX && !posX.Contains(new Vector2Int(z, y)))
             {
                 posX.Add(new Vector2Int(z, y));
-            } else if (x == minX && !negX.Contains(new Vector2Int(z, y)))
+            } else if (x == minX && !negX.Contains(new Vector2Int(-1* z, y)))
             {
-                negX.Add(new Vector2Int(z, y));
+                negX.Add(new Vector2Int(-1 * z, y));
             }
 
             if (y == maxY && !posY.Contains(new Vector2Int(x, z)))
             {
                 posY.Add(new Vector2Int(x, z));
             }
-            else if (y == minY && !negY.Contains(new Vector2Int(x, z)))
+            else if (y == minY && !negY.Contains(new Vector2Int(-1 * x, z)))
             {
-                negY.Add(new Vector2Int(x, z));
+                negY.Add(new Vector2Int(-1 * x, z));
             }
 
             if (z == maxZ && !posZ.Contains(new Vector2Int(x, y)))
@@ -129,7 +129,19 @@ public class MeshSockets
                 {
                     Debug.Log("Not Symmetrical");
                     sockets.Add(new Socket(id, posX.ToArray()));
-                    sockets.Add(new Socket(id + 'f', CreateFlipped(posX, false, true).ToArray()));
+                    List<Vector2Int> flipped = CreateFlipped(posX, false, true);
+                    sockets.Add(new Socket(id + 'f', flipped.ToArray()));
+
+                    string original = "";
+                    string flip = "";
+                    for (int i = 0; i < posX.Count; i++)
+                    {
+                        original += posX[i].ToString();
+                        flip += flipped[i].ToString();
+                    }
+                    Debug.Log("Original: " + original);
+                    Debug.Log("Flipped: " + flip);
+
                 } else
                 {
                     Debug.Log("Symmetrical");
@@ -240,8 +252,12 @@ public class MeshSockets
             if (id == String.Empty)
             {
                 id = GenerateID(true) + "_0";
-                //Debug.Log("Adding on Y: " + id);
+                Debug.Log("Adding on Y: " + id);
                 sockets.Add(new Socket(id, posY.ToArray()));
+                for (int i = 0; i < posY.Count; i++)
+                {
+                    Debug.Log(posY[i]);
+                }
                 GenerateRotated(posY, id);
             }
             meshSockets.Add(id);
@@ -259,8 +275,12 @@ public class MeshSockets
             { 
                 
                 id = GenerateID(true) + "_0";
-                //Debug.Log("Adding on -Y: " + id);
+                Debug.Log("Adding on -Y: " + id);
                 sockets.Add(new Socket(id, negY.ToArray()));
+                for (int i = 0; i < negY.Count; i++)
+                {
+                    Debug.Log(negY[i]);
+                }
                 GenerateRotated(negY, id);
             }
             meshSockets.Add(id);

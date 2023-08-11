@@ -10,6 +10,7 @@ public class ChunkWFC
     public bool isInstantiated;
 
     public List<GameObject> tiles = new List<GameObject>();
+    public List<GameObject> towerTiles = new List<GameObject>();
 
     // Remember to deallocate
     public NativeArray<int> tileMap;

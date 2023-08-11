@@ -75,7 +75,13 @@ public struct BufferJob: IJob
                     // be the corresponding tile in the tileTypes list
                     for (int i = 0; i < tileCount; i++)
                     {
-                        tileMapArray[TileMapArrayCoord(x, y, z, i)] = true;
+                        if (!tileTypes[i].isTowerTile) {
+                            tileMapArray[TileMapArrayCoord(x, y, z, i)] = true;
+                        } else
+                        {
+                            tileMapArray[TileMapArrayCoord(x, y, z, i)] = false;
+                        }
+
                     }
                 }
             }
