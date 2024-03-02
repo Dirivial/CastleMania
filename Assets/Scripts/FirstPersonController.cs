@@ -1,10 +1,7 @@
 ﻿using MoreMountains.Feedbacks;
-using System;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.XR;
 #endif
 
 namespace StarterAssets
