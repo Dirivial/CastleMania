@@ -7,7 +7,6 @@ public class GrapplingHook : MonoBehaviour
     public float MaxLength = 100f;
     public LayerMask HookableLayer;
     public GameObject Hook;
-    public GameObject PointPrefab;
 
     public MMFeedbacks HookFoundTargetFeedback;
     public MMFeedbacks HookMissedTargetFeedback;
@@ -23,8 +22,8 @@ public class GrapplingHook : MonoBehaviour
             {
                 targetFound(hit.point);
                 HookFoundTargetFeedback.PlayFeedbacks(hit.point);
-                PointPrefab.transform.position = hit.point;
-                PointPrefab.SetActive(true);
+                //PointPrefab.transform.position = hit.point;
+                //PointPrefab.SetActive(true);
                 return true;
             }
         }
@@ -35,7 +34,7 @@ public class GrapplingHook : MonoBehaviour
 
     public void UnHook()
     {
-        PointPrefab.SetActive(false);
+        //PointPrefab.SetActive(false);
         HookCoolingDownFeedback.PlayFeedbacks();
     }
 }

@@ -101,6 +101,8 @@ namespace StarterAssets
 		private Vector3 _hookPoint;
 		private bool isHoldingDownButton = false;
 
+        private bool isCursorLocked = true;
+
 
 #if ENABLE_INPUT_SYSTEM
         private PlayerInput _playerInput;
@@ -147,7 +149,9 @@ namespace StarterAssets
 			_shootTimeoutDelta = ShootTimeout;
 			_hookTimeoutDelta = -1f;
 			_foundTarget = false;
-		}
+
+            LockCursor();
+        }
 
 		private void Update()
 		{
@@ -156,7 +160,14 @@ namespace StarterAssets
 			JumpAndGravity();
 			GroundedCheck();
 			Move();
-		}
+
+            // Toggle cursor lock when pressing the "Escape" key
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                isCursorLocked = !isCursorLocked;
+                LockCursor();
+            }
+        }
 
 		private void SetTargetFound(Vector3 target)
 		{
@@ -362,7 +373,21 @@ namespace StarterAssets
 			return Mathf.Clamp(lfAngle, lfMin, lfMax);
 		}
 
-		private void OnDrawGizmosSelected()
+        private void LockCursor()
+        {
+            if (isCursorLocked)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+        }
+
+        private void OnDrawGizmosSelected()
 		{
 			Color transparentGreen = new Color(0.0f, 1.0f, 0.0f, 0.35f);
 			Color transparentRed = new Color(1.0f, 0.0f, 0.0f, 0.35f);
