@@ -43,7 +43,7 @@ public class EnemyManager : MonoBehaviour
     {
         if (target.transform.position.y <= -40)
         {
-            sceneSwitcher.SwitchToScene("Start Screen");
+            KillPlayer();
         }
 
         if (!spawnEnemies) return;
@@ -62,20 +62,27 @@ public class EnemyManager : MonoBehaviour
             
             for (int i = 0; i < numOfEnemies; i++)
             {
-
                 SpawnEnemyAt(UnityEngine.Random.Range(0, enemyTypes.Count), CreateRandomLocation());
             }
-            Debug.Log("Wave # " + wave);
         }
 
         MoveEnemies();
 
         if (playerHealth <= 0)
         {
-            sceneSwitcher.SwitchToScene("Start Screen");
+            KillPlayer();
         }
     }
 
+    private void KillPlayer()
+    {
+        if (score > PlayerPrefs.GetInt("HighScore", 0))
+        {
+            PlayerPrefs.SetInt("HighScore", score);
+        }
+        sceneSwitcher.SwitchToScene("Start Screen");
+    }
+    
     private Vector3 CreateRandomLocation()
     {
         float deltaX = UnityEngine.Random.Range(closestSpawnDistance, furthestSpawnDistance) * (UnityEngine.Random.Range(0, 2) == 0 ? -1 : 1);
