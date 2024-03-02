@@ -655,7 +655,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c76c84763de1e694da2ad700ad60a5af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnEnemies: 1
+  spawnEnemies: 0
   target: {fileID: 1446102457}
   enemyTypes:
   - {fileID: 4809407364614080583, guid: c94420fadace6cb42a4efc3761ea7c22, type: 3}
@@ -1147,7 +1147,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerTransform: {fileID: 1446102457}
-  chunkSize: 256
+  chunkSize: 128
   chunkSpawnDistance: 2
   chunkDestroyDistance: 3
 --- !u!4 &389366917

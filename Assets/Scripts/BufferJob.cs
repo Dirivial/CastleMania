@@ -108,7 +108,14 @@ public struct BufferJob: IJob
     private void PickTileAt(Vector3Int pos)
     {
         int index = ChooseTileTypeAt(pos.x, pos.y, pos.z);
-        tileMap[ConvertTo1D(pos.x, pos.y, pos.z)] = index;
+        if (index >= 0 && tileTypes[index].isTowerTile)
+        {
+            tileMap[ConvertTo1D(pos.x, pos.y, pos.z)] = EMPTY_TILE;
+        }
+        else
+        {
+            tileMap[ConvertTo1D(pos.x, pos.y, pos.z)] = index;
+        }
 
         for (int i = 0; i < tileCount; i++)
         {
@@ -134,10 +141,7 @@ public struct BufferJob: IJob
         {
             return ChooseWithWeights(choices);
         }
-        else
-        {
-            return EMPTY_TILE;
-        }
+        return EMPTY_TILE;
     }
 
     // If you do not have any custom constraints, just return true here or remove the function
@@ -204,6 +208,10 @@ public struct BufferJob: IJob
     // Check if the given tile has a connection to some direction
     private bool HasConnection(int index, Direction direction)
     {
+        if (index < 0)
+        {
+            return false;
+        }
         return hasConnectionData[index + ((int)direction * tileCount)];
     }
 

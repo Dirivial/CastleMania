@@ -4,7 +4,7 @@ using Unity.Jobs;
 using UnityEngine;
 using Unity.Burst;
 
-//[BurstCompile]
+[BurstCompile]
 public struct JobWFC: IJob
 {
 	public NativeArray<int> outNorth;

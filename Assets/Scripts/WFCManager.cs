@@ -7,6 +7,7 @@ using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Random = UnityEngine.Random;
 
 public struct TowerTile
 {
@@ -67,6 +68,8 @@ public class WFCManager : Manager
 
     public void Setup()
     {
+        seed = (uint)Random.Range(1, Int32.MaxValue);
+        
         dimensions = new Vector3Int(TilesPerChunk, numberOfFloors, TilesPerChunk);
         bufferZones = new Dictionary<string, BufferZone>();
 
@@ -105,8 +108,6 @@ public class WFCManager : Manager
 
             i++;
         }
-
-        Debug.Log("tower" + tower + " tower_top " + tower_top + " tower_bottom " + tower_bottom + " tower_window " + tower_window);
 
         // Create dictionary to access chunks
         chunks = new Dictionary<Vector2Int, ChunkWFC>();
