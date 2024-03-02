@@ -171,7 +171,6 @@ public class WFCManager : Manager
                 job.job.Complete();
                 job.towerJob.heights.Dispose();
                 InstantiateTowerTiles(job);
-                //chunks[job.chunkPos].towers.Dispose();
 
                 scheduledTowerJobs.RemoveAt(i);
             }
@@ -243,7 +242,7 @@ public class WFCManager : Manager
         chunks[chunkPos].outSouth.Dispose();
         chunks[chunkPos].outEast.Dispose();
         chunks[chunkPos].outWest.Dispose();
-        //chunks[chunkPos].towers.Dispose();
+        chunks[chunkPos].towers.Dispose();
         chunks[chunkPos].jobWFC.OnDestroy();
 
         chunks.Remove(chunkPos);
