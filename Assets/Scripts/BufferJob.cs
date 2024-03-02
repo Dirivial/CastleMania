@@ -1,10 +1,7 @@
-
-
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
-
 
 /* 
  * This is not the most elegant solution I think, the goal is just to 

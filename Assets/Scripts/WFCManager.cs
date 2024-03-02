@@ -1,12 +1,8 @@
-
-
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
-using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 
 public struct TowerTile
@@ -21,7 +17,6 @@ public class TowerJob
     public JobHandle job;
     public TowerGrowthJob towerJob;
 }
-
 
 public class WFCManager : Manager
 {

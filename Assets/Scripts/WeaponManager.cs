@@ -1,12 +1,7 @@
-
-
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Pool;
 using MoreMountains.Feedbacks;
-using MoreMountains.FeedbacksForThirdParty;
-
 public class WeaponManager : MonoBehaviour
 {
     [SerializeField] private List<AbstractWeapon> weapons;

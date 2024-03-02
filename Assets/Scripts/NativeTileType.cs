@@ -1,6 +1,3 @@
-using System.Linq;
-using Unity.Collections;
-using UnityEngine;
 using Unity.Burst;
 
 [BurstCompile]
