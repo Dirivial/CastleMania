@@ -47,20 +47,25 @@ public class ChunkManager : MonoBehaviour
 
         // Spawn chunks close to the player
         UpdateChunks();
+
+        // Set playerchunk
+        currentPlayerChunk = new Vector2Int(
+            Mathf.FloorToInt(playerTransform.position.x / chunkSize),
+            Mathf.FloorToInt((playerTransform.position.z - chunkSize / 2) / chunkSize)
+        );
     }
 
     private void Update()
     {
         // Calculate the player's current chunk position
         Vector2Int playerChunk = new Vector2Int(
-            Mathf.FloorToInt((playerTransform.position.x) / chunkSize),
+            Mathf.FloorToInt(playerTransform.position.x / chunkSize),
             Mathf.FloorToInt((playerTransform.position.z - chunkSize / 2) / chunkSize)
         );
 
         // If the player has moved to a new chunk, update the chunks
         if (playerChunk != currentPlayerChunk)
         {
-            //Debug.Log(playerTransform.position + " in chunk " + playerChunk);
             currentPlayerChunk = playerChunk;
             UpdateChunks();
         }

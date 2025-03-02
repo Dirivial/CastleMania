@@ -207,6 +207,7 @@ public class WFCManager : Manager
     public override void DestroyChunk(Vector2Int chunkPos)
     {
         //RemoveLeftOverBufferZones(chunkPos);
+        Debug.Log("Destroy chunk:" + chunkPos.ToString());
         int i = 0;
         for (int x = 0; x < dimensions.x; x++)
         {
