@@ -39,9 +39,7 @@ public class WFCManager : Manager
 
     private int tileCount;
     private Dictionary<Vector2Int, ChunkWFC> chunks;
-    private Dictionary<string, BufferZone> bufferZones;
     List<Vector2Int> pendingChunks = new List<Vector2Int>();
-    List<BufferZone> scheduledBufferZones = new List<BufferZone>();
     List<TowerJob> scheduledTowerJobs = new List<TowerJob>();
     private Vector3Int dimensions = new Vector3Int(5, 5, 5);
     // private static int EMPTY_TILE = -2;
@@ -66,7 +64,6 @@ public class WFCManager : Manager
         seed = (uint)Random.Range(1, Int32.MaxValue);
 
         dimensions = new Vector3Int(TilesPerChunk, numberOfFloors, TilesPerChunk);
-        bufferZones = new Dictionary<string, BufferZone>();
 
         XML_IO.ClearTileTypes();
         XML_IO.Import();
@@ -146,18 +143,6 @@ public class WFCManager : Manager
             }
         }
 
-        for (int i = scheduledBufferZones.Count - 1; i >= 0; i--)
-        {
-            BufferZone bufferZone = scheduledBufferZones[i];
-            if (bufferZone != null && bufferZone.jobHandle.IsCompleted)
-            {
-                bufferZone.jobHandle.Complete();
-                InstantiateBuffer(bufferZone);
-                //Debug.Log("Bufferzone done between " + bufferZone.positionA + " & " + bufferZone.positionB);
-                scheduledBufferZones.RemoveAt(i);
-            }
-        }
-
         for (int i = scheduledTowerJobs.Count - 1; i >= 0; i--)
         {
             TowerJob job = scheduledTowerJobs[i];
@@ -191,11 +176,6 @@ public class WFCManager : Manager
             //Debug.Log("Disposed of chunk @ " + c.position);
         }
 
-        // foreach (BufferZone bufferZone in bufferZones.Values)
-        // {
-        //     bufferZone.tileMap.Dispose();
-        // }
-
         for (int i = scheduledTowerJobs.Count - 1; i >= 0; i--)
         {
             TowerJob job = scheduledTowerJobs[i];
@@ -206,7 +186,6 @@ public class WFCManager : Manager
 
     public override void DestroyChunk(Vector2Int chunkPos)
     {
-        //RemoveLeftOverBufferZones(chunkPos);
         Debug.Log("Destroy chunk:" + chunkPos.ToString());
         int i = 0;
         for (int x = 0; x < dimensions.x; x++)
@@ -244,58 +223,6 @@ public class WFCManager : Manager
         chunks.Remove(chunkPos);
     }
 
-    private void RemoveLeftOverBufferZones(Vector2Int chunkPosition)
-    {
-        for (int i = -1; i < 2; i += 2)
-        {
-            Vector2Int v = new Vector2Int(chunkPosition.x, chunkPosition.y + i);
-            Vector2Int h = new Vector2Int(chunkPosition.x + i, chunkPosition.y);
-
-            // Remove bufferzone to the north or south
-            string key = chunkPosition.ToString() + ":" + v.ToString();
-            string key2 = v.ToString() + ":" + chunkPosition.ToString();
-            if (bufferZones.ContainsKey(key))
-            {
-                DeleteBufferZone(key);
-            }
-            else if (bufferZones.ContainsKey(key2))
-            {
-                DeleteBufferZone(key2);
-            }
-            // Remove bufferzone to the west or east
-            key = chunkPosition.ToString() + ":" + h.ToString();
-            key2 = h.ToString() + ":" + chunkPosition.ToString();
-            if (bufferZones.ContainsKey(key))
-            {
-                DeleteBufferZone(key);
-            }
-            else if (bufferZones.ContainsKey(key2))
-            {
-                DeleteBufferZone(key2);
-            }
-        }
-
-    }
-
-    private void DeleteBufferZone(string key)
-    {
-        BufferZone bufferZone = bufferZones[key];
-
-        int i = 0;
-        for (int x = 0; x < dimensions.x; x++)
-        {
-            for (int y = 0; y < dimensions.y; y++)
-            {
-                int index = bufferZone.tileMap[x + y * dimensions.x];
-                if (index < 0 || index == tower_bottom || imported_tiles[index].id < 0) continue;
-                pooler.DespawnTile(imported_tiles[index].id, bufferZone.tiles[i]);
-                i++;
-            }
-        }
-        bufferZone.tileMap.Dispose();
-        bufferZones.Remove(key);
-    }
-
     public override void CreateChunk(Vector2Int chunkPos)
     {
         // Create chunk
@@ -325,8 +252,6 @@ public class WFCManager : Manager
         pendingChunks.Add(chunkPos);
         JobHandle handle = chunks[chunkPos].jobWFC.Schedule();
         chunks[chunkPos].jobHandle = handle;
-
-        //CreateBufferZones(chunkPos, handle);
     }
 
     private void CreateTowerGrowthJobs(NativeList<TowerTile> towers, Vector2Int chunkPos)
@@ -343,125 +268,6 @@ public class WFCManager : Manager
         scheduledTowerJobs.Add(job);
     }
 
-    private void CreateBufferZones(Vector2Int chunkPos, JobHandle jobHandle)
-    {
-        foreach (Vector2Int chunk in chunks.Keys)
-        {
-            // North
-            if (chunk.Equals(new Vector2Int(chunkPos.x, chunkPos.y + 1)))
-            {
-                string key = chunk + ":" + chunkPos;
-
-                if (!bufferZones.ContainsKey(key))
-                {
-                    BufferZone b = new BufferZone();
-                    b.positionB = chunkPos; b.positionA = chunk;
-                    b.IsHorizontal = true;
-
-                    b.jobHandle = JobHandle.CombineDependencies(chunks[chunk].jobHandle, jobHandle);
-
-                    b.tileMap = new NativeArray<int>(dimensions.x * dimensions.y, Allocator.Persistent);
-
-                    // Create buffer job
-                    b.bufferJob = new BufferJob(b.tileMap, tileTypes.AsReadOnly(),
-                        neighborData.AsReadOnly(), hasConnectionData.AsReadOnly(),
-                        new Vector3Int(dimensions.x, dimensions.y, 1), tileCount,
-                        chunks[chunk].outSouth.AsReadOnly(),
-                        chunks[chunkPos].outNorth.AsReadOnly());
-
-                    b.jobHandle = b.bufferJob.Schedule(b.jobHandle);
-                    scheduledBufferZones.Add(b);
-                    bufferZones.Add(key, b);
-                }
-
-            }
-            // South
-            if (chunk.Equals(new Vector2Int(chunkPos.x, chunkPos.y - 1)))
-            {
-                string key = chunkPos + ":" + chunk;
-                if (!bufferZones.ContainsKey(key))
-                {
-                    BufferZone b = new BufferZone();
-                    b.positionB = chunk; b.positionA = chunkPos;
-                    b.IsHorizontal = true;
-
-                    b.jobHandle = JobHandle.CombineDependencies(jobHandle, chunks[chunk].jobHandle);
-
-                    b.tileMap = new NativeArray<int>(dimensions.x * dimensions.y, Allocator.Persistent);
-
-                    bufferZones.Add(chunkPos + ":" + chunk, b);
-
-                    // Create buffer job
-                    b.bufferJob = new BufferJob(b.tileMap, tileTypes.AsReadOnly(),
-                        neighborData.AsReadOnly(), hasConnectionData.AsReadOnly(),
-                        new Vector3Int(dimensions.x, dimensions.y, 1), tileCount,
-                        chunks[chunkPos].outSouth.AsReadOnly(),
-                        chunks[chunk].outNorth.AsReadOnly());
-
-                    b.jobHandle = b.bufferJob.Schedule(b.jobHandle);
-                    scheduledBufferZones.Add(b);
-                }
-            }
-
-            // East
-            if (chunk.Equals(new Vector2Int(chunkPos.x + 1, chunkPos.y)))
-            {
-                string key = chunkPos + ":" + chunk;
-                if (!bufferZones.ContainsKey(key))
-                {
-                    BufferZone b = new BufferZone();
-                    b.positionA = chunk; b.positionB = chunkPos;
-                    b.IsHorizontal = false;
-
-                    b.jobHandle = JobHandle.CombineDependencies(chunks[chunk].jobHandle, chunks[chunkPos].jobHandle);
-
-                    b.tileMap = new NativeArray<int>(dimensions.z * dimensions.y, Allocator.Persistent);
-
-                    bufferZones.Add(chunkPos + ":" + chunk, b);
-
-                    // Create buffer job
-                    b.bufferJob = new BufferJob(b.tileMap, tileTypes.AsReadOnly(),
-                        neighborData.AsReadOnly(), hasConnectionData.AsReadOnly(),
-                        new Vector3Int(1, dimensions.y, dimensions.z), tileCount,
-                        chunks[chunk].outWest.AsReadOnly(),
-                        chunks[chunkPos].outEast.AsReadOnly());
-
-                    b.jobHandle = b.bufferJob.Schedule(b.jobHandle);
-                    scheduledBufferZones.Add(b);
-                }
-            }
-
-            // West
-            if (chunk.Equals(new Vector2Int(chunkPos.x - 1, chunkPos.y)))
-            {
-                string key = chunk + ":" + chunkPos;
-                if (!bufferZones.ContainsKey(key))
-                {
-                    BufferZone b = new BufferZone();
-                    b.positionA = chunkPos; b.positionB = chunk;
-                    b.IsHorizontal = false;
-
-                    b.jobHandle = JobHandle.CombineDependencies(chunks[chunk].jobHandle, chunks[chunkPos].jobHandle);
-
-                    b.tileMap = new NativeArray<int>(dimensions.z * dimensions.y, Allocator.Persistent);
-
-                    bufferZones.Add(chunk + ":" + chunkPos, b);
-
-                    // Create buffer job
-                    b.bufferJob = new BufferJob(b.tileMap, tileTypes.AsReadOnly(),
-                        neighborData.AsReadOnly(), hasConnectionData.AsReadOnly(),
-                        new Vector3Int(1, dimensions.y, dimensions.z), tileCount,
-                        chunks[chunkPos].outWest.AsReadOnly(),
-                        chunks[chunk].outEast.AsReadOnly());
-
-                    b.jobHandle = b.bufferJob.Schedule(b.jobHandle);
-                    scheduledBufferZones.Add(b);
-                }
-            }
-        }
-
-    }
-
     private int ConvertTo1D(int x, int y, int z)
     {
         return x + dimensions.x * (y + dimensions.y * z);
@@ -470,8 +276,8 @@ public class WFCManager : Manager
     private void InstantiateTiles(Vector2Int position)
     {
         NativeArray<int> tileMap = chunks[position].tileMap;
-        int xOffset = position.x * TilesPerChunk * tileSize + tileSize * position.x;
-        int zOffset = position.y * TilesPerChunk * tileSize + tileSize * position.y;
+        int xOffset = position.x * TilesPerChunk * tileSize;
+        int zOffset = position.y * TilesPerChunk * tileSize;
         for (int x = 0; x < dimensions.x; x++)
         {
             for (int z = 0; z < dimensions.z; z++)
@@ -502,52 +308,6 @@ public class WFCManager : Manager
         foreach (TowerTile t in chunks[chunkPos].towers)
         {
             chunks[chunkPos].towerTiles.Add(pooler.SpawnTile(imported_tiles[t.tileId].id, new Vector3Int(xOffset + t.position.x * tileSize, t.position.y * tileSize, zOffset + t.position.z * tileSize), imported_tiles[t.tileId].rotation, tileScale));
-        }
-    }
-
-    private void InstantiateBuffer(BufferZone bufferZone)
-    {
-
-        int xOffset = bufferZone.positionA.x;
-        xOffset = xOffset * TilesPerChunk * tileSize + xOffset * tileSize;
-
-        int zOffset = bufferZone.positionA.y;
-        zOffset = zOffset * TilesPerChunk * tileSize + zOffset * tileSize;
-
-        bufferZone.IsInstantiated = true;
-
-        if (bufferZone.IsHorizontal)
-        {
-            zOffset -= tileSize;
-            for (int x = 0; x < dimensions.x; x++)
-            {
-                for (int y = 0; y < dimensions.y; y++)
-                {
-                    int height = floorHeights[y] * tileSize;
-                    //Debug.Log("Yo " + bufferZone.tileMap[x + y * dimensions.x]);
-                    int index = bufferZone.tileMap[x + y * dimensions.x];
-                    if (index < 0 || index == tower_bottom || imported_tiles[index].id < 0) continue;
-                    //bufferZone.tiles.Add(InstantiateTile(index, xOffset + x * tileSize, height, zOffset));
-                    bufferZone.tiles.Add(pooler.SpawnTile(imported_tiles[index].id, new Vector3Int(xOffset + x * tileSize, height, zOffset), imported_tiles[index].rotation, tileScale));
-                }
-            }
-        }
-        else
-        {
-            xOffset -= tileSize;
-            //Debug.Log("Yo");
-            for (int z = 0; z < dimensions.z; z++)
-            {
-                for (int y = 0; y < dimensions.y; y++)
-                {
-                    int height = floorHeights[y] * tileSize;
-                    //Debug.Log("Yoy " + bufferZone.tileMap[z + y * dimensions.z]);
-                    int index = bufferZone.tileMap[z + y * dimensions.z];
-                    if (index < 0 || index == tower_bottom || imported_tiles[index].id < 0) continue;
-                    //bufferZone.tiles.Add(InstantiateTile(index, xOffset, height, zOffset + z * tileSize));
-                    bufferZone.tiles.Add(pooler.SpawnTile(imported_tiles[index].id, new Vector3Int(xOffset, height, zOffset + z * tileSize), imported_tiles[index].rotation, tileScale));
-                }
-            }
         }
     }
 
@@ -592,73 +352,73 @@ public class WFCManager : Manager
         }
 
 
-        Gizmos.color = Color.green;
-        Vector3 sizeA = new Vector3(tileSize, 1f, 1f);
-        Vector3 sizeB = new Vector3(1f, 1f, tileSize);
+        // Gizmos.color = Color.green;
+        // Vector3 sizeA = new Vector3(tileSize, 1f, 1f);
+        // Vector3 sizeB = new Vector3(1f, 1f, tileSize);
 
-        Gizmos.DrawCube(new Vector3(tileSize * TilesPerChunk / 2 - tileSize / 2, 0, tileSize * TilesPerChunk / 2 - tileSize / 2), new Vector3(2f, 2f, 2f));
-        Gizmos.color = Color.white;
-        foreach (ChunkWFC chunk in chunks.Values)
-        {
-            if (!chunk.jobHandle.IsCompleted || !chunk.isInstantiated)
-            {
-                continue;
-            }
-            int xOffset = chunk.position.x * TilesPerChunk * tileSize + tileSize * chunk.position.x;
-            int zOffset = chunk.position.y * TilesPerChunk * tileSize + tileSize * chunk.position.y;
-            for (int y = 0; y < dimensions.y; y++)
-            {
-                int height = floorHeights[y];
-                for (int i = 0; i < dimensions.z; i++)
-                {
-                    if (HasConnection(chunk.outWest[i + y * dimensions.z], Direction.West))
-                    {
-                        Gizmos.color = Color.green;
-                    }
-                    else
-                    {
-                        Gizmos.color = Color.red;
-                    }
-                    Vector3 p = new Vector3(xOffset - tileSize / 2, height * tileSize, zOffset + i * tileSize);
-                    Gizmos.DrawCube(p, sizeB);
+        // Gizmos.DrawCube(new Vector3(tileSize * TilesPerChunk / 2 - tileSize / 2, 0, tileSize * TilesPerChunk / 2 - tileSize / 2), new Vector3(2f, 2f, 2f));
+        // Gizmos.color = Color.white;
+        // foreach (ChunkWFC chunk in chunks.Values)
+        // {
+        //     if (!chunk.jobHandle.IsCompleted || !chunk.isInstantiated)
+        //     {
+        //         continue;
+        //     }
+        //     int xOffset = chunk.position.x * TilesPerChunk * tileSize;
+        //     int zOffset = chunk.position.y * TilesPerChunk * tileSize;
+        //     for (int y = 0; y < dimensions.y; y++)
+        //     {
+        //         int height = floorHeights[y];
+        //         for (int i = 0; i < dimensions.z; i++)
+        //         {
+        //             if (HasConnection(chunk.outWest[i + y * dimensions.z], Direction.West))
+        //             {
+        //                 Gizmos.color = Color.green;
+        //             }
+        //             else
+        //             {
+        //                 Gizmos.color = Color.red;
+        //             }
+        //             Vector3 p = new Vector3(xOffset - tileSize / 2, height * tileSize, zOffset + i * tileSize);
+        //             Gizmos.DrawCube(p, sizeB);
 
-                    if (HasConnection(chunk.outEast[i], Direction.East))
-                    {
-                        Gizmos.color = Color.green;
-                    }
-                    else
-                    {
-                        Gizmos.color = Color.red;
-                    }
-                    p = new Vector3(xOffset + tileSize * TilesPerChunk - tileSize / 2, height * tileSize, zOffset + i * tileSize);
-                    Gizmos.DrawCube(p, sizeB);
-                }
-                for (int i = 0; i < dimensions.x; i++)
-                {
-                    if (HasConnection(chunk.outNorth[i + y * dimensions.x], Direction.North))
-                    {
-                        Gizmos.color = Color.green;
-                    }
-                    else
-                    {
-                        Gizmos.color = Color.red;
-                    }
-                    Vector3 p = new Vector3(xOffset + i * tileSize, height * tileSize, zOffset + tileSize * TilesPerChunk - tileSize / 2);
-                    Gizmos.DrawCube(p, sizeA);
+        //             if (HasConnection(chunk.outEast[i], Direction.East))
+        //             {
+        //                 Gizmos.color = Color.green;
+        //             }
+        //             else
+        //             {
+        //                 Gizmos.color = Color.red;
+        //             }
+        //             p = new Vector3(xOffset + tileSize * TilesPerChunk - tileSize / 2, height * tileSize, zOffset + i * tileSize);
+        //             Gizmos.DrawCube(p, sizeB);
+        //         }
+        //         for (int i = 0; i < dimensions.x; i++)
+        //         {
+        //             if (HasConnection(chunk.outNorth[i + y * dimensions.x], Direction.North))
+        //             {
+        //                 Gizmos.color = Color.green;
+        //             }
+        //             else
+        //             {
+        //                 Gizmos.color = Color.red;
+        //             }
+        //             Vector3 p = new Vector3(xOffset + i * tileSize, height * tileSize, zOffset + tileSize * TilesPerChunk - tileSize / 2);
+        //             Gizmos.DrawCube(p, sizeA);
 
-                    if (HasConnection(chunk.outSouth[i + y * dimensions.x], Direction.South))
-                    {
-                        Gizmos.color = Color.green;
-                    }
-                    else
-                    {
-                        Gizmos.color = Color.red;
-                    }
-                    p = new Vector3(xOffset + i * tileSize, height * tileSize, zOffset - tileSize / 2);
-                    Gizmos.DrawCube(p, sizeA);
-                }
-            }
-        }
+        //             if (HasConnection(chunk.outSouth[i + y * dimensions.x], Direction.South))
+        //             {
+        //                 Gizmos.color = Color.green;
+        //             }
+        //             else
+        //             {
+        //                 Gizmos.color = Color.red;
+        //             }
+        //             p = new Vector3(xOffset + i * tileSize, height * tileSize, zOffset - tileSize / 2);
+        //             Gizmos.DrawCube(p, sizeA);
+        //         }
+        //     }
+        // }
     }
 
     // Check if the given tile has a connection to some direction
@@ -676,7 +436,7 @@ public class WFCManager : Manager
         for (int i = 0; i < dimensions.y; i++)
         {
             floorHeights[i] = height;
-            height = UnityEngine.Random.Range(height + floorGapMin, height + floorGapMax);
+            height = Random.Range(height + floorGapMin, height + floorGapMax);
         }
     }
 }
