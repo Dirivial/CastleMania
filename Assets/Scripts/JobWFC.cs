@@ -4,21 +4,21 @@ using UnityEngine;
 using Unity.Burst;
 
 [BurstCompile]
-public struct JobWFC: IJob
+public struct JobWFC : IJob
 {
 	public NativeArray<int> outNorth;
-    public NativeArray<int> outSouth;
-    public NativeArray<int> outEast;
-    public NativeArray<int> outWest;
+	public NativeArray<int> outSouth;
+	public NativeArray<int> outEast;
+	public NativeArray<int> outWest;
 
-    private NativeArray<int> tileMap;
+	private NativeArray<int> tileMap;
 	private NativeList<TowerTile> towers;
 
-    // Readonly
-    private NativeArray<NativeTileType>.ReadOnly tileTypes;
+	// Readonly
+	private NativeArray<NativeTileType>.ReadOnly tileTypes;
 	private NativeArray<bool>.ReadOnly neighborData;
 	private NativeArray<bool>.ReadOnly hasConnectionData;
-	
+
 	// Whatever
 	private Vector3Int dimensions;
 	private int tileCount;
@@ -26,30 +26,30 @@ public struct JobWFC: IJob
 	private static readonly int UNDECIDED = -1;
 	private static readonly int EMPTY_TILE = -2;
 
-    private Unity.Mathematics.Random random;
+	private Unity.Mathematics.Random random;
 
 	// Temporary things
-    private NativeList<Vector3Int> tilesToProcess;
+	private NativeList<Vector3Int> tilesToProcess;
 	[DeallocateOnJobCompletion]
-    private NativeArray<bool> tileMapArray;
+	private NativeArray<bool> tileMapArray;
 
 	public JobWFC(Vector3Int dimensions,
 		NativeArray<NativeTileType>.ReadOnly tileTypes, int tileCount,
 		NativeArray<int> tileMap, NativeArray<bool>.ReadOnly neighborData,
 		NativeArray<bool>.ReadOnly hasConnectionData,
 		NativeList<TowerTile> towers,
-        NativeArray<int> outNorth,
-        NativeArray<int> outSouth,
-        NativeArray<int> outEast,
-        NativeArray<int> outWest,
+				NativeArray<int> outNorth,
+				NativeArray<int> outSouth,
+				NativeArray<int> outEast,
+				NativeArray<int> outWest,
 		uint seed)
 	{
 		this.dimensions = dimensions;
 		this.tileTypes = tileTypes;
-        this.tileCount = tileCount;
+		this.tileCount = tileCount;
 		this.neighborData = neighborData;
 		this.hasConnectionData = hasConnectionData;
-        this.tileMap = tileMap;
+		this.tileMap = tileMap;
 		this.towers = towers;
 
 		// Outside connections
@@ -61,10 +61,10 @@ public struct JobWFC: IJob
 
 		// Allocate memory for the temporary stuff
 		tilesToProcess = new NativeList<Vector3Int>(0, Allocator.Persistent);
-        tileMapArray = new NativeArray<bool>(dimensions.x * dimensions.y * dimensions.z * tileCount, Allocator.Persistent);
+		tileMapArray = new NativeArray<bool>(dimensions.x * dimensions.y * dimensions.z * tileCount, Allocator.Persistent);
 
 		//currentTileToProcess = 0;
-        random = new Unity.Mathematics.Random(seed);
+		random = new Unity.Mathematics.Random(seed);
 
 		for (int x = 0; x < dimensions.x; x++)
 		{
@@ -79,7 +79,7 @@ public struct JobWFC: IJob
 					// be the corresponding tile in the tileTypes list
 					for (int i = 0; i < tileCount; i++)
 					{
-                        tileMapArray[TileMapArrayCoord(x, y, z, i)] = true;
+						tileMapArray[TileMapArrayCoord(x, y, z, i)] = true;
 					}
 				}
 			}
@@ -106,8 +106,8 @@ public struct JobWFC: IJob
 	{
 		if (tilesToProcess.IsCreated) // I got an error and this fixed it :)
 		{
-            tilesToProcess.Dispose();
-        }
+			tilesToProcess.Dispose();
+		}
 	}
 
 	// Convert coordinates to singular coordinate for tile map
@@ -117,9 +117,10 @@ public struct JobWFC: IJob
 	}
 
 	// Convert to coordinate to use for the tile map array
-	private int TileMapArrayCoord(int x, int y, int z, int i) {
-        return x + dimensions.x * (y + dimensions.y * (z + dimensions.z * i));
-    }
+	private int TileMapArrayCoord(int x, int y, int z, int i)
+	{
+		return x + dimensions.x * (y + dimensions.y * (z + dimensions.z * i));
+	}
 
 	// Check if the given tile has a connection to some direction
 	private bool HasConnection(int index, Direction direction)
@@ -128,7 +129,8 @@ public struct JobWFC: IJob
 	}
 
 	// Check two tiles are valid neighbors
-	private bool IsNeighbor(int index, Direction direction, int otherIndex) {
+	private bool IsNeighbor(int index, Direction direction, int otherIndex)
+	{
 		if (otherIndex < 0) return false;
 		return neighborData[index + tileCount * ((int)direction + 6 * otherIndex)];
 	}
@@ -186,31 +188,31 @@ public struct JobWFC: IJob
 
 		StoreConnectionOut(pos, index);
 
-        tilesToProcess.Add(pos);
+		tilesToProcess.Add(pos);
 	}
 
 	private void StoreConnectionOut(Vector3Int pos, int index)
 	{
-        // If the tile has a connection outside, it should be marked in one of the corresponding lists
-        // Note that we do not check up/down
-        if (pos.z == 0)
-        {
-            outSouth[pos.x + pos.y * dimensions.x] = index;
-        }
-        if (pos.z == dimensions.z - 1)
-        {
-            outNorth[pos.x + pos.y * dimensions.x] = index;
-        }
+		// If the tile has a connection outside, it should be marked in one of the corresponding lists
+		// Note that we do not check up/down
+		if (pos.z == 0)
+		{
+			outSouth[pos.x + pos.y * dimensions.x] = index;
+		}
+		if (pos.z == dimensions.z - 1)
+		{
+			outNorth[pos.x + pos.y * dimensions.x] = index;
+		}
 
-        if (pos.x == 0)
-        {
-            outWest[pos.z + pos.y * dimensions.z] = index;
-        }
-        if (pos.x == dimensions.x - 1)
-        {
-            outEast[pos.z + pos.y * dimensions.z] = index;
-        }
-    }
+		if (pos.x == 0)
+		{
+			outWest[pos.z + pos.y * dimensions.z] = index;
+		}
+		if (pos.x == dimensions.x - 1)
+		{
+			outEast[pos.z + pos.y * dimensions.z] = index;
+		}
+	}
 
 	// Process the tiles that were have been but in the tilesToProcess stack. Returns list of coordinates for tiles that have been set
 	private void ProcessTiles()
@@ -254,21 +256,21 @@ public struct JobWFC: IJob
 	}
 
 	private void AssignTile(Vector3Int pos, int tileType)
-    {
-        tileMap[ConvertTo1D(pos.x, pos.y, pos.z)] = tileType;
-        for (int i = 0; i < tileCount; i++)
-        {
-            tileMapArray[TileMapArrayCoord(pos.x, pos.y, pos.z, i)] = false;
-        }
+	{
+		tileMap[ConvertTo1D(pos.x, pos.y, pos.z)] = tileType;
+		for (int i = 0; i < tileCount; i++)
+		{
+			tileMapArray[TileMapArrayCoord(pos.x, pos.y, pos.z, i)] = false;
+		}
 
-        if (tileType >= 0 && tileTypes[tileType].isTowerTile)
-        {
-            TowerTile towerTile = new TowerTile();
-            towerTile.position = pos;
-            towerTile.tileId = tileType;
-            towers.Add(towerTile);
-        }
-    }
+		if (tileType >= 0 && tileTypes[tileType].isTowerTile)
+		{
+			TowerTile towerTile = new TowerTile();
+			towerTile.position = pos;
+			towerTile.tileId = tileType;
+			towers.Add(towerTile);
+		}
+	}
 
 
 	// Update the neighbors of the given chunk position
@@ -326,7 +328,7 @@ public struct JobWFC: IJob
 
 									if (HasConnection(j, (Direction)opposite))
 									{
-                                        tileMapArray[TileMapArrayCoord(neighborPosition.x, neighborPosition.y, neighborPosition.z, j)] = false;
+										tileMapArray[TileMapArrayCoord(neighborPosition.x, neighborPosition.y, neighborPosition.z, j)] = false;
 										found = true;
 									}
 								}
@@ -341,7 +343,7 @@ public struct JobWFC: IJob
 								{
 									if (!IsNeighbor(tileIndex, i, j))
 									{
-                                        tileMapArray[TileMapArrayCoord(neighborPosition.x, neighborPosition.y, neighborPosition.z, j)] = false;
+										tileMapArray[TileMapArrayCoord(neighborPosition.x, neighborPosition.y, neighborPosition.z, j)] = false;
 										found = true;
 									}
 								}
@@ -360,7 +362,7 @@ public struct JobWFC: IJob
 
 								if (HasConnection(j, (Direction)opposite))
 								{
-                                    tileMapArray[TileMapArrayCoord(neighborPosition.x, neighborPosition.y, neighborPosition.z, j)] = false;
+									tileMapArray[TileMapArrayCoord(neighborPosition.x, neighborPosition.y, neighborPosition.z, j)] = false;
 									found = true;
 								}
 							}
@@ -405,37 +407,37 @@ public struct JobWFC: IJob
 		}
 	}
 
-    // If you do not have any custom constraints, just return true here or remove the function
-    private bool EnforceCustomConstraints(int x, int y, int z, int i)
-    {
-        if (tileTypes[i].grounded && y != 0)
-        {
-            return false;
-        }
+	// If you do not have any custom constraints, just return true here or remove the function
+	private bool EnforceCustomConstraints(int x, int y, int z, int i)
+	{
+		if (tileTypes[i].grounded && y != 0)
+		{
+			return false;
+		}
 
-        if (tileTypes[i].mustConnect && !CanConnect(x, y, z, i))
-        {
-            return false;
-        }
+		if (tileTypes[i].mustConnect && !CanConnect(x, y, z, i))
+		{
+			return false;
+		}
 
-        if (tileTypes[i].noRepeatH)
-        {
-            if (x > 0 && tileMap[ConvertTo1D(x - 1, y, z)] == i) { return false; }
-            if (x < dimensions.x - 1 && tileMap[ConvertTo1D(x + 1, y, z)] == i) { return false; }
-            if (z > 0 && tileMap[ConvertTo1D(x, y, z - 1)] == i) { return false; }
-            if (z < dimensions.z - 1 && tileMap[ConvertTo1D(x, y, z + 1)] == i) { return false; }
-        }
+		if (tileTypes[i].noRepeatH)
+		{
+			if (x > 0 && tileMap[ConvertTo1D(x - 1, y, z)] == i) { return false; }
+			if (x < dimensions.x - 1 && tileMap[ConvertTo1D(x + 1, y, z)] == i) { return false; }
+			if (z > 0 && tileMap[ConvertTo1D(x, y, z - 1)] == i) { return false; }
+			if (z < dimensions.z - 1 && tileMap[ConvertTo1D(x, y, z + 1)] == i) { return false; }
+		}
 
-        if (tileTypes[i].noRepeatV)
-        {
-            if (y > 0 && tileMap[ConvertTo1D(x, y - 1, z)] == i) { return false; }
-            if (y < dimensions.y - 1 && tileMap[ConvertTo1D(x, y + 1, z)] == i) { return false; }
-        }
+		if (tileTypes[i].noRepeatV)
+		{
+			if (y > 0 && tileMap[ConvertTo1D(x, y - 1, z)] == i) { return false; }
+			if (y < dimensions.y - 1 && tileMap[ConvertTo1D(x, y + 1, z)] == i) { return false; }
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    private int ChooseWithWeights(NativeList<int> indices)
+	private int ChooseWithWeights(NativeList<int> indices)
 	{
 		float cumulativeSum = 0.0f;
 		NativeArray<float> cumulativeWeights = new NativeArray<float>(indices.Length, Allocator.Temp);
@@ -509,62 +511,62 @@ public struct JobWFC: IJob
 	}
 
 
-    private bool CanConnect(int x, int y, int z, int i)
-    {
+	private bool CanConnect(int x, int y, int z, int i)
+	{
 
-        if (HasConnection(i, Direction.West) && x > 0)
-        {
-            int neighbor = tileMap[ConvertTo1D(x-1, y, z)];
-            if (IsNeighbor(i, Direction.West, neighbor))
-            {
-                return true;
-            }
-        }
+		if (HasConnection(i, Direction.West) && x > 0)
+		{
+			int neighbor = tileMap[ConvertTo1D(x - 1, y, z)];
+			if (IsNeighbor(i, Direction.West, neighbor))
+			{
+				return true;
+			}
+		}
 
-        if (HasConnection(i, Direction.East) && x < dimensions.x - 1)
-        {
-            int neighbor = tileMap[ConvertTo1D(x + 1, y, z)];
-            if (IsNeighbor(i, Direction.East, neighbor))
-            {
-                return true;
-            }
-        }
+		if (HasConnection(i, Direction.East) && x < dimensions.x - 1)
+		{
+			int neighbor = tileMap[ConvertTo1D(x + 1, y, z)];
+			if (IsNeighbor(i, Direction.East, neighbor))
+			{
+				return true;
+			}
+		}
 
-        if (HasConnection(i, Direction.South) && z > 0)
-        {
-            int neighbor = tileMap[ConvertTo1D(x, y, z - 1)];
-            if (IsNeighbor(i, Direction.South, neighbor))
-            {
-                return true;
-            }
-        }
+		if (HasConnection(i, Direction.South) && z > 0)
+		{
+			int neighbor = tileMap[ConvertTo1D(x, y, z - 1)];
+			if (IsNeighbor(i, Direction.South, neighbor))
+			{
+				return true;
+			}
+		}
 
-        if (HasConnection(i, Direction.North) && z < dimensions.z - 1)
-        {
-            int neighbor = tileMap[ConvertTo1D(x, y, z + 1)];
-            if (IsNeighbor(i, Direction.North, neighbor))
-            {
-                return true;
-            }
-        }
+		if (HasConnection(i, Direction.North) && z < dimensions.z - 1)
+		{
+			int neighbor = tileMap[ConvertTo1D(x, y, z + 1)];
+			if (IsNeighbor(i, Direction.North, neighbor))
+			{
+				return true;
+			}
+		}
 
-        if (HasConnection(i, Direction.Down) && y > 0)
-        {
-            int neighbor = tileMap[ConvertTo1D(x, y - 1, z)];
-            if (IsNeighbor(i, Direction.Down, neighbor))
-            {
-                return true;
-            }
-        }
+		if (HasConnection(i, Direction.Down) && y > 0)
+		{
+			int neighbor = tileMap[ConvertTo1D(x, y - 1, z)];
+			if (IsNeighbor(i, Direction.Down, neighbor))
+			{
+				return true;
+			}
+		}
 
-        if (HasConnection(i, Direction.Up) && y < dimensions.y - 1)
-        {
-            int neighbor = tileMap[ConvertTo1D(x, y + 1, z)];
-            if (IsNeighbor(i, Direction.Up, neighbor))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+		if (HasConnection(i, Direction.Up) && y < dimensions.y - 1)
+		{
+			int neighbor = tileMap[ConvertTo1D(x, y + 1, z)];
+			if (IsNeighbor(i, Direction.Up, neighbor))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 }

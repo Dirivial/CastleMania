@@ -36,7 +36,7 @@ public class WFCManager : Manager
     private NativeArray<NativeTileType> tileTypes;
     private NativeArray<bool> neighborData;
     private NativeArray<bool> hasConnectionData;
-    
+
     private int tileCount;
     private Dictionary<Vector2Int, ChunkWFC> chunks;
     private Dictionary<string, BufferZone> bufferZones;
@@ -44,7 +44,7 @@ public class WFCManager : Manager
     List<BufferZone> scheduledBufferZones = new List<BufferZone>();
     List<TowerJob> scheduledTowerJobs = new List<TowerJob>();
     private Vector3Int dimensions = new Vector3Int(5, 5, 5);
-   // private static int EMPTY_TILE = -2;
+    // private static int EMPTY_TILE = -2;
     private int tilesPerChunk = 15;
     private int[] floorHeights;
     //private static int UNDECIDED = -1;
@@ -59,12 +59,12 @@ public class WFCManager : Manager
 
     private TilePooler pooler;
 
-    public int TilesPerChunk { get => tilesPerChunk; set =>  tilesPerChunk = value / tileSize - 1; }
+    public int TilesPerChunk { get => tilesPerChunk; set => tilesPerChunk = value / tileSize - 1; }
 
     public void Setup()
     {
         seed = (uint)Random.Range(1, Int32.MaxValue);
-        
+
         dimensions = new Vector3Int(TilesPerChunk, numberOfFloors, TilesPerChunk);
         bufferZones = new Dictionary<string, BufferZone>();
 
@@ -123,9 +123,9 @@ public class WFCManager : Manager
             Vector2Int pos = pendingChunks[i];
             if (chunks.ContainsKey(pos) && chunks[pos].jobHandle.IsCompleted)
             {
-                
+
                 chunks[pos].jobHandle.Complete();
-                
+
                 foreach (TowerJob t in scheduledTowerJobs)
                 {
                     if (t.chunkPos == pos)
@@ -134,7 +134,7 @@ public class WFCManager : Manager
                         break;
                     }
                 }
-                
+
                 InstantiateTiles(pos);
                 chunks[pos].jobWFC.OnDestroy();
                 chunks[pos].isInstantiated = true;
@@ -158,7 +158,7 @@ public class WFCManager : Manager
             }
         }
 
-        for (int i = scheduledTowerJobs.Count - 1; i >= 0;i--)
+        for (int i = scheduledTowerJobs.Count - 1; i >= 0; i--)
         {
             TowerJob job = scheduledTowerJobs[i];
             if (job != null && job.job.IsCompleted)
@@ -191,10 +191,10 @@ public class WFCManager : Manager
             //Debug.Log("Disposed of chunk @ " + c.position);
         }
 
-        foreach (BufferZone bufferZone in bufferZones.Values)
-        {
-            bufferZone.tileMap.Dispose();
-        }
+        // foreach (BufferZone bufferZone in bufferZones.Values)
+        // {
+        //     bufferZone.tileMap.Dispose();
+        // }
 
         for (int i = scheduledTowerJobs.Count - 1; i >= 0; i--)
         {
@@ -206,7 +206,7 @@ public class WFCManager : Manager
 
     public override void DestroyChunk(Vector2Int chunkPos)
     {
-        RemoveLeftOverBufferZones(chunkPos);
+        //RemoveLeftOverBufferZones(chunkPos);
         int i = 0;
         for (int x = 0; x < dimensions.x; x++)
         {
@@ -245,7 +245,7 @@ public class WFCManager : Manager
 
     private void RemoveLeftOverBufferZones(Vector2Int chunkPosition)
     {
-        for (int i = -1; i < 2; i+=2)
+        for (int i = -1; i < 2; i += 2)
         {
             Vector2Int v = new Vector2Int(chunkPosition.x, chunkPosition.y + i);
             Vector2Int h = new Vector2Int(chunkPosition.x + i, chunkPosition.y);
@@ -256,7 +256,8 @@ public class WFCManager : Manager
             if (bufferZones.ContainsKey(key))
             {
                 DeleteBufferZone(key);
-            } else if (bufferZones.ContainsKey(key2))
+            }
+            else if (bufferZones.ContainsKey(key2))
             {
                 DeleteBufferZone(key2);
             }
@@ -324,7 +325,7 @@ public class WFCManager : Manager
         JobHandle handle = chunks[chunkPos].jobWFC.Schedule();
         chunks[chunkPos].jobHandle = handle;
 
-        CreateBufferZones(chunkPos, handle);
+        //CreateBufferZones(chunkPos, handle);
     }
 
     private void CreateTowerGrowthJobs(NativeList<TowerTile> towers, Vector2Int chunkPos)
@@ -505,7 +506,7 @@ public class WFCManager : Manager
 
     private void InstantiateBuffer(BufferZone bufferZone)
     {
-        
+
         int xOffset = bufferZone.positionA.x;
         xOffset = xOffset * TilesPerChunk * tileSize + xOffset * tileSize;
 
@@ -529,7 +530,8 @@ public class WFCManager : Manager
                     bufferZone.tiles.Add(pooler.SpawnTile(imported_tiles[index].id, new Vector3Int(xOffset + x * tileSize, height, zOffset), imported_tiles[index].rotation, tileScale));
                 }
             }
-        } else
+        }
+        else
         {
             xOffset -= tileSize;
             //Debug.Log("Yo");
@@ -562,7 +564,7 @@ public class WFCManager : Manager
     private void ComputeHasConnection(TileType tileType, int index)
     {
         bool anyPositive = false;
-        for (int i = 0;i < 6; i++)
+        for (int i = 0; i < 6; i++)
         {
             for (int j = 0; j < tileCount; j++)
             {
@@ -593,11 +595,11 @@ public class WFCManager : Manager
         Vector3 sizeA = new Vector3(tileSize, 1f, 1f);
         Vector3 sizeB = new Vector3(1f, 1f, tileSize);
 
-        Gizmos.DrawCube(new Vector3(tileSize * TilesPerChunk / 2 - tileSize / 2, 0, tileSize * TilesPerChunk / 2 - tileSize / 2), new Vector3(2f ,2f, 2f));
+        Gizmos.DrawCube(new Vector3(tileSize * TilesPerChunk / 2 - tileSize / 2, 0, tileSize * TilesPerChunk / 2 - tileSize / 2), new Vector3(2f, 2f, 2f));
         Gizmos.color = Color.white;
         foreach (ChunkWFC chunk in chunks.Values)
         {
-            if(!chunk.jobHandle.IsCompleted || !chunk.isInstantiated)
+            if (!chunk.jobHandle.IsCompleted || !chunk.isInstantiated)
             {
                 continue;
             }
