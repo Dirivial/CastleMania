@@ -1148,9 +1148,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerTransform: {fileID: 1446102457}
-  chunkSize: 128
+  chunkSize: 256
   chunkSpawnDistance: 2
   chunkDestroyDistance: 2
+  distanceBetweenChunks: 25
   numArenas: 10
   minSideRooms: 2
   maxSideRooms: 5
@@ -1227,7 +1228,7 @@ MonoBehaviour:
   lavaPrefab: {fileID: 6695338019797790684, guid: 5cb5e9010fca0f842a133d79c78c83ba,
     type: 3}
   lavaHeight: -40
-  chunkSize: 512
+  chunkSize: 256
 --- !u!114 &389366920
 MonoBehaviour:
   m_ObjectHideFlags: 0
