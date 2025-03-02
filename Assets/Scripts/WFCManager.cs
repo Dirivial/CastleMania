@@ -21,6 +21,8 @@ public class TowerJob
 public class WFCManager : Manager
 {
     public Vector3Int tileScale = new Vector3Int(400, 400, 400);
+
+    public List<Vector2Int> selectedTiles = new List<Vector2Int>();
     public int numberOfFloors = 3;
     public int floorGapMin = 1;
     public int floorGapMax = 4;
@@ -57,7 +59,7 @@ public class WFCManager : Manager
 
     private TilePooler pooler;
 
-    public int TilesPerChunk { get => tilesPerChunk; set => tilesPerChunk = value / tileSize - 1; }
+    public int TilesPerChunk { get => tilesPerChunk; set => tilesPerChunk = value / tileSize; }
 
     public void Setup()
     {
@@ -111,6 +113,11 @@ public class WFCManager : Manager
         // Get Pooler
         pooler = GetComponent<TilePooler>();
         pooler.CreateTilePools(imported_tiles);
+
+
+        Debug.Log(tileSize);
+        Debug.Log(TilesPerChunk);
+        Debug.Log(new Vector3(tileSize * TilesPerChunk / 2 - tileSize / 2, 200, tileSize * TilesPerChunk / 2 - tileSize / 2));
     }
 
     public void LateUpdate()
@@ -352,73 +359,77 @@ public class WFCManager : Manager
         }
 
 
-        // Gizmos.color = Color.green;
-        // Vector3 sizeA = new Vector3(tileSize, 1f, 1f);
-        // Vector3 sizeB = new Vector3(1f, 1f, tileSize);
+        Gizmos.color = Color.green;
+        Vector3 sizeA = new Vector3(tileSize, 1f, 1f);
+        Vector3 sizeB = new Vector3(1f, 1f, tileSize);
 
-        // Gizmos.DrawCube(new Vector3(tileSize * TilesPerChunk / 2 - tileSize / 2, 0, tileSize * TilesPerChunk / 2 - tileSize / 2), new Vector3(2f, 2f, 2f));
-        // Gizmos.color = Color.white;
-        // foreach (ChunkWFC chunk in chunks.Values)
-        // {
-        //     if (!chunk.jobHandle.IsCompleted || !chunk.isInstantiated)
-        //     {
-        //         continue;
-        //     }
-        //     int xOffset = chunk.position.x * TilesPerChunk * tileSize;
-        //     int zOffset = chunk.position.y * TilesPerChunk * tileSize;
-        //     for (int y = 0; y < dimensions.y; y++)
-        //     {
-        //         int height = floorHeights[y];
-        //         for (int i = 0; i < dimensions.z; i++)
-        //         {
-        //             if (HasConnection(chunk.outWest[i + y * dimensions.z], Direction.West))
-        //             {
-        //                 Gizmos.color = Color.green;
-        //             }
-        //             else
-        //             {
-        //                 Gizmos.color = Color.red;
-        //             }
-        //             Vector3 p = new Vector3(xOffset - tileSize / 2, height * tileSize, zOffset + i * tileSize);
-        //             Gizmos.DrawCube(p, sizeB);
+        Gizmos.DrawCube(new Vector3(tileSize / 2, 200, tileSize / 2), new Vector3(2f, 2f, 2f));
+        Gizmos.color = Color.white;
+        foreach (ChunkWFC chunk in chunks.Values)
+        {
+            if (!chunk.jobHandle.IsCompleted || !chunk.isInstantiated)
+            {
+                continue;
+            }
+            if (!selectedTiles.Contains(chunk.position))
+            {
+                continue;
+            }
+            int xOffset = chunk.position.x * TilesPerChunk * tileSize;
+            int zOffset = chunk.position.y * TilesPerChunk * tileSize;
+            for (int y = 0; y < dimensions.y; y++)
+            {
+                int height = floorHeights[y];
+                for (int i = 0; i < dimensions.z; i++)
+                {
+                    if (HasConnection(chunk.outWest[i + y * dimensions.z], Direction.West))
+                    {
+                        Gizmos.color = Color.green;
+                    }
+                    else
+                    {
+                        Gizmos.color = Color.red;
+                    }
+                    Vector3 p = new Vector3(xOffset - tileSize / 2, height * tileSize, zOffset + i * tileSize);
+                    Gizmos.DrawCube(p, sizeB);
 
-        //             if (HasConnection(chunk.outEast[i], Direction.East))
-        //             {
-        //                 Gizmos.color = Color.green;
-        //             }
-        //             else
-        //             {
-        //                 Gizmos.color = Color.red;
-        //             }
-        //             p = new Vector3(xOffset + tileSize * TilesPerChunk - tileSize / 2, height * tileSize, zOffset + i * tileSize);
-        //             Gizmos.DrawCube(p, sizeB);
-        //         }
-        //         for (int i = 0; i < dimensions.x; i++)
-        //         {
-        //             if (HasConnection(chunk.outNorth[i + y * dimensions.x], Direction.North))
-        //             {
-        //                 Gizmos.color = Color.green;
-        //             }
-        //             else
-        //             {
-        //                 Gizmos.color = Color.red;
-        //             }
-        //             Vector3 p = new Vector3(xOffset + i * tileSize, height * tileSize, zOffset + tileSize * TilesPerChunk - tileSize / 2);
-        //             Gizmos.DrawCube(p, sizeA);
+                    if (HasConnection(chunk.outEast[i], Direction.East))
+                    {
+                        Gizmos.color = Color.green;
+                    }
+                    else
+                    {
+                        Gizmos.color = Color.red;
+                    }
+                    p = new Vector3(xOffset + tileSize * TilesPerChunk - tileSize / 2, height * tileSize, zOffset + i * tileSize);
+                    Gizmos.DrawCube(p, sizeB);
+                }
+                for (int i = 0; i < dimensions.x; i++)
+                {
+                    if (HasConnection(chunk.outNorth[i + y * dimensions.x], Direction.North))
+                    {
+                        Gizmos.color = Color.green;
+                    }
+                    else
+                    {
+                        Gizmos.color = Color.red;
+                    }
+                    Vector3 p = new Vector3(xOffset + i * tileSize, height * tileSize, zOffset + tileSize * TilesPerChunk - tileSize / 2);
+                    Gizmos.DrawCube(p, sizeA);
 
-        //             if (HasConnection(chunk.outSouth[i + y * dimensions.x], Direction.South))
-        //             {
-        //                 Gizmos.color = Color.green;
-        //             }
-        //             else
-        //             {
-        //                 Gizmos.color = Color.red;
-        //             }
-        //             p = new Vector3(xOffset + i * tileSize, height * tileSize, zOffset - tileSize / 2);
-        //             Gizmos.DrawCube(p, sizeA);
-        //         }
-        //     }
-        // }
+                    if (HasConnection(chunk.outSouth[i + y * dimensions.x], Direction.South))
+                    {
+                        Gizmos.color = Color.green;
+                    }
+                    else
+                    {
+                        Gizmos.color = Color.red;
+                    }
+                    p = new Vector3(xOffset + i * tileSize, height * tileSize, zOffset - tileSize / 2);
+                    Gizmos.DrawCube(p, sizeA);
+                }
+            }
+        }
     }
 
     // Check if the given tile has a connection to some direction

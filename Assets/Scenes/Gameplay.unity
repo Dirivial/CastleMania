@@ -1183,6 +1183,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tileScale: {x: 8, y: 8, z: 8}
+  selectedTiles: []
   numberOfFloors: 5
   floorGapMin: 3
   floorGapMax: 4
