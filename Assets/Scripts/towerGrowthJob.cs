@@ -9,7 +9,7 @@ public struct Interval
     public int end;
 }
 
-[BurstCompile]
+//[BurstCompile]
 public struct TowerGrowthJob: IJob
 {
 

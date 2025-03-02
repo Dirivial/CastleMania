@@ -1,4 +1,5 @@
 ﻿using MoreMountains.Feedbacks;
+using System;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -23,6 +24,8 @@ namespace StarterAssets
 		public float SpeedChangeRate = 10.0f;
 
 		[Header("Shoot/Hook")]
+        [Tooltip("Time required between shots")]
+        public float temporaryVariable = 1.0f;
 		[Tooltip("Time required between shots")]
 		public float ShootTimeout = 0.1f;
 
@@ -204,7 +207,8 @@ namespace StarterAssets
 			{
 				_shootTimeoutDelta = ShootTimeout;
 				Vector3 f = CinemachineCameraTarget.transform.forward;
-				Vector3 initialPosition = Weapon.transform.TransformPoint(Vector3.zero);
+				//Vector3 initialPosition = Weapon.transform.TransformPoint(Vector3.zero);
+				Vector3 initialPosition = transform.position + Vector3.up * 1.2f + f;
 
                 WeaponManager.OnShoot(initialPosition, f, transform.rotation);
 			}
@@ -300,8 +304,6 @@ namespace StarterAssets
 				Vector3 hookVector = (_hookPoint - transform.position);
 
                 inputDirection += hookVector.normalized;
-
-
 
                 Vector3 hookMagnitude = hookVector * hookVector.magnitude * HookDistanceMultiplier * Time.deltaTime;
                 // move the player
