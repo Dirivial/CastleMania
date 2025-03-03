@@ -1148,13 +1148,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerTransform: {fileID: 1446102457}
-  chunkSize: 256
-  chunkSpawnDistance: 2
-  chunkDestroyDistance: 2
+  chunkSize: 64
+  chunkSpawnDistance: 4
+  chunkDestroyDistance: 4
   distanceBetweenChunks: 16
-  numArenas: 10
-  minSideRooms: 2
-  maxSideRooms: 5
 --- !u!4 &389366917
 Transform:
   m_ObjectHideFlags: 0
@@ -1185,8 +1182,8 @@ MonoBehaviour:
   tileScale: {x: 8, y: 8, z: 8}
   selectedTiles: []
   numberOfFloors: 5
-  floorGapMin: 3
-  floorGapMax: 4
+  floorGapMin: 2
+  floorGapMax: 3
   tilesBelowBottomFloor: 4
   XML_IO: {fileID: 11400000, guid: 17e68b98daf7f5b4fba12383ba0edcea, type: 2}
   tileSize: 16
@@ -1229,7 +1226,7 @@ MonoBehaviour:
   lavaPrefab: {fileID: 6695338019797790684, guid: 5cb5e9010fca0f842a133d79c78c83ba,
     type: 3}
   lavaHeight: -40
-  chunkSize: 256
+  chunkSize: 64
 --- !u!114 &389366920
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1251,11 +1248,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 389366915}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 99ee52e155b0da34eac71130b8265da8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  numArenas: 10
+  minSideRooms: 2
+  maxSideRooms: 5
 --- !u!1001 &485691285
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1377,7 +1377,7 @@ PrefabInstance:
     - target: {fileID: 8997996947095583982, guid: c5efc39a8aaf6e64ea40e9ad573e9b47,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 128
+      value: 32
       objectReference: {fileID: 0}
     - target: {fileID: 8997996947095583982, guid: c5efc39a8aaf6e64ea40e9ad573e9b47,
         type: 3}
@@ -1387,7 +1387,7 @@ PrefabInstance:
     - target: {fileID: 8997996947095583982, guid: c5efc39a8aaf6e64ea40e9ad573e9b47,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 128
+      value: 32
       objectReference: {fileID: 0}
     - target: {fileID: 8997996947095583982, guid: c5efc39a8aaf6e64ea40e9ad573e9b47,
         type: 3}
@@ -1497,7 +1497,7 @@ PrefabInstance:
     - target: {fileID: 8762286023885395322, guid: 9c489a8547f4d9e4387da15a4ff82c81,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 128
+      value: 32
       objectReference: {fileID: 0}
     - target: {fileID: 8762286023885395322, guid: 9c489a8547f4d9e4387da15a4ff82c81,
         type: 3}
@@ -1507,7 +1507,7 @@ PrefabInstance:
     - target: {fileID: 8762286023885395322, guid: 9c489a8547f4d9e4387da15a4ff82c81,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 128
+      value: 32
       objectReference: {fileID: 0}
     - target: {fileID: 8762286023885395322, guid: 9c489a8547f4d9e4387da15a4ff82c81,
         type: 3}
@@ -3834,7 +3834,7 @@ PrefabInstance:
     - target: {fileID: 9005220659476430818, guid: 2d3a85ecde41a8246a79669975912b74,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 128
+      value: 32
       objectReference: {fileID: 0}
     - target: {fileID: 9005220659476430818, guid: 2d3a85ecde41a8246a79669975912b74,
         type: 3}
@@ -3844,7 +3844,7 @@ PrefabInstance:
     - target: {fileID: 9005220659476430818, guid: 2d3a85ecde41a8246a79669975912b74,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 128
+      value: 32
       objectReference: {fileID: 0}
     - target: {fileID: 9005220659476430818, guid: 2d3a85ecde41a8246a79669975912b74,
         type: 3}
