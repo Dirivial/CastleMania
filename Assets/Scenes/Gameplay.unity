@@ -1323,7 +1323,7 @@ PrefabInstance:
         type: 3}
       propertyPath: GrapplingHook
       value: 
-      objectReference: {fileID: 2091246325}
+      objectReference: {fileID: 759195313}
     - target: {fileID: 8616685848737228371, guid: c5efc39a8aaf6e64ea40e9ad573e9b47,
         type: 3}
       propertyPath: WeaponManager
@@ -1553,6 +1553,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Lens.FieldOfView
       value: 75
+      objectReference: {fileID: 0}
+    - target: {fileID: 8762286024517199034, guid: 9c489a8547f4d9e4387da15a4ff82c81,
+        type: 3}
+      propertyPath: CameraSide
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 8762286024517199035, guid: 9c489a8547f4d9e4387da15a4ff82c81, type: 3}
@@ -3146,6 +3151,7 @@ GameObject:
   m_Component:
   - component: {fileID: 759195312}
   - component: {fileID: 759195311}
+  - component: {fileID: 759195313}
   m_Layer: 0
   m_Name: Weapons
   m_TagString: Untagged
@@ -3184,6 +3190,26 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &759195313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 759195310}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f61b7974a70eff43b7e4657aa88464c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MaxLength: 100
+  HookableLayer:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  Hook: {fileID: 1277006134}
+  HookFoundTargetFeedback: {fileID: 674329593}
+  HookMissedTargetFeedback: {fileID: 1787150248}
+  HookCoolingDownFeedback: {fileID: 376288823}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -3913,6 +3939,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9005220659476430821, guid: 2d3a85ecde41a8246a79669975912b74,
         type: 3}
+      propertyPath: m_BackGroundColor.a
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9005220659476430821, guid: 2d3a85ecde41a8246a79669975912b74,
+        type: 3}
       propertyPath: m_BackGroundColor.b
       value: 0.000533999
       objectReference: {fileID: 0}
@@ -3930,6 +3961,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: MainCamera
+      objectReference: {fileID: 0}
+    - target: {fileID: 9018249871969862650, guid: 2d3a85ecde41a8246a79669975912b74,
+        type: 3}
+      propertyPath: m_DefaultBlend.m_Time
+      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5120,7 +5156,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.754717, g: 0.754717, b: 0.754717, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -6241,7 +6277,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2091246324}
-  - component: {fileID: 2091246325}
   m_Layer: 0
   m_Name: GrapplingHook
   m_TagString: Projectile
@@ -6266,26 +6301,6 @@ Transform:
   m_Father: {fileID: 1781425665}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: -12.53, y: 0.42, z: 0}
---- !u!114 &2091246325
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2091246323}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f61b7974a70eff43b7e4657aa88464c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MaxLength: 100
-  HookableLayer:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  Hook: {fileID: 1277006134}
-  HookFoundTargetFeedback: {fileID: 674329593}
-  HookMissedTargetFeedback: {fileID: 1787150248}
-  HookCoolingDownFeedback: {fileID: 376288823}
 --- !u!1 &2136022366
 GameObject:
   m_ObjectHideFlags: 0

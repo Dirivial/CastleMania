@@ -21,7 +21,8 @@ public class WeaponManager : MonoBehaviour
             Bullet b = Instantiate(bulletPrefab);
             b.Init(KillBullet);
             return b;
-        }, bullet => {
+        }, bullet =>
+        {
             bullet.gameObject.SetActive(true);
         }, bullet =>
         {
@@ -48,7 +49,7 @@ public class WeaponManager : MonoBehaviour
     public void OnShoot(Vector3 position, Vector3 forward, Quaternion rotation)
     {
         Bullet bullet = bulletPool.Get();
-        bullet.transform.position = position;
+        bullet.transform.position = position + forward;
         bullet.transform.rotation = rotation;
         bullet.SetForward(forward);
         bullet.ResetTimer();

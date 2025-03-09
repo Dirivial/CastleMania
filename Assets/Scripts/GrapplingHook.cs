@@ -8,14 +8,15 @@ public class GrapplingHook : MonoBehaviour
     public LayerMask HookableLayer;
     public GameObject Hook;
 
+
     public MMFeedbacks HookFoundTargetFeedback;
     public MMFeedbacks HookMissedTargetFeedback;
     public MMFeedbacks HookCoolingDownFeedback;
 
-    public bool ShootHook(Action<Vector3> targetFound, Vector3 direction)
+    public bool ShootHook(Action<Vector3> targetFound, Vector3 position, Vector3 direction)
     {
         RaycastHit hit;
-        if (Physics.Raycast(Hook.transform.position, direction, out hit, MaxLength, HookableLayer))
+        if (Physics.Raycast(position, direction, out hit, MaxLength, HookableLayer))
         {
 
             if (hit.collider.CompareTag("Environment"))

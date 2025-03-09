@@ -24,8 +24,8 @@ namespace StarterAssets
 		public float SpeedChangeRate = 10.0f;
 
 		[Header("Shoot/Hook")]
-        [Tooltip("Time required between shots")]
-        public float temporaryVariable = 1.0f;
+		[Tooltip("Time required between shots")]
+		public float temporaryVariable = 1.0f;
 		[Tooltip("Time required between shots")]
 		public float ShootTimeout = 0.1f;
 
@@ -35,14 +35,14 @@ namespace StarterAssets
 		public float HookVerticalVelocityReset = 10.0f;
 		[Tooltip("Set a scale on how much moving along x/z-axes impacts movement when hooking")]
 		public float HookHorizontalScaling = 0.8f;
-        [Tooltip("How quickly you move when using the grappling hook")]
-        public float HookSpeed = 20f;
-        [Tooltip("Multiplier for how much distance impacts hook speed")]
+		[Tooltip("How quickly you move when using the grappling hook")]
+		public float HookSpeed = 20f;
+		[Tooltip("Multiplier for how much distance impacts hook speed")]
 		public float HookDistanceMultiplier = 1f;
-        [Tooltip("The grappling hook object")]
-        public GrapplingHook GrapplingHook;
+		[Tooltip("The grappling hook object")]
+		public GrapplingHook GrapplingHook;
 
-        [Space(10)]
+		[Space(10)]
 		[Tooltip("The height the player can jump")]
 		public float JumpHeight = 1.2f;
 		[Tooltip("The character uses its own gravity value. The engine default is -9.81f")]
@@ -78,11 +78,11 @@ namespace StarterAssets
 
 		[Header("Weapons Manager")]
 		[Tooltip("The weapon manager is used to shoot and switch weapons")]
-        public WeaponManager WeaponManager;
+		public WeaponManager WeaponManager;
 		public GameObject Weapon;
 
-        // cinemachine
-        private float _cinemachineTargetPitch;
+		// cinemachine
+		private float _cinemachineTargetPitch;
 
 		// player
 		private float _speed;
@@ -94,33 +94,33 @@ namespace StarterAssets
 		private float _jumpTimeoutDelta;
 		private float _fallTimeoutDelta;
 		private float _shootTimeoutDelta;
-        private float _hookTimeoutDelta;
+		private float _hookTimeoutDelta;
 
 		// Grappling hook
 		private bool _foundTarget;
 		private Vector3 _hookPoint;
 		private bool isHoldingDownButton = false;
 
-        private bool isCursorLocked = true;
+		private bool isCursorLocked = true;
 
 
 #if ENABLE_INPUT_SYSTEM
-        private PlayerInput _playerInput;
+		private PlayerInput _playerInput;
 #endif
 		private CharacterController _controller;
 		private StarterAssetsInputs _input;
 		private GameObject _mainCamera;
-        private const float _threshold = 0.01f;
+		private const float _threshold = 0.001f;
 
 		private bool IsCurrentDeviceMouse
 		{
 			get
 			{
-				#if ENABLE_INPUT_SYSTEM
+#if ENABLE_INPUT_SYSTEM
 				return _playerInput.currentControlScheme == "KeyboardMouse";
-				#else
+#else
 				return false;
-				#endif
+#endif
 			}
 		}
 
@@ -150,8 +150,8 @@ namespace StarterAssets
 			_hookTimeoutDelta = -1f;
 			_foundTarget = false;
 
-            LockCursor();
-        }
+			LockCursor();
+		}
 
 		private void Update()
 		{
@@ -161,13 +161,13 @@ namespace StarterAssets
 			GroundedCheck();
 			Move();
 
-            // Toggle cursor lock when pressing the "Escape" key
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                isCursorLocked = !isCursorLocked;
-                LockCursor();
-            }
-        }
+			// Toggle cursor lock when pressing the "Escape" key
+			if (Input.GetKeyDown(KeyCode.Escape))
+			{
+				isCursorLocked = !isCursorLocked;
+				LockCursor();
+			}
+		}
 
 		private void SetTargetFound(Vector3 target)
 		{
@@ -175,20 +175,23 @@ namespace StarterAssets
 			_hookPoint = target;
 		}
 
-        private void Hook()
-        {
-            if (_input.hook)
-            {
+		private void Hook()
+		{
+			if (_input.hook)
+			{
 				if (_hookTimeoutDelta <= 0.0f && !isHoldingDownButton)
 				{
-                    bool results = GrapplingHook.ShootHook(SetTargetFound, CinemachineCameraTarget.transform.forward);
-                    _hookTimeoutDelta = HookTimeout;
+					bool results = GrapplingHook.ShootHook(SetTargetFound, CinemachineCameraTarget.transform.position, CinemachineCameraTarget.transform.forward);
+					_hookTimeoutDelta = HookTimeout;
 					isHoldingDownButton = true;
-                } else if (!_foundTarget)
+				}
+				else if (!_foundTarget)
 				{
-                    _hookTimeoutDelta -= Time.deltaTime;
-                }
-            } else {
+					_hookTimeoutDelta -= Time.deltaTime;
+				}
+			}
+			else
+			{
 				if (_foundTarget)
 				{
 					_foundTarget = false;
@@ -198,27 +201,27 @@ namespace StarterAssets
 				}
 				isHoldingDownButton = false;
 				_hookTimeoutDelta -= Time.deltaTime;
-            }
-        }
+			}
+		}
 
-        private void Shoot()
-        {
-            if (_input.shoot && _shootTimeoutDelta <= 0.0f)
+		private void Shoot()
+		{
+			if (_input.shoot && _shootTimeoutDelta <= 0.0f)
 			{
 				_shootTimeoutDelta = ShootTimeout;
 				Vector3 f = CinemachineCameraTarget.transform.forward;
 				//Vector3 initialPosition = Weapon.transform.TransformPoint(Vector3.zero);
-				Vector3 initialPosition = transform.position + Vector3.up * 1.2f + f;
+				Vector3 initialPosition = CinemachineCameraTarget.transform.position;//transform.position + Vector3.up * 1.2f + f;
 
-                WeaponManager.OnShoot(initialPosition, f, transform.rotation);
+				WeaponManager.OnShoot(initialPosition, f, transform.rotation);
 			}
-            if (_shootTimeoutDelta >= 0.0f)
-            {
-                _shootTimeoutDelta -= Time.deltaTime;
-            }
-        }
+			if (_shootTimeoutDelta >= 0.0f)
+			{
+				_shootTimeoutDelta -= Time.deltaTime;
+			}
+		}
 
-        private void LateUpdate()
+		private void LateUpdate()
 		{
 			CameraRotation();
 		}
@@ -237,7 +240,7 @@ namespace StarterAssets
 			{
 				//Don't multiply mouse input by Time.deltaTime
 				float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
-				
+
 				_cinemachineTargetPitch += _input.look.y * RotationSpeed * deltaTimeMultiplier;
 				_rotationVelocity = _input.look.x * RotationSpeed * deltaTimeMultiplier;
 
@@ -299,20 +302,21 @@ namespace StarterAssets
 			{
 				_verticalVelocity = HookVerticalVelocityReset;
 				inputDirection.x *= HookHorizontalScaling;
-                inputDirection.z *= HookHorizontalScaling;
+				inputDirection.z *= HookHorizontalScaling;
 
 				Vector3 hookVector = (_hookPoint - transform.position);
 
-                inputDirection += hookVector.normalized;
+				inputDirection += hookVector.normalized;
 
-                Vector3 hookMagnitude = hookVector * hookVector.magnitude * HookDistanceMultiplier * Time.deltaTime;
-                // move the player
-                _controller.Move(inputDirection.normalized * HookSpeed * Time.deltaTime + hookMagnitude);
-            } else
+				Vector3 hookMagnitude = hookVector * hookVector.magnitude * HookDistanceMultiplier * Time.deltaTime;
+				// move the player
+				_controller.Move(inputDirection.normalized * HookSpeed * Time.deltaTime + hookMagnitude);
+			}
+			else
 			{
-                // move the player
-                _controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
-            }
+				// move the player
+				_controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+			}
 		}
 
 		private void JumpAndGravity()
@@ -372,21 +376,21 @@ namespace StarterAssets
 			return Mathf.Clamp(lfAngle, lfMin, lfMax);
 		}
 
-        private void LockCursor()
-        {
-            if (isCursorLocked)
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
-            }
-            else
-            {
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
-            }
-        }
+		private void LockCursor()
+		{
+			if (isCursorLocked)
+			{
+				Cursor.lockState = CursorLockMode.Locked;
+				Cursor.visible = false;
+			}
+			else
+			{
+				Cursor.lockState = CursorLockMode.None;
+				Cursor.visible = true;
+			}
+		}
 
-        private void OnDrawGizmosSelected()
+		private void OnDrawGizmosSelected()
 		{
 			Color transparentGreen = new Color(0.0f, 1.0f, 0.0f, 0.35f);
 			Color transparentRed = new Color(1.0f, 0.0f, 0.0f, 0.35f);

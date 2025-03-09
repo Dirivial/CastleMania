@@ -9,13 +9,10 @@ public class TilePooler : MonoBehaviour
     public int initialPoolSize;
     public int maximumPoolSize;
 
-    private List<TileType> tileTypes = new List<TileType>();
     private List<ObjectPool<GameObject>> tilePools = new List<ObjectPool<GameObject>>();
 
     public void CreateTilePools(List<TileType> tileTypes)
     {
-        this.tileTypes = tileTypes;
-
         foreach (TileType tileType in tileTypes)
         {
             if (tileType.id == -1 || tilePools.Count > tileType.id) continue;
@@ -23,14 +20,18 @@ public class TilePooler : MonoBehaviour
             ObjectPool<GameObject> tilePool = new ObjectPool<GameObject>(() =>
             {
                 return Instantiate(tileType.tileObject);
-            }, obj => {
+            }, obj =>
+            {
                 obj.SetActive(true);
             }, obj =>
             {
                 obj.SetActive(false);
             }, obj =>
             {
-                Destroy(obj);
+                if (obj != null)
+                {
+                    Destroy(obj);
+                }
             }, false, initialPoolSize, maximumPoolSize);
             tilePools.Add(tilePool);
         }
