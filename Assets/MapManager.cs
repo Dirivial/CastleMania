@@ -16,6 +16,10 @@ public class MapManager : MonoBehaviour
     public int minSideRooms = 2; // Minimum number of side rooms
     public int maxSideRooms = 5; // Maximum number of side rooms
 
+    [Header("Map Walls")]
+    public GameObject wall;
+
+
     public List<List<Vector2Int>> roomTypes = new List<List<Vector2Int>>();
 
     private Dictionary<Vector2Int, Room> map = new Dictionary<Vector2Int, Room>();
@@ -27,6 +31,9 @@ public class MapManager : MonoBehaviour
 
         // Add side rooms
         //AddSideRooms();
+
+        // Omit start room
+        map.Remove(new Vector2Int(0, 0));
 
         PrintMap();
 
@@ -141,6 +148,35 @@ public class MapManager : MonoBehaviour
             if (UnityEngine.Random.value < 0.5f) // 50% chance to create a loop
             {
                 //map[sideRoom].Add(mainPathArena);
+            }
+        }
+    }
+    public void SpawnWalls(int roomSize)
+    {
+        foreach (var room in map)
+        {
+            Vector2Int coord = room.Key;
+
+            // TODO: If there is a room check to see if it belongs to another "area" 
+            if (!(coord.x - 1 == 0 && coord.y == 0) && !map.ContainsKey(new Vector2Int(coord.x - 1, coord.y)))
+            {
+                // Spawn wall here
+                Instantiate(wall, new Vector3Int(coord.x * roomSize, 0, coord.y * roomSize), Quaternion.Euler(new Vector3(0, -90, 0)), transform);
+            }
+            if (!(coord.x + 1 == 0 && coord.y == 0) && !map.ContainsKey(new Vector2Int(coord.x + 1, coord.y)))
+            {
+                // Spawn wall here
+                Instantiate(wall, new Vector3Int((coord.x + 1) * roomSize, 0, coord.y * roomSize), Quaternion.Euler(new Vector3(0, -90, 0)), transform);
+            }
+            if (!(coord.x == 0 && coord.y - 1 == 0) && !map.ContainsKey(new Vector2Int(coord.x, coord.y - 1)))
+            {
+                // Spawn wall here
+                Instantiate(wall, new Vector3Int(coord.x * roomSize, 0, coord.y * roomSize), Quaternion.identity, transform);
+            }
+            if (!(coord.x == 0 && coord.y + 1 == 0) && !map.ContainsKey(new Vector2Int(coord.x, coord.y + 1)))
+            {
+                // Spawn wall here
+                Instantiate(wall, new Vector3Int(coord.x * roomSize, 0, (coord.y + 1) * roomSize), Quaternion.identity, transform);
             }
         }
     }

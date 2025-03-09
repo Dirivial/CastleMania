@@ -25,14 +25,14 @@ namespace StarterAssets
 
 		[Header("Shoot/Hook")]
 		[Tooltip("Time required between shots")]
-		public float temporaryVariable = 1.0f;
-		[Tooltip("Time required between shots")]
 		public float ShootTimeout = 0.1f;
 
 		[Tooltip("Time required between hooks")]
 		public float HookTimeout = 1.0f;
 		[Tooltip("This is determines how much upwards momentum the player get after unhooking")]
-		public float HookVerticalVelocityReset = 10.0f;
+		public AnimationCurve HookVerticalVelocityCurve;
+		public float HookVerticalScaling = 50.0f;
+
 		[Tooltip("Set a scale on how much moving along x/z-axes impacts movement when hooking")]
 		public float HookHorizontalScaling = 0.8f;
 		[Tooltip("How quickly you move when using the grappling hook")]
@@ -300,13 +300,14 @@ namespace StarterAssets
 
 			if (_input.hook && _foundTarget)
 			{
-				_verticalVelocity = HookVerticalVelocityReset;
 				inputDirection.x *= HookHorizontalScaling;
 				inputDirection.z *= HookHorizontalScaling;
 
-				Vector3 hookVector = (_hookPoint - transform.position);
+				Vector3 hookVector = _hookPoint - transform.position;
+				hookVector = hookVector.normalized;
 
-				inputDirection += hookVector.normalized;
+				inputDirection += hookVector;
+				_verticalVelocity = HookVerticalVelocityCurve.Evaluate(hookVector.y) * HookVerticalScaling;
 
 				Vector3 hookMagnitude = hookVector * hookVector.magnitude * HookDistanceMultiplier * Time.deltaTime;
 				// move the player

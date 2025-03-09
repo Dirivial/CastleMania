@@ -48,6 +48,7 @@ public class WFCManager : Manager
     private int tilesPerChunk = 15;
     private int[] floorHeights;
     //private static int UNDECIDED = -1;
+    private int tileOffset = 4;
 
     // Implementation specific
     private int tower_bottom = -2;
@@ -66,6 +67,7 @@ public class WFCManager : Manager
         seed = (uint)Random.Range(1, Int32.MaxValue);
 
         dimensions = new Vector3Int(TilesPerChunk, numberOfFloors, TilesPerChunk);
+        tileOffset = tileSize / 2;
 
         XML_IO.ClearTileTypes();
         XML_IO.Import();
@@ -283,8 +285,8 @@ public class WFCManager : Manager
     private void InstantiateTiles(Vector2Int position)
     {
         NativeArray<int> tileMap = chunks[position].tileMap;
-        int xOffset = position.x * TilesPerChunk * tileSize;
-        int zOffset = position.y * TilesPerChunk * tileSize;
+        int xOffset = position.x * TilesPerChunk * tileSize + tileOffset;
+        int zOffset = position.y * TilesPerChunk * tileSize + tileOffset;
         for (int x = 0; x < dimensions.x; x++)
         {
             for (int z = 0; z < dimensions.z; z++)
@@ -310,8 +312,8 @@ public class WFCManager : Manager
     private void InstantiateTowerTiles(TowerJob towerJob)
     {
         Vector2Int chunkPos = towerJob.chunkPos;
-        int xOffset = chunkPos.x * TilesPerChunk * tileSize + tileSize * chunkPos.x;
-        int zOffset = chunkPos.y * TilesPerChunk * tileSize + tileSize * chunkPos.y;
+        int xOffset = chunkPos.x * TilesPerChunk * tileSize + tileOffset;
+        int zOffset = chunkPos.y * TilesPerChunk * tileSize + tileOffset;
         foreach (TowerTile t in chunks[chunkPos].towers)
         {
             chunks[chunkPos].towerTiles.Add(pooler.SpawnTile(imported_tiles[t.tileId].id, new Vector3Int(xOffset + t.position.x * tileSize, t.position.y * tileSize, zOffset + t.position.z * tileSize), imported_tiles[t.tileId].rotation, tileScale));
@@ -375,8 +377,8 @@ public class WFCManager : Manager
             {
                 continue;
             }
-            int xOffset = chunk.position.x * TilesPerChunk * tileSize;
-            int zOffset = chunk.position.y * TilesPerChunk * tileSize;
+            int xOffset = chunk.position.x * TilesPerChunk * tileSize + tileOffset;
+            int zOffset = chunk.position.y * TilesPerChunk * tileSize + tileOffset;
             for (int y = 0; y < dimensions.y; y++)
             {
                 int height = floorHeights[y];
