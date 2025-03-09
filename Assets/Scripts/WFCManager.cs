@@ -156,7 +156,7 @@ public class WFCManager : Manager
             if (job != null && job.job.IsCompleted)
             {
                 job.job.Complete();
-                //job.towerJob.heights.Dispose();
+                job.towerJob.heights.Dispose();
                 InstantiateTowerTiles(job);
 
                 scheduledTowerJobs.RemoveAt(i);
