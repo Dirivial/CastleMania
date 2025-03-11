@@ -24,13 +24,15 @@ public class MapManager : MonoBehaviour
 
     private Dictionary<Vector2Int, Room> map = new Dictionary<Vector2Int, Room>();
 
-    public Dictionary<Vector2Int, Room> GenerateMap()
+    public Dictionary<Vector2Int, Room> GenerateMap(int roomSize)
     {
         // Generate the main path using DFS
         GenerateMainPath();
 
         // Add side rooms
         //AddSideRooms();
+
+        SpawnWalls(roomSize);
 
         // Omit start room
         map.Remove(new Vector2Int(0, 0));
@@ -158,22 +160,22 @@ public class MapManager : MonoBehaviour
             Vector2Int coord = room.Key;
 
             // TODO: If there is a room check to see if it belongs to another "area" 
-            if (!(coord.x - 1 == 0 && coord.y == 0) && !map.ContainsKey(new Vector2Int(coord.x - 1, coord.y)))
+            if (!map.ContainsKey(new Vector2Int(coord.x - 1, coord.y)))
             {
                 // Spawn wall here
                 Instantiate(wall, new Vector3Int(coord.x * roomSize, 0, coord.y * roomSize), Quaternion.Euler(new Vector3(0, -90, 0)), transform);
             }
-            if (!(coord.x + 1 == 0 && coord.y == 0) && !map.ContainsKey(new Vector2Int(coord.x + 1, coord.y)))
+            if (!map.ContainsKey(new Vector2Int(coord.x + 1, coord.y)))
             {
                 // Spawn wall here
                 Instantiate(wall, new Vector3Int((coord.x + 1) * roomSize, 0, coord.y * roomSize), Quaternion.Euler(new Vector3(0, -90, 0)), transform);
             }
-            if (!(coord.x == 0 && coord.y - 1 == 0) && !map.ContainsKey(new Vector2Int(coord.x, coord.y - 1)))
+            if (!map.ContainsKey(new Vector2Int(coord.x, coord.y - 1)))
             {
                 // Spawn wall here
                 Instantiate(wall, new Vector3Int(coord.x * roomSize, 0, coord.y * roomSize), Quaternion.identity, transform);
             }
-            if (!(coord.x == 0 && coord.y + 1 == 0) && !map.ContainsKey(new Vector2Int(coord.x, coord.y + 1)))
+            if (!map.ContainsKey(new Vector2Int(coord.x, coord.y + 1)))
             {
                 // Spawn wall here
                 Instantiate(wall, new Vector3Int(coord.x * roomSize, 0, (coord.y + 1) * roomSize), Quaternion.identity, transform);

@@ -33,9 +33,9 @@ public class ChunkManager : MonoBehaviour
     private void Start()
     {
         // Create map layout
-        map = mapManager.GenerateMap();
+        map = mapManager.GenerateMap(chunkSize);
 
-        mapManager.SpawnWalls(chunkSize);
+        //mapManager.SpawnWalls(chunkSize);
 
         // Spawn chunks close to the player
         UpdateChunks();
